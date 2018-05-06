@@ -1,0 +1,81 @@
+---
+title: "Smash and smash-gen comparisons"
+author: "Dongyue Xie"
+date: "May 5, 2018"
+output: html_document
+---
+
+```{r}
+library(smashr)
+smash.gen=function(x,sigma,family='DaubExPhase',niter=100,tol=1e-2){
+  mu=c()
+  s=c()
+  mu=rbind(mu,rep(mean(x),length(x)))
+  s=rbind(s,rep(1/mu[1],length(x)))
+  y=log(mean(x))+(x-mean(x))/mean(x)
+  for(i in 1:niter){
+    mu.hat=smash.gaus(y,sigma=sigma+s[i,])
+    mu=rbind(mu,mu.hat)
+    #update m and s_t
+    s=rbind(s,1/mu.hat)
+    #update y
+    mt=exp(mu.hat)
+    y=log(mt)+(x-mt)/mt
+    #y=log(mu.hat)+(x-mu.hat)/mu.hat
+    if(norm(mu.hat-mu[i,],'2')<tol){
+      break
+    }
+  }
+  return(list(mu.hat=mu.hat,mu=mu,s=s))
+}
+```
+
+# Poisson no noise
+
+```{r}
+set.seed(1234)
+mu <- c(rep(10, 128), rep(20, 128), rep(30, 128), rep(10, 128))
+x <- sapply(mu, function(x) rpois(1,x))
+
+smash.out=smash.poiss(x)
+smash.gen.out=exp(smash.gen(x,0)$mu.hat)
+
+plot(x,col='gray80')
+lines(smash.gen.out,col='red',lwd=2)
+lines(smash.out,col='blue',lwd=2)
+lines(mu)
+```
+
+# Poisson with low added noise
+
+```{r}
+set.seed(1234)
+mu <- c(rep(10, 128), rep(20, 128), rep(30, 128), rep(10, 128))
+x <- (mu + rnorm(512, 0, 0.1))
+x <- sapply(x, function(x) return(rpois(1,x)))
+
+smash.out=smash.poiss(x)
+smash.gen.out=exp(smash.gen(x,0)$mu.hat)
+
+plot(x,col='gray80')
+lines(smash.gen.out,col='red',lwd=2)
+lines(smash.out,col='blue',lwd=2)
+lines(mu)
+```
+
+# Poisson with high added noise
+
+```{r}
+set.seed(1234)
+mu <- c(rep(10, 128), rep(20, 128), rep(30, 128), rep(10, 128))
+x <- (mu + rnorm(512, 0, 1))
+x <- sapply(x, function(x) return(rpois(1,x)))
+
+smash.out=smash.poiss(x)
+smash.gen.out=exp(smash.gen(x,0)$mu.hat)
+
+plot(x,col='gray80')
+lines(smash.gen.out,col='red',lwd=2)
+lines(smash.out,col='blue',lwd=2)
+lines(mu)
+```

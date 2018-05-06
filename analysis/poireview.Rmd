@@ -1,0 +1,95 @@
+---
+title: "Generalizaton of smash normal version"
+author: "Dongyue Xie"
+date: "May 1, 2018"
+output: html_document
+---
+
+
+# Poisson Distribution
+
+A random variable $X$ has a Poisson distribution with parameter
+$\mu$ if it takes integer values $y = 0, 1, 2, \dots$ with probability $P(X=x)=\frac{e^{-\mu}\mu^x}{x!}$ where $\mu>0$. The mean and variance of $X$ is $E(X)=Var(X)=\mu$.  
+
+
+# Exponential family
+
+$f_Y(y;\theta,\phi)=\exp[(y\theta-b(\theta))/a(\phi)+c(y,\phi)]$. If $\phi$ is known, then \(\theta\) is called canonical parameter. For example, $\theta=\mu, \phi=\sigma^2$ in normal distribution.
+
+$E(Y)=\mu=b'(\theta)$, $Var(Y)=b''(\theta)a(\phi)$. $b''(\theta)$ is variance function and is denoted $V(\mu)$ if it's a function of $\mu$. $a(\phi)$ has the form $a(\phi)=\frac{\phi}{a}$, where $\phi$ is the dispersion parameter and is constant over observations, and $a$ is the weight on each observation.
+
+For Poisson distribution, $\phi=1, b(\theta)=\exp(\theta),V(\mu)=1$
+
+# Weighted least squares
+
+$y_i=x_i\beta+\epsilon_i$ where $Var(\epsilon_i|x_i)=f(x_i)\neq constant$ and $Cov(\epsilon_i,\epsilon_j)=0$.
+
+Let $w_i\propto 1/\sigma_i^2$, we have $E(W^{-1/2}y|X)=W^{-1/2}X\beta$ and $\hat\beta=(X^TWX)^{-1}X^TWy$.
+
+
+# Iterative weighted least squares
+
+Weight: $W=V^{-1}(\frac{d\mu}{d\eta})^2$
+
+Dependent variate: $z=\eta+(y-\mu)\frac{d\eta}{d\mu}$
+
+$z$ is a linearized form of link function applied to the data: 
+$g(y)\simeq g(\mu)+(y-\mu)g'(\mu)=\eta+(y-\mu)\frac{d\eta}{d\mu}$.
+
+Derivation:
+
+The score function of glm model is $$s(\beta_j)=\frac{\partial l}{\partial \beta_j}=\Sigma_{i=1}^na(\phi_i)^{-1}V(\mu_i)^{-1}(y_i-\mu_i)x_{ij}\frac{d\eta_i}{d\mu_i}$$ $$=\Sigma_{i=1}^na_iV(\mu_i)^{-1}(y_i-\mu_i)x_{ij}\frac{d\eta_i}{d\mu_i}$$
+
+A method of solving score equations is the iterative
+algorithm Fisher's Method of Scoring. 
+
+It turns out that the updates can be written in the form of weighted least squares where the weight matrix is $W$ defined above and the variable $z$ is called adjusted variable(working variable).
+
+# Log-linear model
+
+$\log(\mu)=X\beta, \eta=\log(\mu)$ and $z=\log(\mu)+\frac{y-\mu}{\mu}$
+
+$z_i=\log(\hat\mu_i)+\frac{y_i-\hat\mu_i}{\hat\mu_i}$ and $w_{ii}=\hat\mu_i$
+
+Notice that $E(z_i)=\log(\mu_i)$ and $Var(z_i)=\frac{1}{\mu_i^2}Var(y_i)=1/\mu_i$.
+
+
+
+# Smoothing via adaptive shrinkage(smash)
+
+## Review
+
+Gaussian nonparametric regression(Gaussian sequence model) is defined as $y_i=\mu_i+\sigma_iz_i$ where $z_i\sim N(0,1)$, $i=1,2,\dots,T$. In multivariate form, it can be formulated as $y|\mu\sim N_T(\mu,D)$ where D is the diagonal matrix with diagonal elements ($\sigma_1^2,\dots,\sigma_T^2$). Applying a discrete wavelet transform(DWT) represented as an orthogonal matrix $W$, we have $Wy|W\mu\sim N(W\mu,WDW^T)$ which is $\tilde y|\tilde \mu\sim N(\tilde\mu,WDW^T)$. If $\mu$ has spatial structure, then $\tilde\mu$ would be sparse.
+
+In heterokedastic variance case, we only use the diagonal of $WDW^T$ so we can apply EB shrinkage to $\tilde y_j|\tilde\mu_j\sim N(\tilde\mu_j,w_j^2)$ where $w_j^2=\Sigma_{t=1}^T\sigma_t^2W_{jt}^2$.
+
+If $D$ is unknown, we estimate it using shrinkage methods under the assumption that the variances are also spatially structured.
+
+Define $Z_t^2=(y_t-\mu_t)^2$. Since $y_t-\mu_t\sim N(0,\sigma_t^2)$, $Z_t^2\sim\sigma_t^2\chi_1^2$ and $E(Z_t^2)=\sigma_t^2$. Though $Z_t^2$ is chi-squared distributed, we treat it as Gaussian. We use $\frac{2}{3}Z_t^4$ to estimate $Var(Z_t^2)$.($Var(Z_t^2)=2\sigma_t^4$, $E(Z_t^4)=3\sigma_t^4$.) 
+
+## Generalization of smash - normal version
+
+Suppose $Y_t = \mu_t + N(0,s^2_t) + N(0,\sigma^2)$
+where $s^2_t$ is known and the mean vector $\mu$ and (constant) $\sigma$ are to be estimated.
+
+If assume $\sigma$ is known too, then it is equivalent to the above heterokedastic variance case.
+
+```{r,eval=FALSE,include=FALSE}
+Proposed ways to estimate $\sigma^2$ when $\mu_t$ is known: Define $Z_t^2=(y_t-\mu_t)^2$. Since $y_t-\mu_t\sim N(0,s_t^2+\sigma^2)$, $Z_t^2\sim(s_t^2+\sigma^2)\chi_1^2$ and $E(Z_t^2)=s_t^2+\sigma^2$. Assume $Z_t^2=E(Z_t^2)+N(0,\frac{2}{3}Z_t^4)=s_t^2+\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We have two ways to estimate $\sigma^2$. Firstly, estimate $s_t^2+\sigma^2$ together, say $\hat{\epsilon_t}$, then $\hat{\sigma^2}=\Sigma_t(\hat{\epsilon_t}-s_t^2)/T$. Another way is to define $\tilde{Z_t^2}=Z_t^2-s_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can get the estimate of $\sigma^2$ directly in this way(Maybe EB, WLS, trend filtering?). Which way is better? Any other way?
+```
+
+For Poisson data, $X_t\sim Poi(m_t)$, let $Y_t=\log(m_t)+\frac{x_t-m_t}{m_t}$ and set $\mu_t=\log(m_t)$, $s_t^2=\frac{1}{m_t}$. We can then estimate $\mu_t$ and $\sigma^2$ using the above generalized smash model.
+
+Algorithm:
+
+1. Initialize $m_t^{(0)}=\Sigma_{t=1}^Tx_t$ and $s_t^2=1/m_t^{(0)}$.
+2. Estimate $\mu_t$ using generalized smash model.
+3. Update $m_t=exp(\mu_t)$ and repeat 1,2,3 until convergence.
+
+Some Rational: consider the Taylor series expansion of $\log(X_t)$ around $\lambda_t$: $\log(X_t)=\log(\lambda_t)+\frac{1}{\lambda_t}(X_t-\lambda_t)-\frac{1}{2\lambda_t^2}(X_t-\lambda_t)^2+\dots$
+
+```{r,eval=FALSE,include=FALSE}
+We encounter Poisson Nugget effect in some data. Poisson Nugget effect refers to position specific biases(variance?) so despite a clear underlying trend in large scale variability , we see a lot of oscillations at the level of a base position. Consider the following data generation procedure: let $\mu=(\mu_1,...,\mu_t,...,\mu_T)$, $\lambda_t=\exp(\mu_t+\phi_t)$ where $\phi_t\sim N(0,\sigma^2)$, and $X_t\sim Poi(\lambda_t)$. Then $Y_t=\log(\lambda_t)+\frac{X_t-\lambda_t}{\lambda_t}=\mu_t+\phi_t+N(0,1/\lambda_t)$, where the last normal distribution should be a approximation.
+```
+
+

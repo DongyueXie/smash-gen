@@ -6,4 +6,15 @@ output:
     toc: false
 ---
 
-Welcome to my research website.
+# Project Overview
+
+This project aims to study a generalization version of normal version of smash. It transfer the Poisson wavelet smoothing problem to the wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.
+
+# Analysis
+
+1. [Basic review](poireview.html)
+2. [Poisson nugget simulation](nugget.html)
+
+# Credits
+
+This project is based on the ideas from [Matthew Stephens](http://stephenslab.uchicago.edu/). Thanks to Matthew Stephens and [Kushal K Dey](https://kkdey.github.io/) for their great help.
