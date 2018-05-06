@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+
+<title>Generalizaton of smash normal version</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Generalizaton of smash normal version</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>May 1, 2018</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-05-05</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown is untracked by Git. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:red;">✖</strong> <strong>Environment:</strong> objects present </summary></p>
+The global environment had objects present when the code in the R Markdown file was run. These objects can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment. Use <code>wflow_publish</code> or <code>wflow_build</code> to ensure that the code is always run in an empty environment. <br><br>
+<p>
+The following objects were defined in the global environment when these results were created:
+</p>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:left;">
+Class
+</th>
+<th style="text-align:left;">
+Size
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+k
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+48 bytes
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m
+</td>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+2 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+simu.out
+</td>
+<td style="text-align:left;">
+list
+</td>
+<td style="text-align:left;">
+28.7 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+simu_study
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+14.3 Kb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+smash.gen
+</td>
+<td style="text-align:left;">
+function
+</td>
+<td style="text-align:left;">
+122.3 Kb
+</td>
+</tr>
+</tbody>
+</table>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> b7e89a3 </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    docs/figure/
+    Ignored:    log/
+
+Untracked files:
+    Untracked:  analysis/nugget.Rmd
+    Untracked:  analysis/poireview.Rmd
+    Untracked:  analysis/simu1.Rmd
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<hr />
+<div id="poisson-distribution" class="section level1">
+<h1>Poisson Distribution</h1>
+<p>A random variable <span class="math inline">\(X\)</span> has a Poisson distribution with parameter <span class="math inline">\(\mu\)</span> if it takes integer values <span class="math inline">\(y = 0, 1, 2, \dots\)</span> with probability <span class="math inline">\(P(X=x)=\frac{e^{-\mu}\mu^x}{x!}\)</span> where <span class="math inline">\(\mu&gt;0\)</span>. The mean and variance of <span class="math inline">\(X\)</span> is <span class="math inline">\(E(X)=Var(X)=\mu\)</span>.</p>
+</div>
+<div id="exponential-family" class="section level1">
+<h1>Exponential family</h1>
+<p><span class="math inline">\(f_Y(y;\theta,\phi)=\exp[(y\theta-b(\theta))/a(\phi)+c(y,\phi)]\)</span>. If <span class="math inline">\(\phi\)</span> is known, then <span class="math inline">\(\theta\)</span> is called canonical parameter. For example, <span class="math inline">\(\theta=\mu, \phi=\sigma^2\)</span> in normal distribution.</p>
+<p><span class="math inline">\(E(Y)=\mu=b&#39;(\theta)\)</span>, <span class="math inline">\(Var(Y)=b&#39;&#39;(\theta)a(\phi)\)</span>. <span class="math inline">\(b&#39;&#39;(\theta)\)</span> is variance function and is denoted <span class="math inline">\(V(\mu)\)</span> if it’s a function of <span class="math inline">\(\mu\)</span>. <span class="math inline">\(a(\phi)\)</span> has the form <span class="math inline">\(a(\phi)=\frac{\phi}{a}\)</span>, where <span class="math inline">\(\phi\)</span> is the dispersion parameter and is constant over observations, and <span class="math inline">\(a\)</span> is the weight on each observation.</p>
+<p>For Poisson distribution, <span class="math inline">\(\phi=1, b(\theta)=\exp(\theta),V(\mu)=1\)</span></p>
+</div>
+<div id="weighted-least-squares" class="section level1">
+<h1>Weighted least squares</h1>
+<p><span class="math inline">\(y_i=x_i\beta+\epsilon_i\)</span> where <span class="math inline">\(Var(\epsilon_i|x_i)=f(x_i)\neq constant\)</span> and <span class="math inline">\(Cov(\epsilon_i,\epsilon_j)=0\)</span>.</p>
+<p>Let <span class="math inline">\(w_i\propto 1/\sigma_i^2\)</span>, we have <span class="math inline">\(E(W^{-1/2}y|X)=W^{-1/2}X\beta\)</span> and <span class="math inline">\(\hat\beta=(X^TWX)^{-1}X^TWy\)</span>.</p>
+</div>
+<div id="iterative-weighted-least-squares" class="section level1">
+<h1>Iterative weighted least squares</h1>
+<p>Weight: <span class="math inline">\(W=V^{-1}(\frac{d\mu}{d\eta})^2\)</span></p>
+<p>Dependent variate: <span class="math inline">\(z=\eta+(y-\mu)\frac{d\eta}{d\mu}\)</span></p>
+<p><span class="math inline">\(z\)</span> is a linearized form of link function applied to the data: <span class="math inline">\(g(y)\simeq g(\mu)+(y-\mu)g&#39;(\mu)=\eta+(y-\mu)\frac{d\eta}{d\mu}\)</span>.</p>
+<p>Derivation:</p>
+<p>The score function of glm model is <span class="math display">\[s(\beta_j)=\frac{\partial l}{\partial \beta_j}=\Sigma_{i=1}^na(\phi_i)^{-1}V(\mu_i)^{-1}(y_i-\mu_i)x_{ij}\frac{d\eta_i}{d\mu_i}\]</span> <span class="math display">\[=\Sigma_{i=1}^na_iV(\mu_i)^{-1}(y_i-\mu_i)x_{ij}\frac{d\eta_i}{d\mu_i}\]</span></p>
+<p>A method of solving score equations is the iterative algorithm Fisher’s Method of Scoring.</p>
+<p>It turns out that the updates can be written in the form of weighted least squares where the weight matrix is <span class="math inline">\(W\)</span> defined above and the variable <span class="math inline">\(z\)</span> is called adjusted variable(working variable).</p>
+</div>
+<div id="log-linear-model" class="section level1">
+<h1>Log-linear model</h1>
+<p><span class="math inline">\(\log(\mu)=X\beta, \eta=\log(\mu)\)</span> and <span class="math inline">\(z=\log(\mu)+\frac{y-\mu}{\mu}\)</span></p>
+<p><span class="math inline">\(z_i=\log(\hat\mu_i)+\frac{y_i-\hat\mu_i}{\hat\mu_i}\)</span> and <span class="math inline">\(w_{ii}=\hat\mu_i\)</span></p>
+<p>Notice that <span class="math inline">\(E(z_i)=\log(\mu_i)\)</span> and <span class="math inline">\(Var(z_i)=\frac{1}{\mu_i^2}Var(y_i)=1/\mu_i\)</span>.</p>
+</div>
+<div id="smoothing-via-adaptive-shrinkagesmash" class="section level1">
+<h1>Smoothing via adaptive shrinkage(smash)</h1>
+<div id="review" class="section level2">
+<h2>Review</h2>
+<p>Gaussian nonparametric regression(Gaussian sequence model) is defined as <span class="math inline">\(y_i=\mu_i+\sigma_iz_i\)</span> where <span class="math inline">\(z_i\sim N(0,1)\)</span>, <span class="math inline">\(i=1,2,\dots,T\)</span>. In multivariate form, it can be formulated as <span class="math inline">\(y|\mu\sim N_T(\mu,D)\)</span> where D is the diagonal matrix with diagonal elements (<span class="math inline">\(\sigma_1^2,\dots,\sigma_T^2\)</span>). Applying a discrete wavelet transform(DWT) represented as an orthogonal matrix <span class="math inline">\(W\)</span>, we have <span class="math inline">\(Wy|W\mu\sim N(W\mu,WDW^T)\)</span> which is <span class="math inline">\(\tilde y|\tilde \mu\sim N(\tilde\mu,WDW^T)\)</span>. If <span class="math inline">\(\mu\)</span> has spatial structure, then <span class="math inline">\(\tilde\mu\)</span> would be sparse.</p>
+<p>In heterokedastic variance case, we only use the diagonal of <span class="math inline">\(WDW^T\)</span> so we can apply EB shrinkage to <span class="math inline">\(\tilde y_j|\tilde\mu_j\sim N(\tilde\mu_j,w_j^2)\)</span> where <span class="math inline">\(w_j^2=\Sigma_{t=1}^T\sigma_t^2W_{jt}^2\)</span>.</p>
+<p>If <span class="math inline">\(D\)</span> is unknown, we estimate it using shrinkage methods under the assumption that the variances are also spatially structured.</p>
+<p>Define <span class="math inline">\(Z_t^2=(y_t-\mu_t)^2\)</span>. Since <span class="math inline">\(y_t-\mu_t\sim N(0,\sigma_t^2)\)</span>, <span class="math inline">\(Z_t^2\sim\sigma_t^2\chi_1^2\)</span> and <span class="math inline">\(E(Z_t^2)=\sigma_t^2\)</span>. Though <span class="math inline">\(Z_t^2\)</span> is chi-squared distributed, we treat it as Gaussian. We use <span class="math inline">\(\frac{2}{3}Z_t^4\)</span> to estimate <span class="math inline">\(Var(Z_t^2)\)</span>.(<span class="math inline">\(Var(Z_t^2)=2\sigma_t^4\)</span>, <span class="math inline">\(E(Z_t^4)=3\sigma_t^4\)</span>.)</p>
+</div>
+<div id="generalization-of-smash---normal-version" class="section level2">
+<h2>Generalization of smash - normal version</h2>
+<p>Suppose <span class="math inline">\(Y_t = \mu_t + N(0,s^2_t) + N(0,\sigma^2)\)</span> where <span class="math inline">\(s^2_t\)</span> is known and the mean vector <span class="math inline">\(\mu\)</span> and (constant) <span class="math inline">\(\sigma\)</span> are to be estimated.</p>
+<p>If assume <span class="math inline">\(\sigma\)</span> is known too, then it is equivalent to the above heterokedastic variance case.</p>
+<p>For Poisson data, <span class="math inline">\(X_t\sim Poi(m_t)\)</span>, let <span class="math inline">\(Y_t=\log(m_t)+\frac{x_t-m_t}{m_t}\)</span> and set <span class="math inline">\(\mu_t=\log(m_t)\)</span>, <span class="math inline">\(s_t^2=\frac{1}{m_t}\)</span>. We can then estimate <span class="math inline">\(\mu_t\)</span> and <span class="math inline">\(\sigma^2\)</span> using the above generalized smash model.</p>
+<p>Algorithm:</p>
+<ol style="list-style-type: decimal">
+<li>Initialize <span class="math inline">\(m_t^{(0)}=\Sigma_{t=1}^Tx_t\)</span> and <span class="math inline">\(s_t^2=1/m_t^{(0)}\)</span>.</li>
+<li>Estimate <span class="math inline">\(\mu_t\)</span> using generalized smash model.</li>
+<li>Update <span class="math inline">\(m_t=exp(\mu_t)\)</span> and repeat 1,2,3 until convergence.</li>
+</ol>
+<p>Some Rational: consider the Taylor series expansion of <span class="math inline">\(\log(X_t)\)</span> around <span class="math inline">\(\lambda_t\)</span>: <span class="math inline">\(\log(X_t)=\log(\lambda_t)+\frac{1}{\lambda_t}(X_t-\lambda_t)-\frac{1}{2\lambda_t^2}(X_t-\lambda_t)^2+\dots\)</span></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.0 (2017-04-21)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows &gt;= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] smashr_1.1-1    workflowr_1.0.1 rmarkdown_1.8  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.16        highr_0.6           compiler_3.4.0     
+ [4] git2r_0.21.0        R.methodsS3_1.7.1   R.utils_2.6.0      
+ [7] bitops_1.0-6        iterators_1.0.8     tools_3.4.0        
+[10] digest_0.6.13       evaluate_0.10       lattice_0.20-35    
+[13] Matrix_1.2-9        foreach_1.4.3       rstudioapi_0.7     
+[16] yaml_2.1.19         parallel_3.4.0      stringr_1.3.0      
+[19] knitr_1.20          REBayes_1.3         caTools_1.17.1     
+[22] rprojroot_1.3-2     grid_3.4.0          glue_1.2.0         
+[25] data.table_1.10.4-3 R6_2.2.2            ashr_2.2-7         
+[28] magrittr_1.5        whisker_0.3-2       backports_1.0.5    
+[31] codetools_0.2-15    htmltools_0.3.5     MASS_7.3-47        
+[34] assertthat_0.2.0    wavethresh_4.6.8    stringi_1.1.6      
+[37] Rmosek_8.0.69       doParallel_1.0.11   pscl_1.4.9         
+[40] truncnorm_1.0-7     SQUAREM_2017.10-1   crayon_1.3.4       
+[43] R.oo_1.21.0        </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
