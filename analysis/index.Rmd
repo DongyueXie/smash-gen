@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Smash-gen"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,13 +8,14 @@ output:
 
 # Project Overview
 
-This project aims to study a generalization version of normal version of smash. It transfer the Poisson wavelet smoothing problem to the wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.
+This project aims to study a generalization version of normal version of smash. It is a version of wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.
 
 # Analysis
 
 1. [Basic review](poireview.html)
-2. [Poisson nugget simulation](nugget.html)
+2. [Poisson nugget simulation](nugget.html): assume $\sigma$ is known.
+3. [Poisson nugget simulation](nuggetunkown.html): assume $\sigma$ is unknown.
 
 # Credits
 
-This project is based on the ideas from [Matthew Stephens](http://stephenslab.uchicago.edu/). Thanks to Matthew Stephens and [Kushal K Dey](https://kkdey.github.io/) for their great help.
+This project is based on the ideas from Professor [Matthew Stephens](http://stephenslab.uchicago.edu/). Thanks to Matthew Stephens and [Kushal K Dey](https://kkdey.github.io/) for their great help.
