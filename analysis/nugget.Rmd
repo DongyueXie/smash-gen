@@ -58,9 +58,10 @@ smash.gen=function(x,sigma,family='DaubExPhase',niter=30,tol=1e-2){
     loglr[i]=est$logLR
     mu=rbind(mu,mu.hat)
     #update m and s_t
-    s=rbind(s,1/mu.hat)
-    #update y
     mt=exp(mu.hat)
+    s=rbind(s,1/mt)
+    #update y
+    
     y=rbind(y,log(mt)+(x-mt)/mt)
     #y=rbind(y,log(mu.hat)+(x-mu.hat)/mu.hat)
     munorm[i]=norm(mu.hat-mu[i,],'2')
@@ -83,8 +84,8 @@ $X_t\sim Poi(\lambda_t)$.
 #' Simulation study comparing smash and smashgen
 
 simu_study=function(m,sigma,seed=1234,
-                    niter=100,family='DaubExPhase',tol=1e-2,
-                    reflect=FALSE){
+                    niter=30,family='DaubExPhase',tol=1e-2,
+                    reflect=reflect){
   set.seed(seed)
   lamda=exp(m+rnorm(length(m),0,sigma))
   x=rpois(length(m),lamda)
