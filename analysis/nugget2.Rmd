@@ -1,0 +1,585 @@
+---
+title: "Poisson nugget effect(modified)"
+author: "Dongyue Xie"
+date: "May 7, 2018"
+output: html_document
+---
+Note: 1. Switch to $m_t=\exp(\hat\mu_t+\hat u_t)$ at each iteration. 2. Change the functions to be circular(kept polynomial curve for comparisons).
+
+# Algorithm
+
+Let $X_t$ be a Poisson observation, $t=1,2,\dots,T$. 
+
+1. Input $\sigma$ and initialize $m_t^{(0)}=\frac{\Sigma_{t=1}^T X_t}{T}$,  $Y_t^{(0)}=\log(m_t^{(0)})+\frac{X_t-m_t^{(0)}}{m_t^{(0)}}$ and $s_t^{2(0)}=\frac{1}{m_t^{(0)}}$ for $t=1,2,\dots,T$.
+2. For $i=1,2,...$, iterate until convergence:
+a. Fit $Y_t=\tilde\mu_t+N(0,s_t^2)$ using `smash.gaus` and obtain $\hat{\tilde\mu}_t$.
+b. Update $m_t^{(i)}=\exp(\hat{\tilde\mu}_t)$, $Y_t^{(i)}=\log(m_t^{(i)})+\frac{X_t-m_t^{(i)}}{m_t^{(i)}}$, and $s_t^{2(i)}=\frac{1}{m_t^{(i)}}$
+3. Fit $Y_t^{(i)}=\mu_t+N(0,\sigma^2+s_t^{2(i)})$ using `smash.gaus` and output $\hat{\mu}_t$.
+
+Convergence criteria: $||\tilde\mu^{(i)}-\tilde\mu^{(i-1)}||_2\leq \epsilon$.
+
+
+
+```{r}
+#' smash generaliation function
+
+#' A modified version. Instead of input \sigma^2+s_t^2 and estiamte \mu_t, we simply input s_t^2 and after convergence, input both to estimate the final \mu_t.
+
+#' This function is for $Y_t=\mu_t+N(0,s_t^2)+N(0,\sigma^2)$ with known $s_t^2$ and $\sigma^2$.
+
+
+#' @param x: a vector of observations
+#' @param sigma: standard deviations, scalar.
+#' @param family: choice of wavelet basis to be used, as in wavethresh.
+#' @param niter: number of iterations for IRLS
+#' @param tol: tolerance of the criterion to stop the iterations
+
+
+smash.gen=function(x,sigma,family='DaubExPhase',niter=30,tol=1e-2){
+  mu=c()
+  s=c()
+  y=c()
+  munorm=c()
+  mu=rbind(mu,rep(mean(x),length(x)))
+  s=rbind(s,rep(1/mu[1],length(x)))
+  y=rbind(y,log(mean(x))+(x-mean(x))/mean(x))
+  for(i in 1:niter){
+    vars=ifelse(s[i,]<0,1e-8,s[i,])
+    mu.hat=smash.gaus(y[i,],sigma=sqrt(vars))#mu.hat is \mu_t+E(u_t|y)
+    
+    mu=rbind(mu,mu.hat)
+    munorm[i]=norm(mu.hat-mu[i,],'2')
+    if(munorm[i]<tol){
+      break
+    }
+    #update m and s_t
+    mt=exp(mu.hat)
+    s=rbind(s,1/mt)
+    y=rbind(y,log(mt)+(x-mt)/mt)
+    
+    
+  }
+  mu.hat=smash.gaus(y[i,],sigma = sqrt(sigma^2+ifelse(s[i,]<0,1e-8,s[i,])))
+  return(list(mu.hat=mu.hat,mu=mu,s=s,y=y,munorm=munorm))
+}
+
+```
+
+```{r}
+#' Simulation study comparing smash and smashgen
+
+simu_study=function(m,sigma,seed=1234,
+                    niter=30,family='DaubExPhase',tol=1e-2,
+                    reflect=FALSE){
+  set.seed(seed)
+  lamda=exp(m+rnorm(length(m),0,sigma))
+  x=rpois(length(m),lamda)
+  #fit data
+  smash.out=smash.poiss(x,reflect=reflect)
+  smash.gen.out=smash.gen(x,sigma=sigma,niter=niter,family = family,tol=tol)
+  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x,loglik=smash.gen.out$loglik))
+}
+
+```
+
+# Simulation 1: Constant trend Poisson nugget
+
+## $\sigma=0.01$
+
+```{r}
+library(smashr)
+m=rep(3,256)
+simu.out=simu_study(m,0.01)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-gen"), # puts text in the legend
+       lty=c(1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.1$
+
+```{r}
+
+simu.out=simu_study(m,0.1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+
+## $\sigma=0.5$
+
+```{r}
+
+simu.out=simu_study(m,0.5)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m),col='gray80')
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m),col='gray80')
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=1$
+
+```{r}
+
+simu.out=simu_study(m,1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m),col='black')
+legend("topleft", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m),col='black')
+legend("topleft", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+# Simulation 2: Step trend 
+
+## $\sigma=0.01$
+
+```{r}
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+simu.out=simu_study(m,0.01)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.1$
+
+```{r}
+
+simu.out=simu_study(m,0.1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.5$
+
+```{r}
+
+simu.out=simu_study(m,0.5)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=1$
+
+```{r}
+
+simu.out=simu_study(m,1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topleft", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+An example that the algorithm does not converge:(there is an 'extreme' outlier)
+
+```{r}
+simu.out=simu_study(m,1,seed=2132)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+
+```
+
+# Simulation 3: Polynomial curve Poisson nugget
+
+## $\sigma=0.01$
+
+```{r}
+m = seq(-1,1,length.out = 256)
+m = m^3-2*m+1
+simu.out=simu_study(m,0.01)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.1$
+
+```{r}
+m = seq(-1,1,length.out = 256)
+m = m^3-2*m+1
+simu.out=simu_study(m,0.1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.5$
+
+```{r}
+m = seq(-1,1,length.out = 256)
+m = m^3-2*m+1
+simu.out=simu_study(m,0.5)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=1$
+
+```{r}
+m = seq(-1,1,length.out = 256)
+m = m^3-2*m+1
+simu.out=simu_study(m,1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+# Simulation 4: Sin curve Poisson nugget
+
+## $\sigma=0.01$
+
+```{r}
+m = seq(-pi,pi,length.out = 256)
+m = 2*(sin(m)+1)
+simu.out=simu_study(m,0.01)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.1$
+
+```{r}
+simu.out=simu_study(m,0.1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=0.5$
+
+```{r}
+
+simu.out=simu_study(m,0.5)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+## $\sigma=1$
+
+```{r}
+
+simu.out=simu_study(m,1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+# Summary
+
+When there are extreme outiers(see step trend $\sigma=1$), the smash-gen algorithm does not converge. While for most of the cases, it converges and gives smooether estiamte than smash.
