@@ -15,7 +15,18 @@ Let $X_t$ be a Poisson observation, $t=1,2,\dots,T$.
 a. Fit $Y_t=\mu_t+N(0,\sigma^2)+N(0,s_t^2)$ using `smash.gaus` and obtain $\hat\mu_t$.
 b. Update $m_t^{(i)}=\exp(\hat\mu_t)$, $Y_t^{(i)}=\log(m_t^{(i)})+\frac{X_t-m_t^{(i)}}{m_t^{(i)}}$, and $s_t^{2(i)}=\frac{1}{m_t^{(i)}}$
 
-Convergence criteria: $||\mu_t^{(i)}-\mu_t^{(i-1)}||_2\leq \epsilon$.
+Convergence criteria: $||\mu^{(i)}-\mu^{(i-1)}||_2\leq \epsilon$.
+```{r}
+#' A function return loglikelihood for Gaussion sequence model
+
+#' @param x: a vector of data
+#' @param mu: a vector of mean
+#' @param sd: a vector of standard deviation
+
+loglik_calc=function(x,mu,sd){
+  return(sum(dnorm(x,mu,sd,log=TRUE)))
+}
+```
 
 ```{r}
 #' smash generaliation function
@@ -27,27 +38,37 @@ Convergence criteria: $||\mu_t^{(i)}-\mu_t^{(i-1)}||_2\leq \epsilon$.
 #' @param family: choice of wavelet basis to be used, as in wavethresh.
 #' @param niter: number of iterations for IRLS
 #' @param tol: criterion to stop the iterations
+#' @param conv: convergence criterion: loglik, mudis
 
-smash.gen=function(x,sigma,family='DaubExPhase',niter=100,tol=1e-2){
+smash.gen=function(x,sigma,family='DaubExPhase',niter=30,tol=1e-2){
   mu=c()
   s=c()
+  loglik=c()
+  loglr=c()
+  y=c()
+  munorm=c()
   mu=rbind(mu,rep(mean(x),length(x)))
   s=rbind(s,rep(1/mu[1],length(x)))
-  y=log(mean(x))+(x-mean(x))/mean(x)
+  y=rbind(y,log(mean(x))+(x-mean(x))/mean(x))
   for(i in 1:niter){
-    mu.hat=smash.gaus(y,sigma=sigma+s[i,])
+    vars=sigma^2+ifelse(s[i,]<0,1e-8,s[i,])
+    est=smash.gaus(y[i,],sigma=sqrt(vars),return.loglr = TRUE)
+    mu.hat=est$mu.est
+    loglik[i]=loglik_calc(y[i,],mu.hat,sqrt(vars))
+    loglr[i]=est$logLR
     mu=rbind(mu,mu.hat)
     #update m and s_t
     s=rbind(s,1/mu.hat)
     #update y
     mt=exp(mu.hat)
-    y=log(mt)+(x-mt)/mt
-    #y=log(mu.hat)+(x-mu.hat)/mu.hat
-    if(norm(mu.hat-mu[i,],'2')<tol){
+    y=rbind(y,log(mt)+(x-mt)/mt)
+    #y=rbind(y,log(mu.hat)+(x-mu.hat)/mu.hat)
+    munorm[i]=norm(mu.hat-mu[i,],'2')
+    if(munorm[i]<tol){
       break
     }
   }
-  return(list(mu.hat=mu.hat,mu=mu,s=s))
+  return(list(mu.hat=mu.hat,mu=mu,s=s,loglik=loglik,loglr=loglr,y=y,munorm=munorm))
 }
 
 ```
@@ -70,7 +91,7 @@ simu_study=function(m,sigma,seed=1234,
   #fit data
   smash.out=smash.poiss(x,reflect=FALSE)
   smash.gen.out=smash.gen(x,sigma=sigma,niter=niter,family = family,tol=tol)
-  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x))
+  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x,loglik=smash.gen.out$loglik))
 }
 
 ```

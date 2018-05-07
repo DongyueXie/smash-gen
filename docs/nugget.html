@@ -317,12 +317,11 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-05</p>
+<p><strong>Last updated:</strong> 2018-05-07</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown file has staged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </details>
 </li>
 <li>
@@ -341,14 +340,19 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/3bd6a611beab778b61cf474cc46892da20ead464" target="_blank">3bd6a61</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/ee449359188181522babf1a9b0d6f84ea486e892" target="_blank">ee44935</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    docs/figure/
     Ignored:    log/
+
+Untracked files:
+    Untracked:  analysis/overdis.Rmd
+
+Staged changes:
+    Modified:   analysis/nugget.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -377,6 +381,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/nugget.html" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+<td style="text-align:left;">
+edit simu
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -428,7 +449,16 @@ first commit
 <li>Fit <span class="math inline">\(Y_t=\mu_t+N(0,\sigma^2)+N(0,s_t^2)\)</span> using <code>smash.gaus</code> and obtain <span class="math inline">\(\hat\mu_t\)</span>.</li>
 <li>Update <span class="math inline">\(m_t^{(i)}=\exp(\hat\mu_t)\)</span>, <span class="math inline">\(Y_t^{(i)}=\log(m_t^{(i)})+\frac{X_t-m_t^{(i)}}{m_t^{(i)}}\)</span>, and <span class="math inline">\(s_t^{2(i)}=\frac{1}{m_t^{(i)}}\)</span></li>
 </ol>
-<p>Convergence criteria: <span class="math inline">\(||\mu_t^{(i)}-\mu_t^{(i-1)}||_2\leq \epsilon\)</span>.</p>
+<p>Convergence criteria: <span class="math inline">\(||\mu^{(i)}-\mu^{(i-1)}||_2\leq \epsilon\)</span>.</p>
+<pre class="r"><code>#&#39; A function return loglikelihood for Gaussion sequence model
+
+#&#39; @param x: a vector of data
+#&#39; @param mu: a vector of mean
+#&#39; @param sd: a vector of standard deviation
+
+loglik_calc=function(x,mu,sd){
+  return(sum(dnorm(x,mu,sd,log=TRUE)))
+}</code></pre>
 <pre class="r"><code>#&#39; smash generaliation function
 
 #&#39; This function is for $Y_t=\mu_t+N(0,s_t^2)+N(0,\sigma^2)$ with known $s_t^2$ and $\sigma^2$.
@@ -438,27 +468,37 @@ first commit
 #&#39; @param family: choice of wavelet basis to be used, as in wavethresh.
 #&#39; @param niter: number of iterations for IRLS
 #&#39; @param tol: criterion to stop the iterations
+#&#39; @param conv: convergence criterion: loglik, mudis
 
-smash.gen=function(x,sigma,family=&#39;DaubExPhase&#39;,niter=100,tol=1e-2){
+smash.gen=function(x,sigma,family=&#39;DaubExPhase&#39;,niter=30,tol=1e-2){
   mu=c()
   s=c()
+  loglik=c()
+  loglr=c()
+  y=c()
+  munorm=c()
   mu=rbind(mu,rep(mean(x),length(x)))
   s=rbind(s,rep(1/mu[1],length(x)))
-  y=log(mean(x))+(x-mean(x))/mean(x)
+  y=rbind(y,log(mean(x))+(x-mean(x))/mean(x))
   for(i in 1:niter){
-    mu.hat=smash.gaus(y,sigma=sigma+s[i,])
+    vars=sigma^2+ifelse(s[i,]&lt;0,1e-8,s[i,])
+    est=smash.gaus(y[i,],sigma=sqrt(vars),return.loglr = TRUE)
+    mu.hat=est$mu.est
+    loglik[i]=loglik_calc(y[i,],mu.hat,sqrt(vars))
+    loglr[i]=est$logLR
     mu=rbind(mu,mu.hat)
     #update m and s_t
     s=rbind(s,1/mu.hat)
     #update y
     mt=exp(mu.hat)
-    y=log(mt)+(x-mt)/mt
-    #y=log(mu.hat)+(x-mu.hat)/mu.hat
-    if(norm(mu.hat-mu[i,],&#39;2&#39;)&lt;tol){
+    y=rbind(y,log(mt)+(x-mt)/mt)
+    #y=rbind(y,log(mu.hat)+(x-mu.hat)/mu.hat)
+    munorm[i]=norm(mu.hat-mu[i,],&#39;2&#39;)
+    if(munorm[i]&lt;tol){
       break
     }
   }
-  return(list(mu.hat=mu.hat,mu=mu,s=s))
+  return(list(mu.hat=mu.hat,mu=mu,s=s,loglik=loglik,loglr=loglr,y=y,munorm=munorm))
 }</code></pre>
 <p>Data generation by Poisson glm:</p>
 <p><span class="math inline">\(\lambda_t=\exp(m_t+\epsilon_t)\)</span>, where <span class="math inline">\(\epsilon_t\sim N(0,\sigma^2)\)</span>.</p>
@@ -474,7 +514,7 @@ simu_study=function(m,sigma,seed=1234,
   #fit data
   smash.out=smash.poiss(x,reflect=FALSE)
   smash.gen.out=smash.gen(x,sigma=sigma,niter=niter,family = family,tol=tol)
-  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x))
+  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x,loglik=smash.gen.out$loglik))
 }</code></pre>
 </div>
 <div id="simulation-1-constant-trend-poisson-nugget" class="section level1">
@@ -495,7 +535,37 @@ legend(&quot;topright&quot;, # places a legend at the appropriate place
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-4-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -505,7 +575,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-4-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.1)
 
@@ -520,7 +620,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-5-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -530,7 +660,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-5-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.5\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.5)
 
@@ -545,7 +705,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-6-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m),col=&#39;gray80&#39;)
@@ -555,7 +745,38 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /> <span class="math inline">\(\sigma=1\)</span></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-6-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,1)
 
 #par(mfrow = c(1,2))
@@ -569,7 +790,37 @@ legend(&quot;topleft&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-7-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m),col=&#39;black&#39;)
@@ -579,7 +830,37 @@ legend(&quot;topleft&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-7-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="simulation-2-step-trend" class="section level1">
 <h1>Simulation 2: Step trend</h1>
@@ -598,7 +879,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-8-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -608,7 +919,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-8-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.1)
 
@@ -623,7 +964,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-9-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -633,7 +1004,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-9-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.5\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.5)
 
@@ -648,7 +1049,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-10-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -658,7 +1089,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-10-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,1)
 
@@ -673,7 +1134,37 @@ legend(&quot;topleft&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-11-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -683,7 +1174,37 @@ legend(&quot;topleft&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-11-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="simulation-3-oscillating-poisson-nugget" class="section level1">
 <h1>Simulation 3: Oscillating Poisson nugget</h1>
@@ -701,11 +1222,71 @@ simu.out=simu_study(m,0.01)
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-12-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-12-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.1)
 
@@ -714,11 +1295,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-13-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-13-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.5\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.5)
 
@@ -727,11 +1368,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-14-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-14-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,1)
 
@@ -740,11 +1441,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-15-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-15-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="fast-oscillating-poisson-nugget" class="section level2">
 <h2>Fast Oscillating Poisson nugget</h2>
@@ -760,11 +1521,71 @@ simu.out=simu_study(m,0.01)
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-16-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-16-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.1)
 
@@ -773,11 +1594,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-17-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-17-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-17-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-17-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.5\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,0.5)
 
@@ -786,11 +1667,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-18-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-18-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>simu.out=simu_study(m,1)
 
@@ -799,11 +1740,71 @@ lines(exp(m))</code></pre>
 plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash-gen&#39;)
 lines(simu.out$smash.gen.out, col = &quot;red&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-19-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-19-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;,main=&#39;smash&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-19-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-19-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="simulation-4-polynomial-curve-poisson-nugget" class="section level1">
@@ -824,7 +1825,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-20-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -834,7 +1865,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-20-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.1\)</span></p>
 <pre class="r"><code>m = seq(-1,1,length.out = 256)
 m = m^3-2*m+1
@@ -851,7 +1912,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-21-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-21-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -861,7 +1952,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-21-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-21-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-21-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=0.5\)</span></p>
 <pre class="r"><code>m = seq(-1,1,length.out = 256)
 m = m^3-2*m+1
@@ -878,7 +1999,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-22-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-22-1.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -888,7 +2039,37 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-21-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-22-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/b551a8f8d1ede028497760118ea75ad9874c62f5/docs/figure/nugget.Rmd/unnamed-chunk-22-2.png" target="_blank">b551a8f</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-05
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>m = seq(-1,1,length.out = 256)
 m = m^3-2*m+1
@@ -905,7 +2086,7 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(simu.out$x,col = &quot;gray80&quot; ,ylab = &#39;&#39;)
 lines(simu.out$smash.out, col = &quot;blue&quot;, lwd = 2)
 lines(exp(m))
@@ -915,7 +2096,7 @@ legend(&quot;topright&quot;,
        lwd=c(1,1),
        cex = 1,
        col=c(&quot;black&quot;, &quot;blue&quot;))</code></pre>
-<p><img src="figure/nugget.Rmd/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nugget.Rmd/unnamed-chunk-23-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
