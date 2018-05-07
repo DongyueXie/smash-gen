@@ -14,7 +14,7 @@ Let $X_t$ be a Poisson observation, $t=1,2,\dots,T$.
 2. For $i=1,2,...$, iterate until convergence:
 a. Fit $Y_t=\tilde\mu_t+N(0,s_t^2)$ using `smash.gaus` and obtain $\hat{\tilde\mu}_t$.
 b. Update $m_t^{(i)}=\exp(\hat{\tilde\mu}_t)$, $Y_t^{(i)}=\log(m_t^{(i)})+\frac{X_t-m_t^{(i)}}{m_t^{(i)}}$, and $s_t^{2(i)}=\frac{1}{m_t^{(i)}}$
-3. Fit $Y_t^{(i)}=\mu_t+N(0,\sigma^2+s_t^{2(i)})$ using `smash.gaus` and output $\hat{\mu}_t$.
+3. Assume converging at $i=I$, fit $Y_t^{(I)}=\mu_t+N(0,\sigma^2+s_t^{2(I)})$ using `smash.gaus` and output $\hat{\mu}_t$.
 
 Convergence criteria: $||\tilde\mu^{(i)}-\tilde\mu^{(i-1)}||_2\leq \epsilon$.
 
@@ -340,7 +340,139 @@ legend("topleft",
 
 ```
 
-# Simulation 3: Polynomial curve Poisson nugget
+# Simulation 3: Oscillating Poisson nugget
+
+
+### $\sigma=0.01$
+```{r}
+m=c()
+for(k in 1:8){
+    m=c(m, rep(1,15), rep(5, 15))
+}
+m=c(m,rep(1,16))
+simu.out=simu_study(m,0.01)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+### $\sigma=0.1$
+```{r}
+m=c()
+for(k in 1:8){
+    m=c(m, rep(1,15), rep(5, 15))
+}
+m=c(m,rep(1,16))
+simu.out=simu_study(m,0.1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+### $\sigma=0.5$
+```{r}
+m=c()
+for(k in 1:8){
+    m=c(m, rep(1,15), rep(5, 15))
+}
+m=c(m,rep(1,16))
+simu.out=simu_study(m,0.5)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+### $\sigma=1$
+```{r}
+m=c()
+for(k in 1:8){
+    m=c(m, rep(1,15), rep(5, 15))
+}
+m=c(m,rep(1,16))
+simu.out=simu_study(m,1)
+
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth", "smash"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black", "blue"))
+```
+
+
+# Simulation 4: Polynomial curve Poisson nugget
 
 ## $\sigma=0.01$
 
