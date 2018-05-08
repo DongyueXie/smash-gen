@@ -1,5 +1,5 @@
 ---
-title: "Set highest coeffs to 0"
+title: "Set highest resolution coeffs to 0"
 author: "Dongyue Xie"
 date: "May 8, 2018"
 output: html_document
