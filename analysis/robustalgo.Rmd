@@ -1,0 +1,148 @@
+---
+title: "Set highest coeffs to 0"
+author: "Dongyue Xie"
+date: "May 8, 2018"
+output: html_document
+---
+
+Gaussian models are not robust to outliers so the smash-gen algorithm does not converge when the nugget effect is large. One solution might be setting the very highest resolution wavelet coefficients to 0. 
+
+```{r}
+library(smashr)
+library(wavethresh)
+```
+
+```{r}
+#' smash generaliation function(set the highest resolution wavelet coeffs to 0)
+
+
+#' @param x: a vector of observations
+#' @param sigma: standard deviations, scalar.
+#' @param family: choice of wavelet basis to be used, as in wavethresh.
+#' @param niter: number of iterations for IRLS
+#' @param tol: tolerance of the criterion to stop the iterations
+#' @param robust: whether set the highest resolution wavelet coeffs to 0
+
+smash.gen=function(x,sigma,family='DaubExPhase',filter.number = 1, niter=30,tol=1e-2,robust=FALSE){
+  mu=c()
+  s=c()
+  y=c()
+  munorm=c()
+  mu=rbind(mu,rep(mean(x),length(x)))
+  s=rbind(s,rep(1/mu[1],length(x)))
+  y0=log(mean(x))+(x-mean(x))/mean(x)
+  #######set the highest resolution wavelet coeffs to 0
+  if(robust){
+    wds=wd(y0,family = family,filter.number = filter.number)
+    wtd=threshold(wds, levels = wds$nlevels-1,  policy="manual",value = Inf) 
+    y=rbind(y,wr(wtd))
+  }else{
+    y=rbind(y,y0)
+  }
+  for(i in 1:niter){
+    vars=ifelse(s[i,]<0,1e-8,s[i,])
+    mu.hat=smash.gaus(y[i,],sigma=sqrt(vars))#mu.hat is \mu_t+E(u_t|y)
+    
+    mu=rbind(mu,mu.hat)
+    munorm[i]=norm(mu.hat-mu[i,],'2')
+    if(munorm[i]<tol){
+      break
+    }
+    #update m and s_t
+    mt=exp(mu.hat)
+    s=rbind(s,1/mt)
+    y=rbind(y,log(mt)+(x-mt)/mt)
+    
+    
+  }
+  mu.hat=smash.gaus(y[i,],sigma = sqrt(sigma^2+ifelse(s[i,]<0,1e-8,s[i,])))
+  return(list(mu.hat=mu.hat,mu=mu,s=s,y=y,munorm=munorm))
+}
+
+#' Simulation study comparing smash and smashgen
+
+simu_study=function(m,sigma,seed=1234,
+                    niter=30,family='DaubExPhase',tol=1e-2,
+                    reflect=FALSE,robust=FALSE){
+  set.seed(seed)
+  lamda=exp(m+rnorm(length(m),0,sigma))
+  x=rpois(length(m),lamda)
+  #fit data
+  smash.out=smash.poiss(x,reflect=reflect)
+  smash.gen.out=smash.gen(x,sigma=sigma,niter=niter,family = family,tol=tol,robust=robust)
+  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x,loglik=smash.gen.out$loglik))
+}
+
+```
+
+
+# Simulations
+
+Left plot: original plot.
+
+Right plot: setting the very highest resolution wavelet coefficients to 0.
+
+```{r}
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+
+
+par(mfrow = c(1,2))
+simu.out=simu_study(m,1,seed=2132)
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+simu.out=simu_study(m,1,seed=2132,robust = T)
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+
+```{r}
+#bumps
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+
+par(mfrow = c(1,2))
+simu.out=simu_study(f,1)
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+simu.out=simu_study(f,1,robust = T)
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topright", 
+       c("truth","smash-gen"), 
+       lty=c(1,1), 
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+
