@@ -14,7 +14,8 @@ This project aims to study a generalization version of normal version of smash. 
 
 1. [Basic review](poireview.html)
 2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
-3. [Poisson nugget simulation](nuggetunkown.html): assume $\sigma$ is unknown.
+3. [A robust version of smash-gen](robustalgo.gtml): set the highest resolution wavelet coeffs to 0.
+4. [Poisson nugget simulation](nuggetunkown.html): assume $\sigma$ is unknown.
 
 # Credits
 
