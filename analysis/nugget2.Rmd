@@ -320,7 +320,7 @@ legend("topleft",
        col=c("black", "blue"))
 ```
 
-An example that the algorithm does not converge:(there is an 'extreme' outlier)
+An example that the algorithm does not converge:(there is an 'extreme' outlier). A more robust version of smash-gen is developed. See [here](robustalgo.html).
 
 ```{r}
 simu.out=simu_study(m,1,seed=2132)
@@ -594,7 +594,7 @@ legend("topright",
        col=c("black", "blue"))
 ```
 
-# Simulation 4: Sin curve Poisson nugget
+# Simulation 5: Sin curve Poisson nugget
 
 ## $\sigma=0.01$
 
