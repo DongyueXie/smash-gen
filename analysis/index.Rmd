@@ -15,7 +15,9 @@ This project aims to study a generalization version of normal version of smash. 
 1. [Basic review](poireview.html)
 2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
 3. [A robust version of smash-gen](robustalgo.html): set the highest resolution wavelet coeffs to 0.
-4. [Poisson nugget simulation](nuggetunkown.html): assume $\sigma$ is unknown.
+4. [Treat Poisson data as normal](iter1.html): only do 1 iteration.
+5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
+6. [Poisson nugget simulation](nuggetunkown.html): assume $\sigma$ is unknown.
 
 # Credits
 
