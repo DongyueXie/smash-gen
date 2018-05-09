@@ -1,0 +1,500 @@
+---
+title: "One iteration, ash posterior mean"
+author: "Dongyue Xie"
+date: "May 8, 2018"
+output: html_document
+---
+```{r}
+library(smashr)
+library(ashr)
+```
+
+```{r}
+#' smash generaliation function, expansion around ash posterior mean
+
+
+#' @param x: a vector of observations
+#' @param sigma: standard deviations, scalar.
+#' @param family: choice of wavelet basis to be used, as in wavethresh.
+#' @param niter: number of iterations for IRLS
+#' @param tol: tolerance of the criterion to stop the iterations
+#' @param ashp: whether expand around ash posterior mean 
+#' @param robust: whether set the highest resolution wavelet coeffs to 0
+#' @param verbose: whether print out the number of iterations to converge.
+
+smash.gen=function(x,sigma,family='DaubExPhase',
+                   ashp=TRUE,verbose=FALSE, robust=FALSE,
+                   niter=30,tol=1e-2){
+  mu=c()
+  s=c()
+  y=c()
+  munorm=c()
+  #apply ash to poisson data?
+  if(ashp){
+    pmean=ash(rep(0,length(x)),1,lik=lik_pois(x))$result$PosteriorMean
+    mu=rbind(mu,pmean)
+    s=rbind(s,1/mu)
+    y0=log(mu)+(x-mu)/mu
+  }else{
+    mu=rbind(mu,rep(mean(x),length(x)))
+    s=rbind(s,1/mu)
+    y0=log(mean(x))+(x-mean(x))/mean(x)
+  }
+  #set wavelet coeffs to 0?
+  if(robust){
+    wds=wd(y0,family = family,filter.number = filter.number)
+    wtd=threshold(wds, levels = wds$nlevels-1,  policy="manual",value = Inf) 
+    y=rbind(y,wr(wtd))
+  }else{
+    y=rbind(y,y0)
+  }
+  for(i in 1:niter){
+    vars=ifelse(s[i,]<0,1e-8,s[i,])
+    mu.hat=smash.gaus(y[i,],sigma=sqrt(vars))#mu.hat is \mu_t+E(u_t|y)
+    mu=rbind(mu,mu.hat)
+    munorm[i]=norm(mu.hat-mu[i,],'2')
+    if(munorm[i]<tol){
+      if(verbose){
+        message(sprintf('Converge after %i iterations',i))
+      }
+      break
+    }
+    #update m and s_t
+    mt=exp(mu.hat)
+    s=rbind(s,1/mt)
+    y=rbind(y,log(mt)+(x-mt)/mt)
+    
+    
+  }
+  mu.hat=smash.gaus(y[i,],sigma = sqrt(sigma^2+ifelse(s[i,]<0,1e-8,s[i,])))
+  return(list(mu.hat=mu.hat,mu=mu,s=s,y=y,munorm=munorm))
+}
+
+```
+
+```{r}
+#' Simulation study comparing smash and smashgen
+
+simu_study=function(m,sigma,seed=1234,
+                    niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
+                    tol=1e-2,reflect=FALSE){
+  set.seed(seed)
+  lamda=exp(m+rnorm(length(m),0,sigma))
+  x=rpois(length(m),lamda)
+  #fit data
+  smash.out=smash.poiss(x,reflect=reflect)
+  smash.gen.out=smash.gen(x,sigma=sigma,niter=niter,family = family,tol=tol,ashp=ashp,verbose=verbose)
+  return(list(smash.out=smash.out,smash.gen.out=exp(smash.gen.out$mu.hat),smash.gen.est=smash.gen.out,x=x,loglik=smash.gen.out$loglik))
+}
+
+```
+
+
+# Simulation 1: Constant trend Poisson nugget
+
+## $\sigma=0.01$
+
+```{r}
+library(smashr)
+m=rep(3,256)
+simu.out=simu_study(m,0.01)
+simu.out.conv=simu_study(m,0.01,niter = 30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+```
+
+## $\sigma=0.1$
+
+```{r}
+
+simu.out=simu_study(m,0.1)
+simu.out.conv=simu_study(m,0.1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+
+```
+
+
+## $\sigma=0.5$
+
+```{r}
+simu.out=simu_study(m,0.5)
+simu.out.conv=simu_study(m,0.5,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+
+```
+
+## $\sigma=1$
+
+```{r}
+
+simu.out=simu_study(m,1)
+simu.out.conv=simu_study(m,1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(exp(m))
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+
+
+```
+
+# Simulation 2: Step trend 
+
+## $\sigma=0.01$
+
+```{r}
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+simu.out=simu_study(m,0.01)
+simu.out.conv=simu_study(m,0.01,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.1$
+
+```{r}
+simu.out=simu_study(m,0.1)
+simu.out.conv=simu_study(m,0.1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.5$
+
+```{r}
+simu.out=simu_study(m,0.5)
+simu.out.conv=simu_study(m,0.5,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=1$
+
+```{r}
+
+simu.out=simu_study(m,1)
+simu.out.conv=simu_study(m,1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+# Simulation 3: Oscillating Poisson nugget
+
+
+## $\sigma=0.01$
+```{r}
+m=c()
+for(k in 1:8){
+    m=c(m, rep(1,15), rep(5, 15))
+}
+m=c(m,rep(1,16))
+simu.out=simu_study(m,0.01)
+simu.out.conv=simu_study(m,0.01,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.1$
+```{r}
+simu.out=simu_study(m,0.1)
+simu.out.conv=simu_study(m,0.1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.5$
+```{r}
+simu.out=simu_study(m,0.5)
+simu.out.conv=simu_study(m,0.5,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=1$
+```{r}
+simu.out=simu_study(m,1)
+simu.out.conv=simu_study(m,1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+# Simulation 4: Bumps
+
+## $\sigma=0.01$
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+m=f
+simu.out=simu_study(m,0.01)
+simu.out.conv=simu_study(m,0.01,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.1$
+```{r}
+simu.out=simu_study(m,0.1)
+simu.out.conv=simu_study(m,0.1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.5$
+```{r}
+simu.out=simu_study(m,0.5)
+simu.out.conv=simu_study(m,0.5,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=1$
+```{r}
+simu.out=simu_study(m,1)
+simu.out.conv=simu_study(m,1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+# Simulation 5: Sin curve Poisson nugget
+
+## $\sigma=0.01$
+```{r}
+m = seq(-pi,pi,length.out = 256)
+m = 2*(sin(m)+1)
+simu.out=simu_study(m,0.01)
+simu.out.conv=simu_study(m,0.01,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.1$
+```{r}
+simu.out=simu_study(m,0.1)
+simu.out.conv=simu_study(m,0.1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=0.5$
+```{r}
+simu.out=simu_study(m,0.5)
+simu.out.conv=simu_study(m,0.5,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
+
+## $\sigma=1$
+```{r}
+simu.out=simu_study(m,1)
+simu.out.conv=simu_study(m,1,niter=30)
+#par(mfrow = c(1,2))
+
+plot(simu.out$x,col = "gray80" ,ylab = '')
+lines(simu.out.conv$smash.gen.out, col = "blue", lwd = 2)
+lines(simu.out$smash.gen.out, col = "red", lwd = 2)
+lines(exp(m))
+legend("topleft", # places a legend at the appropriate place
+       c("truth","smash-gen-1iter","converged"), # puts text in the legend
+       lty=c(1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1),
+       cex = 1,
+       col=c("black","red", "blue"))
+```
