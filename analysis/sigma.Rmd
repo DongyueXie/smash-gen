@@ -80,7 +80,7 @@ for(i in 1:100){
   moment[i]=sigma_est(y,mu,st,'moment')
   ols[i]=sigma_est(y,mu,st,'ols')
 }
-boxplot(data.frame(wls=wls,ols=ols,smash_s=smashs,moment=moment))
+boxplot(data.frame(wls=wls,ols=ols,smash_s=smashs,moment=moment),ylab='sigma hat')
 abline(h=sigma,lty=2)
 ```
 Weighted least square is problematic. The reason is that weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
@@ -172,7 +172,7 @@ abline(h=sigma,lty=2)
 
 boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
                    smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
 abline(h=0,lty=2)
 ```
 
@@ -192,7 +192,7 @@ abline(h=sigma,lty=2)
 
 boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
                    smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
 abline(h=0,lty=2)
 ```
 
@@ -219,6 +219,6 @@ abline(h=sigma,lty=2)
 
 boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
                    smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
 abline(h=0,lty=2)
 ```
