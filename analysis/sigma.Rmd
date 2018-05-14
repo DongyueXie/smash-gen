@@ -26,6 +26,7 @@ Method 4: $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$. Define $Z_t^2=(Y_t-\mu_t)^2\sim (
 library(smashr)
 library(ashr)
 library(caTools)
+library(wavethresh)
 ```
 
 ```{r}
