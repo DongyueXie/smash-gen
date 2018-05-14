@@ -76,11 +76,11 @@ st=sqrt(rchisq(128,5))
 for(i in 1:100){
   y=mu+rnorm(128,0,sigma)+rnorm(128,0,st)
   wls[i]=sigma_est(y,mu,st,'wls')
-  smashs[i]=sigma_est(y,mu,st,'smash')
+  smashs[i]=sigma_est(y,mu,st,'smashc')
   moment[i]=sigma_est(y,mu,st,'moment')
   ols[i]=sigma_est(y,mu,st,'ols')
 }
-boxplot(data.frame(wls=wls,ols=ols,smash_s=smashs,moment=moment),ylab='sigma hat')
+boxplot(data.frame(wls=wls,ols=ols,smashc=smashs,moment=moment),ylab='sigma hat')
 abline(h=sigma,lty=2)
 ```
 Weighted least square is problematic. The reason is that weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
