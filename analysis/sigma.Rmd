@@ -159,7 +159,6 @@ simu_study_var=function(mu,st,sigma,niter=100,criterion='2norm',seed=12345){
 
 
 # Constant Trend
-
 ```{r}
 mu=rep(1,128)
 sigma=2
