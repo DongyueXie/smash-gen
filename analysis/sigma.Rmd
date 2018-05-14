@@ -1,0 +1,225 @@
+---
+title: "Estimate unknown variance"
+author: "Dongyue Xie"
+date: "May 10, 2018"
+output: html_document
+---
+To recap, the model we are considering is $Y_t=\mu_t+u_t+\epsilon_t$ where $u_t\sim N(0,\sigma^2)$ and $\epsilon_t\sim N(0,s_t^2)$.
+
+In previous analysis, we assume $\sigma^2$ is known so when estimating $\mu_t$, we simply plug $\sigma^2$ in the `smash.gaus` function. However, in practice we don't know the $\sigma^2$. To address this problem, we propose possible ways.
+
+# Estimate $\sigma^2+s_t^2$ together
+
+Method 1: When estimating $\mu_t$, what we actually need is $\sigma^2+s_t^2$. Hence, we can simply feed $y_t$ to `smash.gaus` then iteratively estimate $\mu_t$ and $\sigma^2+s_t^2$.The advantage is that this is simple and easy. But this method does not take advantage of known $s_t^2$.
+
+Method 2: Using "running MAD" method: $1.4826\times MAD$. MAD stands for median absolute deviation, $MAD(x)=median|x-median(x)|$. For nomal distribution $x\sim N(\mu,\sigma^2)$, MAD(x)=$\sigma$MAD(z), where $z\sim N(0,1)$ so $\sigma=\frac{MAD(x)}{MAD(z)}=1.4826\times MAD(x)$.($1/[\Phi^{-1}(3/4)] \approx 1.4826$ ). One advantage of MAD is the robustness. In Xing$\&$Stephens(2016), simulations show that SMASH outperforms RMAD(running MAD).
+
+# Estimate $\sigma^2$ only
+
+Method 3: $E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2\sigma^2$. Similarly, $E(Y_t-Y_{t-1})^2=s_t^2+s_{t-1}^2+2\sigma^2$. We have $\hat\sigma^2_t=((Y_t-Y_{t+1})^2+(Y_t-Y_{t+1})^2-2s_t^2-s_{t-1}^2-s_{t+1}^2)/4$ for each $t$. The estimate of $\sigma^2$ is given by the mean of $\hat\sigma^2_t$.
+
+Method 4: $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$. Define $Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{4}{3}Z_t^4$. We transfer it to a mean estimating problem. $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Define $\tilde Z_t^2=Z_t^2-s_t^2$, $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can either use `smash.gaus` or weighted least square to estimate $\sigma^2$.
+
+# Experiments
+
+```{r}
+library(smashr)
+library(ashr)
+```
+
+```{r}
+#' A function estimate \sigma^2 using method 4
+#' @param x: data
+#' @param mu
+#' @param st
+#' @param method: 'smashc', 'moment', 'wls'
+
+#' return estimated sd
+
+sigma_est=function(x,mu,st,method){
+  if(method=='moment'){
+    x.m=c(x[length(x)],x,x[1])
+    st.m=c(st[length(x)],st,st[1])
+    sg=c()
+    for(i in 2:length(x)){
+      sg=c(sg,
+           ((x.m[i]-x.m[i+1])^2+(x.m[i]-x.m[i-1])^2-2*st.m[i]^2-st.m[i-1]^2-st.m[i+1]^2)/4)
+    }
+    return(sqrt(mean(ifelse(sg<0,1e-8,sg))))
+  }else{
+    zt=(x-mu)^2
+    zt2=zt-st^2
+    zt2.var=2/3*zt^4
+    if(method=='wls'){
+      wls.est=lm(zt2~1,weights = 1/zt2.var)$coefficients
+      return(sqrt(ifelse(wls.est<0,1e-8,wls.est)))
+      }
+    if(method=='smashc'){
+      smash.est=smash.gaus(zt2,sigma=sqrt(zt2.var))
+      return(sqrt(mean(ifelse(smash.est<0,1e-8,smash.est))))
+    }
+    if(method=='ols'){
+      return(sqrt(ifelse(mean(zt2)<0,1e-8,mean(zt2))))
+    }
+  }
+}
+
+# Test the sigma_est function
+wls=c()
+smashs=c()
+moment=c()
+ols=c()
+mu=rep(2,128)
+sigma=1
+set.seed(1234)
+st=sqrt(rchisq(128,5))
+for(i in 1:100){
+  y=mu+rnorm(128,0,sigma)+rnorm(128,0,st)
+  wls[i]=sigma_est(y,mu,st,'wls')
+  smashs[i]=sigma_est(y,mu,st,'smash')
+  moment[i]=sigma_est(y,mu,st,'moment')
+  ols[i]=sigma_est(y,mu,st,'ols')
+}
+boxplot(data.frame(wls=wls,ols=ols,smash_s=smashs,moment=moment))
+abline(h=sigma,lty=2)
+```
+Weighted least square is problematic. The reason is that weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
+
+
+Now we compare the estimate of $\sqrt(\sigma^2+s_t^2)$. The measure of accuracy is euclidean distance.
+```{r}
+#' Function to estimate \sqrt(\sigma^2+s_t^2) together
+
+#' return estimated sd
+
+sst_est=function(x,method,filter.number=1,family="DaubExPhase"){
+  n = length(x)
+  J = log2(n)
+  if(method=='rmad'){
+    x.w = wavethresh::wd(x, filter.number = filter.number, 
+                         family = family, type = "station")
+    win.size = round(n/10)
+    odd.boo = (win.size%%2 == 1)
+    win.size = win.size + (1 - odd.boo)
+    sigma.est = runmad(accessD(x.w, J - 1), win.size, endrule = "func")
+    return(sigma.est)
+  }
+  if(method=='smashu'){
+    sigma.est=sqrt(smash.gaus(x,v.est=T,joint=T)$var.res)
+    return(sigma.est)
+  }
+}
+
+```
+
+
+```{r}
+#' Function to do comparisons among methods
+
+#' @param est: 's' or 'sst'
+simu_study_var=function(mu,st,sigma,niter=100,criterion='2norm',seed=12345){
+  set.seed(seed)
+  n=length(mu)
+  
+  ols.sst=c()
+  moment.sst=c()
+  smashc.sst=c()
+  smashu.sst=c()
+  rmad.sst=c()
+  
+  ols.s=c()
+  moment.s=c()
+  smashc.s=c()
+  #smashu.s=c()
+  #rmad.s=c()
+  
+  for(iter in 1:niter){
+    y=mu+rnorm(n,0,sigma)+rnorm(n,0,st)
+    ols=sigma_est(y,mu,st,'ols')
+    ols.s[iter]=ols
+    ols.sst[iter]=norm(sqrt(ols^2+st^2)-sqrt(sigma^2+st^2),'2')
+    moment=sigma_est(y,mu,st,'moment')
+    moment.s[iter]=moment
+    moment.sst[iter]=norm(sqrt(moment^2+st^2)-sqrt(sigma^2+st^2),'2')
+    smashc=sigma_est(y,mu,st,'smashc')
+    smashc.s[iter]=smashc
+    smashc.sst[iter]=norm(sqrt(smashc^2+st^2)-sqrt(sigma^2+st^2),'2')
+    smashu=sst_est(y,'smashu')
+    #smashu.s[iter]= ifelse(smashu^2-st^2)
+    smashu.sst[iter]=norm(smashu-sqrt(sigma^2+st^2),'2')
+    rmad=sst_est(y,'rmad')
+    rmad.sst[iter]=norm(rmad-sqrt(sigma^2+st^2),'2')
+  }
+  return(list(ols.sst=ols.sst,moment.sst=moment.sst,smashc.sst=smashc.sst,
+              smashu.sst=smashu.sst,rmad.sst=rmad.sst,ols.s=ols.s,moment.s=moment.s,
+              smashc.s=smashc.s))
+}
+
+```
+
+
+# Constant Trend
+
+```{r}
+mu=rep(1,128)
+sigma=2
+set.seed(123)
+st=sqrt(rchisq(128,5))
+results=simu_study_var(mu,st,sigma)
+
+boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
+              smashc.s=results$smashc.s))
+abline(h=sigma,lty=2)
+
+boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
+                   smashc.sst=results$smashc.sst,
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+abline(h=0,lty=2)
+```
+
+Ols and smash in method 4 give very similar results and are better than the other methods. 
+# Step 
+
+```{r}
+mu=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+sigma=1
+set.seed(123)
+st=sqrt(rchisq(length(mu),5))
+results=simu_study_var(mu,st,sigma)
+
+boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
+              smashc.s=results$smashc.s))
+abline(h=sigma,lty=2)
+
+boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
+                   smashc.sst=results$smashc.sst,
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+abline(h=0,lty=2)
+```
+
+# Bumps
+
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f
+sigma=2
+set.seed(123)
+st=sqrt(rchisq(length(mu),5))
+results=simu_study_var(mu,st,sigma)
+
+boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
+              smashc.s=results$smashc.s))
+abline(h=sigma,lty=2)
+
+boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
+                   smashc.sst=results$smashc.sst,
+                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst))
+abline(h=0,lty=2)
+```
