@@ -1,0 +1,219 @@
+---
+title: "Poisson unknown variance"
+author: "Dongyue Xie"
+date: "May 13, 2018"
+output: html_document
+---
+
+```{r}
+library(smashrgen)
+```
+
+```{r}
+#' Simulation study comparing smash and smashgen
+
+simu_study=function(m,sigma,nsimu=100,seed=1234,
+                    niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
+                    tol=1e-2,reflect=FALSE){
+  set.seed(seed)
+  smash.err=c()
+  smashgen.err=c()
+  smashu.err=c()
+  smashc.err=c()
+  for(k in 1:nsimu){
+    lamda=exp(m+rnorm(length(m),0,sigma))
+    x=rpois(length(m),lamda)
+    #fit data
+    smash.out=smash.poiss(x,reflect=reflect)
+    smashgen.out=smash_gen(x,dist_family = 'poisson',sigma = sigma)
+    smashu.out=smash_gen(x,dist_family = 'poisson',method = 'smashu')
+    smashc.out=smash_gen(x,dist_family = 'poisson',method = 'smashc')
+    smash.err[k]=norm((exp(m)-smash.out),'2')^2
+    smashgen.err[k]=norm((exp(m)-smashgen.out),'2')^2
+    smashu.err[k]=norm((exp(m)-smashu.out),'2')^2
+    smashc.err[k]=norm((exp(m)-smashc.out),'2')^2
+  }
+  return(list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,
+              smashc.out=smashc.out,x=x,smash.err=smash.err,smashgen.err=smashgen.err,
+              smashu.err=smashu.err,smashc.err=smashc.err))
+}
+```
+
+# Simulation 1: Constant trend Poisson nugget
+
+## $\sigma=0.1$
+
+```{r}
+m=rep(1,128)
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+## $\sigma=1$
+
+```{r}
+m=rep(1,128)
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+## $\sigma=2$
+
+```{r}
+m=rep(1,128)
+result=simu_study(m,2)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+# Simulation 2: Step trend 
+
+## $\sigma=0.1$
+
+```{r}
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+## $\sigma=1$
+
+```{r}
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+# Simulation 4: Bumps
+
+## $\sigma=0.1$
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+m=f
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
+
+## $\sigma=0.1$
+```{r}
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$smash.out,col=4)
+plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(exp(m),col=1)
+lines(result$smashgen.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(exp(m),col=1)
+lines(result$smashu.out,col=4)
+plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(exp(m),col=1)
+lines(result$smashc.out,col=4)
+mean(result$smash.err)
+mean(result$smashgen.err)
+mean(result$smashu.err)
+mean(result$smashc.err)
+```
