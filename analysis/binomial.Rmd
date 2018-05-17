@@ -21,7 +21,7 @@ Methods for estimating $\sigma^2$ or $\sigma^2+s_t^2$ are discussed [here](sigma
 
 ```{r}
 library(smashrgen)
-
+library(ggplot2)
 simu_study=function(p,sigma,ntri,nsimu=100,seed=12345,
                     niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
                     tol=1e-2){
