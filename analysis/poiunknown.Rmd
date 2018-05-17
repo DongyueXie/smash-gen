@@ -99,7 +99,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=2$
@@ -126,7 +126,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 # Simulation 2: Step trend 
@@ -155,7 +155,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
@@ -182,7 +182,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 # Simulation 3: Bumps
@@ -218,7 +218,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
@@ -243,7 +243,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 # Simulation 4: Spike mean
@@ -276,7 +276,7 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
@@ -301,5 +301,5 @@ mean(result$err$smashgen)
 mean(result$err$smashgen.smashu)
 mean(result$err$smashgen.mle)
 
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
