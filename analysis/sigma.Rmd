@@ -45,7 +45,7 @@ library(ggplot2)
 #simulations
 n=256
 mu=rep(3,n)
-plot(mu,mian='Mean function')
+plot(mu,main='Mean function')
 t=1:n/n
 var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
 var2 = var2.ini/sqrt(var(var2.ini))
@@ -65,7 +65,7 @@ apply(result.def,2,var)
 
 It seems that the estimate of $var(Z_t^2)$ is problematic using the default method in Xing$\&$Stephens(2016). Some $Z_t$ are too small. Hence the methods using $var(Z_t^2)$ do not work well. The weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
 
-Though mle estimate is unbiased, it's variance is large. Thus, using robust estimator is possible a better way. We consider Huber M-estimator. However, since the distribution of $\tilde Z_t$ is highly skewed, Huber M estimator is not very appropriate in this context.
+Though mle estimate is unbiased, it's variance is large. Thus, using robust estimator is possible a better way. We consider Huber M-estimator. However, since the distribution of $\tilde Z_t$ is highly skewed to the right, Huber M estimator is not very appropriate in this context. So the parameter k in Huber M estimator is chosen to be 0.99 quantile, which makes it very close to mle.
 
 We then use smash to estimate the $var(Z_t^2)$.
 
@@ -99,7 +99,7 @@ Using rmad gives satisfactory results and runs much faster than smash method.
 
 Since what we eventually need is $\sqrt(\sigma^2+s_t^2)$, we compare performance of all the estimators. For methods estimating $\sigma^2$, we add known $s_t^2$ to $\hat\sigma^2$. Two methods that directly estimate $\sqrt(\sigma^2+s_t^2)$ are smash and rmad. The measure of accuracy is mean squared error.
 
-To figure out how the improvements of variance estimation help with the mean estimaiton, we also calculate the MSE of mean estimation using the estimated variance from corresponding methods. To ficilatate the comparsions, the results from smash with true variance(*smashtrue*) are added.
+To figure out how the improvements of variance estimation help with the mean estimation, we also calculate the MSE of mean estimation using the estimated variance from corresponding methods. To facilitate the comparisons, the results from smash with true variance(*smashtrue*) are added.
 
 ## Constant mean function
 
@@ -134,7 +134,7 @@ ggplot(df2gg(result.spike.sst$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fil
 ggplot(df2gg(result.spike.sst$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
 
 ```
-Tough the estimate of total sd are more accurate for the first 5 methods(but not significantly better), this did not help with the mean estimation a lot. 
+Tough the estimate of total sd are more accurate for the first 5 methods(but not significantly better because the magnitude of MSE variance estimations is around $10^{-2}$ to $10^{-1}$ ), this did not help with the mean estimation a lot. 
 
 Now let's reduce sample size from 512 to 128.
 ```{r smalln}
@@ -173,7 +173,7 @@ ggplot(df2gg(result.spike.sst3$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fil
 ```
 
 Reduce the noise level: times 1/2.
-```{r small noise}
+```{r smallnoise}
 n = 512
 t = 1:n/n
 mu = spike.f(t)
@@ -184,8 +184,10 @@ var2 = var2.ini/sqrt(var(var2.ini))/2
 st=sqrt(var2)
 
 sigma=1/2
+
 result.spike.sst4=simu_study_sst(mu,st,sigma)
 ggplot(df2gg(result.spike.sst4$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+
 ggplot(df2gg(result.spike.sst4$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
 
 ```
@@ -206,5 +208,8 @@ ggplot(df2gg(result.spike.nspa$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fi
 ggplot(df2gg(result.spike.nspa$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
 ```
 
-The variance estimaitons using smash indeed are not as good as the first five methods, while the mean estimations are not significantly worse but have larger variance.
+The variance estimations using smash indeed are not as good as the first five methods, while the mean estimations are not significantly worse but have larger variance.
 
+# Summary
+
+Generally, we can simply apply `smash.gaus` directly to the data if what we are interested in is $\mu_t$. If we are also interested in $\sigma$, then the simple MLE is reliable enough.
