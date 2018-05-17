@@ -186,6 +186,7 @@ st=sqrt(var2)
 sigma=1/2
 
 result.spike.sst4=simu_study_sst(mu,st,sigma)
+
 ggplot(df2gg(result.spike.sst4$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
 
 ggplot(df2gg(result.spike.sst4$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
