@@ -1,0 +1,337 @@
+---
+title: "Binomial wavelet smoothing"
+author: "Dongyue Xie"
+date: "May 12, 2018"
+output: html_document
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+# Algorithm
+
+Let $X_t$ be a Binomial observation with number of trials $n_t$, $t=1,2,\dots,T$. 
+
+1. Apply `ash` to binomial data $(X_t, n_t)$ and obtain the posterior mean $\hat p=E(p|X,n)$, $\hat p\in R^T$.
+2. Let $s_t=\frac{1}{n_t\hat p_t(1-\hat p_t)}$ and $Y_t=\log\frac{\hat p_t}{1-\hat p_t}+\frac{X_t/n_t-\hat p_t}{n_t\hat p_t(1-\hat p_t)}$.
+3. Apply `smash.gaus` to $Y_t$ with standard deviation $\sqrt(\sigma^2+s_t^2)$ if $\sigma^2$ is known. If it's unknown, then either $\sigma^2$ or $\sigma^2+s_t^2$ should be estimated first. The output of `smash.gaus` is denoted as $\mu_t$.
+4. Export $\frac{\exp(\mu_t)}{1+\exp(\mu_t)}$.
+
+Methods for estimating $\sigma^2$ or $\sigma^2+s_t^2$ are discussed [here](sigma.html).
+
+```{r}
+library(smashrgen)
+
+simu_study=function(p,sigma,ntri,nsimu=100,seed=12345,
+                    niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
+                    tol=1e-2){
+  set.seed(seed)
+  #smash.err=c()
+  smashgen.err=c()
+  smashgen.smashu.err=c()
+  #smashgen.mle.err=c()
+  n=length(p)
+  true.p=exp(p)/(1+exp(p))
+  for(k in 1:nsimu){
+    ng=rnorm(n,0,sigma)
+    m=exp(p+ng)
+    q=m/(1+m)
+    x=rbinom(n,ntri,q)
+    #fit data
+    #smash.out=smash.poiss(x)
+    smashgen.out=smash_gen(x,dist_family = 'binomial',sigma = sigma,ntri=ntri)
+    smashu.out=smash_gen(x,dist_family = 'binomial',y_var_est = 'smashu',ntri=ntri)
+    #mle.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'mle')
+    #smash.err[k]=mse(exp(m),smash.out)
+    smashgen.err[k]=mse(true.p,smashgen.out)
+    smashgen.smashu.err[k]=mse(true.p,smashu.out)
+    #smashgen.mle.err[k]=mse(exp(m),mle.out)
+  }
+  return(list(est=list(smashgen.out=smashgen.out,smashu.out=smashu.out,x=x),err=data.frame(smashgen=smashgen.err, smashgen.smashu=smashgen.smashu.err)))
+}
+```
+
+# Constant trend
+
+## $\sigma=0.1$
+
+```{r const}
+p=rep(0,128)
+set.seed(111)
+ntri=rpois(128,30)
+result=simu_study(p,0.1,ntri)
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+legend("topright", # places a legend at the appropriate place
+       c("truth","smashgen"), # puts text in the legend
+       lty=c(1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+legend("topright", # places a legend at the appropriate place
+       c("truth","smashgen"), # puts text in the legend
+       lty=c(1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1),
+       cex = 1,
+       col=c("black","blue"))
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$
+
+```{r const1}
+result=simu_study(p,1,ntri)
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$, small prob
+
+```{r}
+p=rep(-3,128)
+result=simu_study(p,1,ntri)
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+# Step trend
+
+## $\sigma=0.1$
+```{r}
+p=c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128))
+set.seed(111)
+ntri=rpois(512,30)
+result=simu_study(p,0.1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$
+```{r}
+p=c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128))
+set.seed(111)
+ntri=rpois(512,30)
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$, more variant ntri
+
+```{r}
+p=c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128))
+set.seed(111)
+ntri=rpois(512,50)-20
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+# Bumps
+
+## $\sigma=0.1$
+
+```{r bumps}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+p=f-3
+
+set.seed(111)
+ntri=rpois(256,30)
+result=simu_study(p,0.1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$
+
+```{r bumps}
+set.seed(111)
+ntri=rpois(256,30)
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$, more variant ntri
+
+```{r bumps}
+set.seed(111)
+ntri=rpois(256,50)-20
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$, smaller ntri
+
+```{r bumps}
+set.seed(111)
+ntri=rpois(256,20)-9
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+
+# Spike mean
+
+## $\sigma=0.1$
+
+```{r spike}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+p = spike.f(t)*2-2
+
+set.seed(111)
+ntri=rpois(256,20)-9
+result=simu_study(p,0.1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+
+## $\sigma=1$
+
+```{r spike}
+set.seed(111)
+ntri=rpois(256,20)-9
+result=simu_study(p,1,ntri)
+
+par(mfrow=c(1,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: known variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x/ntri,col='gray80',ylab='',main='smashgen: unknown variance')
+lines(exp(p)/(1+exp(p)),col=1)
+lines(result$est$smashu.out,col=4)
+
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
