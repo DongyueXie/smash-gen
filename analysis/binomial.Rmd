@@ -223,7 +223,7 @@ ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+lab
 
 ## $\sigma=1$
 
-```{r bumps}
+```{r bump}
 set.seed(111)
 ntri=rpois(256,30)
 result=simu_study(p,1,ntri)
@@ -244,7 +244,7 @@ ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+lab
 
 ## $\sigma=1$, more variant ntri
 
-```{r bumps}
+```{r}
 set.seed(111)
 ntri=rpois(256,50)-20
 result=simu_study(p,1,ntri)
@@ -265,7 +265,7 @@ ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+lab
 
 ## $\sigma=1$, smaller ntri
 
-```{r bumps}
+```{r}
 set.seed(111)
 ntri=rpois(256,20)-9
 result=simu_study(p,1,ntri)
@@ -317,7 +317,7 @@ ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+lab
 
 ## $\sigma=1$
 
-```{r spike}
+```{r spike1}
 set.seed(111)
 ntri=rpois(256,20)-9
 result=simu_study(p,1,ntri)
