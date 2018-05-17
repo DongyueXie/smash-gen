@@ -1,41 +1,48 @@
 ---
-title: "Poisson unknown variance"
+title: "Poisson nugget effect, unknown variance"
 author: "Dongyue Xie"
 date: "May 13, 2018"
 output: html_document
 ---
-
-```{r}
-library(smashrgen)
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
 
-```{r}
+Simulations of Poisson nugget effect(unkown).
+
+Previously, we have studies the [methods](sigma.html) to estimate unknown $\sigma$ in the model $Y_t=\mu_t+N(0,\sigma^2)+N(0,s_t^2)$. Here, we apply mle and smashu methods and compare them with smash as well as smashgen with known $sigma$. The measure of accuracy is mean square error. Plots are also given as visual aid.
+
+```{r,warning=FALSE}
+library(smashrgen)
+library(ggplot2)
+```
+
+```{r,warning=FALSE}
 #' Simulation study comparing smash and smashgen
 
-simu_study=function(m,sigma,nsimu=100,seed=1234,
+simu_study=function(m,sigma,nsimu=100,seed=12345,
                     niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
-                    tol=1e-2,reflect=FALSE){
+                    tol=1e-2){
   set.seed(seed)
   smash.err=c()
   smashgen.err=c()
-  smashu.err=c()
-  smashc.err=c()
+  smashgen.smashu.err=c()
+  smashgen.mle.err=c()
   for(k in 1:nsimu){
     lamda=exp(m+rnorm(length(m),0,sigma))
     x=rpois(length(m),lamda)
     #fit data
-    smash.out=smash.poiss(x,reflect=reflect)
+    smash.out=smash.poiss(x)
     smashgen.out=smash_gen(x,dist_family = 'poisson',sigma = sigma)
-    smashu.out=smash_gen(x,dist_family = 'poisson',method = 'smashu')
-    smashc.out=smash_gen(x,dist_family = 'poisson',method = 'smashc')
-    smash.err[k]=norm((exp(m)-smash.out),'2')^2
-    smashgen.err[k]=norm((exp(m)-smashgen.out),'2')^2
-    smashu.err[k]=norm((exp(m)-smashu.out),'2')^2
-    smashc.err[k]=norm((exp(m)-smashc.out),'2')^2
+    smashu.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'smashu')
+    mle.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'mle')
+    smash.err[k]=mse(exp(m),smash.out)
+    smashgen.err[k]=mse(exp(m),smashgen.out)
+    smashgen.smashu.err[k]=mse(exp(m),smashu.out)
+    smashgen.mle.err[k]=mse(exp(m),mle.out)
   }
-  return(list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,
-              smashc.out=smashc.out,x=x,smash.err=smash.err,smashgen.err=smashgen.err,
-              smashu.err=smashu.err,smashc.err=smashc.err))
+  return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x),err=data.frame(smash=smash.err,smashgen=smashgen.err,
+              smashgen.smashu=smashgen.smashu.err,smashgen.mle=smashgen.mle.err)))
 }
 ```
 
@@ -43,130 +50,145 @@ simu_study=function(m,sigma,nsimu=100,seed=1234,
 
 ## $\sigma=0.1$
 
-```{r}
+```{r,warning=FALSE}
 m=rep(1,128)
 result=simu_study(m,0.1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
 
-```{r}
+```{r,warning=FALSE}
 m=rep(1,128)
 result=simu_study(m,1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=2$
 
-```{r}
+```{r,warning=FALSE}
 m=rep(1,128)
 result=simu_study(m,2)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 # Simulation 2: Step trend 
 
 ## $\sigma=0.1$
 
-```{r}
+```{r,warning=FALSE}
 m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
 result=simu_study(m,0.1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
 
-```{r}
+```{r,warning=FALSE}
 m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
 result=simu_study(m,1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
-# Simulation 4: Bumps
+# Simulation 3: Bumps
 
 ## $\sigma=0.1$
-```{r}
+```{r,warning=FALSE}
 m=seq(0,1,length.out = 256)
 h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
 w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
@@ -178,42 +200,106 @@ for(i in 1:length(m)){
 m=f
 result=simu_study(m,0.1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
-## $\sigma=0.1$
-```{r}
+## $\sigma=1$
+```{r,warning=FALSE}
 result=simu_study(m,1)
 par(mfrow=c(2,2))
-plot(result$x,col='gray80',ylab='',main='smash')
+plot(result$est$x,col='gray80',ylab='',main='smash')
 lines(exp(m),col=1)
-lines(result$smash.out,col=4)
-plot(result$x,col='gray80',ylab='',main='known sigma')
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
 lines(exp(m),col=1)
-lines(result$smashgen.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sqrt(sigma^2+s_t^2)')
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
 lines(exp(m),col=1)
-lines(result$smashu.out,col=4)
-plot(result$x,col='gray80',ylab='',main='estimate sigma')
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
-lines(result$smashc.out,col=4)
-mean(result$smash.err)
-mean(result$smashgen.err)
-mean(result$smashu.err)
-mean(result$smashc.err)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+# Simulation 4: Spike mean
+
+## $\sigma=0.1$
+```{r,warning=FALSE}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$
+```{r,warning=FALSE}
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+mean(result$err$smash)
+mean(result$err$smashgen)
+mean(result$err$smashgen.smashu)
+mean(result$err$smashgen.mle)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
