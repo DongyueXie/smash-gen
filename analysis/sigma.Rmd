@@ -6,221 +6,205 @@ output: html_document
 ---
 To recap, the model we are considering is $Y_t=\mu_t+u_t+\epsilon_t$ where $u_t\sim N(0,\sigma^2)$ and $\epsilon_t\sim N(0,s_t^2)$.
 
-In previous analysis, we assume $\sigma^2$ is known so when estimating $\mu_t$, we simply plug $\sigma^2$ in the `smash.gaus` function. However, in practice we don't know the $\sigma^2$. To address this problem, we propose possible ways.
+In previous analysis, we assume $\sigma^2$ is known so when estimating $\mu_t$, we simply plug $\sigma^2$ in the `smash.gaus` function. However, in practice we don't know the $\sigma^2$. 
 
-# Estimate $\sigma^2+s_t^2$ together
+Note: 
 
-Method 1: When estimating $\mu_t$, what we actually need is $\sigma^2+s_t^2$. Hence, we can simply feed $y_t$ to `smash.gaus` then iteratively estimate $\mu_t$ and $\sigma^2+s_t^2$.The advantage is that this is simple and easy. But this method does not take advantage of known $s_t^2$.
+1. If sigma is NULL in `smash.gaus`, then `smash.gaus` runs 1-2-1 of the algorithm in paper. If `v.est=F`, then it returns estimated $\mu_t$ from the last 1.  If `v.est=T`, then it runs 2 one more time.
 
-Method 2: Using "running MAD" method: $1.4826\times MAD$. MAD stands for median absolute deviation, $MAD(x)=median|x-median(x)|$. For nomal distribution $x\sim N(\mu,\sigma^2)$, MAD(x)=$\sigma$MAD(z), where $z\sim N(0,1)$ so $\sigma=\frac{MAD(x)}{MAD(z)}=1.4826\times MAD(x)$.($1/[\Phi^{-1}(3/4)] \approx 1.4826$ ). One advantage of MAD is the robustness. In Xing$\&$Stephens(2016), simulations show that SMASH outperforms RMAD(running MAD).
+2. If sigma is given, then it runs 1 to give $\hat\mu_t$. If `v.est=T`, then it runs 2 one more time. So: even if sigma is given, `smash.gaus` could still estimate it.
 
-# Estimate $\sigma^2$ only
+3. Names of the methods are marked in **bold** for convenience.
 
-Method 3: $E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2\sigma^2$. Similarly, $E(Y_t-Y_{t-1})^2=s_t^2+s_{t-1}^2+2\sigma^2$. We have $\hat\sigma^2_t=((Y_t-Y_{t+1})^2+(Y_t-Y_{t+1})^2-2s_t^2-s_{t-1}^2-s_{t+1}^2)/4$ for each $t$. The estimate of $\sigma^2$ is given by the mean of $\hat\sigma^2_t$.
+# Estimate ($\sigma^2+s_t^2$) together
 
-Method 4: $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$. Define $Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{4}{3}Z_t^4$. We transfer it to a mean estimating problem. $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Define $\tilde Z_t^2=Z_t^2-s_t^2$, $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can either use `smash.gaus` or weighted least square to estimate $\sigma^2$.
+When estimating $\mu_t$, what we actually need is $\sigma^2+s_t^2$ for `smash.gaus`.
 
-# Experiments
+Method 1(**smashu**):  We can simply feed $y_t$ to `smash.gaus` then get estimated $\mu_t$ and $\sigma^2+s_t^2$. This is simple and easy. But this method does not take advantage of known $s_t^2$.
 
-```{r}
-library(smashr)
-library(ashr)
-library(caTools)
-library(wavethresh)
+Method 2(**rmad**): Using "running MAD"(RMAD) method: $1.4826\times MAD$. MAD stands for median absolute deviation, $MAD(x)=median|x-median(x)|$. (For normal distribution $x\sim N(\mu,\sigma^2)$, $MAD(x)=\sigma MAD(z)$, where $z\sim N(0,1)$ so $\sigma=\frac{MAD(x)}{MAD(z)}=1.4826\times MAD(x)$.($1/[\Phi^{-1}(3/4)] \approx 1.4826$ )). One advantage of MAD is the robustness. In Xing$\&$Stephens(2016), simulations show that SMASH outperforms RMA.
+
+# Estimate $\sigma^2$ 
+
+Method 3(**moment**): It's easy to show that $E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2\sigma^2$. Similarly, $E(Y_t-Y_{t-1})^2=s_t^2+s_{t-1}^2+2\sigma^2$. Combining two equations and solving for $\sigma^2$, we have a natural way to estimate it:  $\hat\sigma^2_t=\frac{((Y_t-Y_{t+1})^2+(Y_t-Y_{t+1})^2-2s_t^2-s_{t-1}^2-s_{t+1}^2)}{4}$ for each $t$. The estimate of $\sigma^2$ is given by the mean of $\hat\sigma^2_t$. Using this method as the initialization might be reasonable.
+
+Method 4: This method follows the same idea for estimating variance in Xing$\&$Stephens(2016). Since $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$, we define  $Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{2}{3}Z_t^4$. It's then transferred to a mean estimating problem: $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Let $\tilde Z_t^2=Z_t^2-s_t^2$, then $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can either use maximum likelihood estimation(**mle**), weighted least square(**wls**), empirical Bayes method (**eb**) or huber M-estimator(**huberm**) to estimate $\sigma^2$.
+
+# Simulation: unknown variance $\sigma^2$.
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
 
 ```{r}
-#' A function estimate \sigma^2 using method 4
-#' @param x: data
-#' @param mu
-#' @param st
-#' @param method: 'smashc', 'moment', 'wls'
+library(smashrgen)
+library(ggplot2)
+```
 
-#' return estimated sd
-
-sigma_est=function(x,mu,st,method){
-  if(method=='moment'){
-    x.m=c(x[length(x)],x,x[1])
-    st.m=c(st[length(x)],st,st[1])
-    sg=c()
-    for(i in 2:length(x)){
-      sg=c(sg,
-           ((x.m[i]-x.m[i+1])^2+(x.m[i]-x.m[i-1])^2-2*st.m[i]^2-st.m[i-1]^2-st.m[i+1]^2)/4)
-    }
-    return(sqrt(mean(ifelse(sg<0,1e-8,sg))))
-  }else{
-    zt=(x-mu)^2
-    zt2=zt-st^2
-    zt2.var=2/3*zt^4
-    if(method=='wls'){
-      wls.est=lm(zt2~1,weights = 1/zt2.var)$coefficients
-      return(sqrt(ifelse(wls.est<0,1e-8,wls.est)))
-      }
-    if(method=='smashc'){
-      smash.est=smash.gaus(zt2,sigma=sqrt(zt2.var))
-      return(sqrt(mean(ifelse(smash.est<0,1e-8,smash.est))))
-    }
-    if(method=='ols'){
-      return(sqrt(ifelse(mean(zt2)<0,1e-8,mean(zt2))))
-    }
-  }
-}
-
-# Test the sigma_est function
-wls=c()
-smashs=c()
-moment=c()
-ols=c()
-mu=rep(2,128)
+```{r default}
+#simulations
+n=256
+mu=rep(3,n)
+plot(mu,mian='Mean function')
+t=1:n/n
+var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
+var2 = var2.ini/sqrt(var(var2.ini))
+st=sqrt(var2)
+plot(var2,type = 'l',main='variance function')
 sigma=1
-set.seed(1234)
-st=sqrt(rchisq(128,5))
-for(i in 1:100){
-  y=mu+rnorm(128,0,sigma)+rnorm(128,0,st)
-  wls[i]=sigma_est(y,mu,st,'wls')
-  smashs[i]=sigma_est(y,mu,st,'smashc')
-  moment[i]=sigma_est(y,mu,st,'moment')
-  ols[i]=sigma_est(y,mu,st,'ols')
-}
-boxplot(data.frame(wls=wls,ols=ols,smashc=smashs,moment=moment),ylab='sigma hat')
+
+result.def=simu_study_s(mu,st,sigma,'default')
+boxplot(result.def,ylab='sigma hat',main=expression(paste('var(',tilde(z),'): default')))
 abline(h=sigma,lty=2)
-```
-Weighted least square is problematic. The reason is that weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
-
-
-Now we compare the estimate of $\sqrt(\sigma^2+s_t^2)$. The measure of accuracy is euclidean distance.
-```{r}
-#' Function to estimate \sqrt(\sigma^2+s_t^2) together
-
-#' return estimated sd
-
-sst_est=function(x,method,filter.number=1,family="DaubExPhase"){
-  n = length(x)
-  J = log2(n)
-  if(method=='rmad'){
-    x.w = wavethresh::wd(x, filter.number = filter.number, 
-                         family = family, type = "station")
-    win.size = round(n/10)
-    odd.boo = (win.size%%2 == 1)
-    win.size = win.size + (1 - odd.boo)
-    sigma.est = runmad(accessD(x.w, J - 1), win.size, endrule = "func")
-    return(sigma.est)
-  }
-  if(method=='smashu'){
-    sigma.est=sqrt(smash.gaus(x,v.est=T,joint=T)$var.res)
-    return(sigma.est)
-  }
-}
+# report MSE
+apply(result.def,2,function(x) mean((x-1)^2))
+# variance of estimates
+apply(result.def,2,var)
 
 ```
 
+It seems that the estimate of $var(Z_t^2)$ is problematic using the default method in Xing$\&$Stephens(2016). Some $Z_t$ are too small. Hence the methods using $var(Z_t^2)$ do not work well. The weights in wls is $1/(2/3)Z_t^4)=3/(2Z_t^4)$. It's very sensitive to small $Z_t$, which means that the very smallest $Z_t$ dominates the estimation of $\sigma^2$.
 
-```{r}
-#' Function to do comparisons among methods
+Though mle estimate is unbiased, it's variance is large. Thus, using robust estimator is possible a better way. We consider Huber M-estimator. However, since the distribution of $\tilde Z_t$ is highly skewed, Huber M estimator is not very appropriate in this context.
 
-#' @param est: 's' or 'sst'
-simu_study_var=function(mu,st,sigma,niter=100,criterion='2norm',seed=12345){
-  set.seed(seed)
-  n=length(mu)
-  
-  ols.sst=c()
-  moment.sst=c()
-  smashc.sst=c()
-  smashu.sst=c()
-  rmad.sst=c()
-  
-  ols.s=c()
-  moment.s=c()
-  smashc.s=c()
-  #smashu.s=c()
-  #rmad.s=c()
-  
-  for(iter in 1:niter){
-    y=mu+rnorm(n,0,sigma)+rnorm(n,0,st)
-    ols=sigma_est(y,mu,st,'ols')
-    ols.s[iter]=ols
-    ols.sst[iter]=norm(sqrt(ols^2+st^2)-sqrt(sigma^2+st^2),'2')
-    moment=sigma_est(y,mu,st,'moment')
-    moment.s[iter]=moment
-    moment.sst[iter]=norm(sqrt(moment^2+st^2)-sqrt(sigma^2+st^2),'2')
-    smashc=sigma_est(y,mu,st,'smashc')
-    smashc.s[iter]=smashc
-    smashc.sst[iter]=norm(sqrt(smashc^2+st^2)-sqrt(sigma^2+st^2),'2')
-    smashu=sst_est(y,'smashu')
-    #smashu.s[iter]= ifelse(smashu^2-st^2)
-    smashu.sst[iter]=norm(smashu-sqrt(sigma^2+st^2),'2')
-    rmad=sst_est(y,'rmad')
-    rmad.sst[iter]=norm(rmad-sqrt(sigma^2+st^2),'2')
-  }
-  return(list(ols.sst=ols.sst,moment.sst=moment.sst,smashc.sst=smashc.sst,
-              smashu.sst=smashu.sst,rmad.sst=rmad.sst,ols.s=ols.s,moment.s=moment.s,
-              smashc.s=smashc.s))
-}
+We then use smash to estimate the $var(Z_t^2)$.
 
-```
-
-
-# Constant Trend
-```{r}
-mu=rep(1,128)
-sigma=2
-set.seed(123)
-st=sqrt(rchisq(128,5))
-results=simu_study_var(mu,st,sigma)
-
-boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
-              smashc.s=results$smashc.s))
+```{r smash}
+result.smash=simu_study_s(mu,st,sigma,'smash')
+boxplot(result.smash,ylab='sigma hat',main=expression(paste('var(',tilde(z),'): smash')))
 abline(h=sigma,lty=2)
+# report MSE
+apply(result.smash,2,function(x) mean((x-1)^2))
+# variance of estimates
+apply(result.smash,2,var)
 
-boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
-                   smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
-abline(h=0,lty=2)
 ```
 
-Ols and smash in method 4 give very similar results and are better than the other methods. 
-# Step 
+Now we have much better estimates of $var(Z_t^2)$ so wls, eb and huberm methods improve a lot. However, it takes significantly more time to run.
 
-```{r}
-mu=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+Use rmad to estimate the $var(Z_t^2)$.
+```{r rmad}
+result.rmad=simu_study_s(mu,st,sigma,'rmad')
+boxplot(result.rmad,ylab='sigma hat',main=expression(paste('var(',tilde(z),'): rmad')))
+abline(h=sigma,lty=2)
+# report MSE
+apply(result.rmad,2,function(x) mean((x-1)^2))
+# variance of estimates
+apply(result.rmad,2,var)
+```
+
+Using rmad gives satisfactory results and runs much faster than smash method. 
+
+# Simulation: estimate $\sqrt(\sigma^2+s_t^2)$
+
+Since what we eventually need is $\sqrt(\sigma^2+s_t^2)$, we compare performance of all the estimators. For methods estimating $\sigma^2$, we add known $s_t^2$ to $\hat\sigma^2$. Two methods that directly estimate $\sqrt(\sigma^2+s_t^2)$ are smash and rmad. The measure of accuracy is mean squared error.
+
+To figure out how the improvements of variance estimation help with the mean estimaiton, we also calculate the MSE of mean estimation using the estimated variance from corresponding methods. To ficilatate the comparsions, the results from smash with true variance(*smashtrue*) are added.
+
+## Constant mean function
+
+```{r const}
 sigma=1
-set.seed(123)
-st=sqrt(rchisq(length(mu),5))
-results=simu_study_var(mu,st,sigma)
+result.sst=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.sst$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.sst$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
+```
+For the estimation of total standard deviation estimation($\sqrt(\sigma^2+s_t^2)$), those methods which estimate $\sigma^2$ first then add $s_t^2$ perform uniformly better(smaller MSE, smaller variance) than those estimating total sd directly. 
 
-boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
-              smashc.s=results$smashc.s))
-abline(h=sigma,lty=2)
+The second plot shows the MSE of $\hat\mu_t$ after substituting the estimated total sd into `smash.gaus`. The first four methods have slightly better performance(smaller variance mainly), which is kind of as expected since they have more accurate estimate of variance.
 
-boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
-                   smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
-abline(h=0,lty=2)
+## Spike mean function
+
+Now we change the mean function from constant to a more complicated one('spike' mean) to see if the performance of methods are consistent.
+```{r spike}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+mu = spike.f(t)
+plot(mu,type='l',main='Mean function')
+
+var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
+var2 = var2.ini/sqrt(var(var2.ini))
+st=sqrt(var2)
+
+sigma=1
+result.spike.sst=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.spike.sst$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.spike.sst$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
+
+```
+Tough the estimate of total sd are more accurate for the first 5 methods(but not significantly better), this did not help with the mean estimation a lot. 
+
+Now let's reduce sample size from 512 to 128.
+```{r smalln}
+n = 128
+t = 1:n/n
+mu = spike.f(t)
+#plot(mu,type='l',main='Mean function')
+
+var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
+var2 = var2.ini/sqrt(var(var2.ini))
+st=sqrt(var2)
+
+sigma=1
+result.spike.sst2=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.spike.sst2$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.spike.sst2$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
+
 ```
 
-# Bumps
+Increase the noise level: times 2.
+```{r largenoise}
+n = 512
+t = 1:n/n
+mu = spike.f(t)
+#plot(mu,type='l',main='Mean function')
 
-```{r}
-m=seq(0,1,length.out = 256)
-h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
-w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
-t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
-f = c()
-for(i in 1:length(m)){
-  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
-}
-mu=f
-sigma=2
-set.seed(123)
-st=sqrt(rchisq(length(mu),5))
-results=simu_study_var(mu,st,sigma)
+var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
+var2 = var2.ini/sqrt(var(var2.ini))*2
+st=sqrt(var2)
 
-boxplot(data.frame(ols.s=results$ols.s,moment.s=results$moment.s,
-              smashc.s=results$smashc.s))
-abline(h=sigma,lty=2)
+sigma=1*2
+result.spike.sst3=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.spike.sst3$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.spike.sst3$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
 
-boxplot(data.frame(ols.sst=results$ols.sst,moment.sst=results$moment.sst,
-                   smashc.sst=results$smashc.sst,
-                   smashu.sst=results$smashu.sst,rmad.sst=results$rmad.sst),ylab='error',main='Estimate sqrt(sigma^2+s_t^2)')
-abline(h=0,lty=2)
 ```
+
+Reduce the noise level: times 1/2.
+```{r small noise}
+n = 512
+t = 1:n/n
+mu = spike.f(t)
+#plot(mu,type='l',main='Mean function')
+
+var2.ini = (1 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))
+var2 = var2.ini/sqrt(var(var2.ini))/2
+st=sqrt(var2)
+
+sigma=1/2
+result.spike.sst4=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.spike.sst4$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.spike.sst4$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
+
+```
+
+## Spike mean, non-spatial variance
+
+One assumption of smash is that the variance has spatial features. We now check the performance if this assumption is violated.
+
+```{r nonspatial}
+n=512
+t = 1:n/n
+mu = spike.f(t)
+set.seed(111)
+st=sqrt(runif(n,0,3))
+sigma=1
+result.spike.nspa=simu_study_sst(mu,st,sigma)
+ggplot(df2gg(result.spike.nspa$var.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Toal sd estimation')+labs(x='')
+ggplot(df2gg(result.spike.nspa$mu.est),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+ggtitle('Mean estimation')+labs(x='')
+```
+
+The variance estimaitons using smash indeed are not as good as the first five methods, while the mean estimations are not significantly worse but have larger variance.
+
