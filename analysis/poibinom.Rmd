@@ -1,0 +1,430 @@
+---
+title: "Poisson to approximate binomial"
+author: "Dongyue Xie"
+date: "May 15, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+# Methods
+
+Let $X\sim Binomial(n,p)$ then $E(X)=np, Var(X)=np(1-p)$. Poisson distribution is an approximation of binomial distribution when $n$ is large and $p$ is small. A rule of thumb is that $n\geq 20, p\leq 0.05$.
+
+Derivation: Let $\lambda=np$
+
+$$\frac{n!}{x!(n-x)!}p^x(1-p)^{n-x}=\frac{n(n-1)...(n-k+1)}{x!}(\lambda/n)^x(1-\lambda/n)^{n-x}\approx \frac{\lambda^x}{x!}(1-\lambda/n)^{n-x}$$ as $n\to \infty$. Since $lim_{n\to \infty}(1-\lambda/n)^{n}=e^{-\lambda}$ and $lim_{n\to \infty}(1-\lambda/n)^{-x}=1$, we have $$\frac{n!}{x!(n-x)!}p^x(1-p)^{n-x}\approx \frac{\lambda^x e^{-\lambda}}{x!}.$$
+
+If we have binomial observation $X_t$ with $n_t$ and treat it as Poisson observation, we can do the following expansion: $$Y_t=\log(X_t)=\log(n_tp_t)+\frac{X_t-n_tp_t}{n_tp_t}=\log(n_t)+\log(p_t)+\frac{X_t-n_tp_t}{n_tp_t}.$$ This leads to $$Y_t-\log(n_t)=\log(p_t)+\frac{X_t-n_tp_t}{n_tp_t}.$$
+
+
+# Experiments
+
+We compare the performance of smashgen - binomial and smashgen - poi_binom, as well as Translation Invariant (TI) thresholding (Coifman and Donoho, 1995), which is one of the best methods in a large-scale simulation study in Antoniadis et al. (2001), and Ebayesthresh (Johnstone and Silverman, 2005b). 
+
+For all experiments, T is set to be 256, nugget effect $\sigma=1$. The mean squared errors are reported and the plots are served as visual aids.
+
+```{r}
+library(smashrgen)
+library(ggplot2)
+library(EbayesThresh)
+
+simu_study=function(p,sigma=1,ntri,nsimu=100,seed=12345,
+                    niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
+                    tol=1e-2){
+  set.seed(seed)
+  smash.binom.err=c()
+  smash.poibinom.err=c()
+  ti.thresh.err=c()
+  eb.thresh.err=c()
+  n=length(p)
+  target=exp(p)/(1+exp(p))
+  for(k in 1:nsimu){
+    ng=rnorm(n,0,sigma)
+    m=exp(p+ng)
+    q=m/(1+m)
+    x=rbinom(n,ntri,q)
+    #fit data
+    smash.binom.out=smash_gen(x,dist_family = 'binomial',y_var_est='smashu',ntri=ntri)
+    smash.poibinom.out=smash_gen(x,dist_family = 'poi_binom',y_var_est='smashu',ntri=ntri)
+    ti.thresh.out=ti.thresh(x/ntri,method='rmad')
+    eb.thresh.out=waveti.ebayes(x/ntri)
+    #errors
+    smash.binom.err[k]=mse(target,smash.binom.out)
+    smash.poibinom.err[k]=mse(target,smash.poibinom.out)
+    ti.thresh.err[k]=mse(target,ti.thresh.out)
+    eb.thresh.err[k]=mse(target,eb.thresh.out)
+  }
+  return(list(est=list(smash.binom.out=smash.binom.out,smash.poibinom.out=smash.poibinom.out, ti.thresh.out=ti.thresh.out,eb.thresh.out=eb.thresh.out,x=x),
+              err=data.frame(smash.binom=smash.binom.err,smash.poibinom=smash.poibinom.err, ti.thresh=ti.thresh.err,eb.thresh=eb.thresh.err)))
+}
+
+waveti.ebayes = function(x, filter.number = 10, family = "DaubLeAsymm", min.level = 3) {
+    n = length(x)
+    J = log2(n)
+    x.w = wd(x, filter.number, family, type = "station")
+    for (j in min.level:(J - 1)) {
+        x.pm = ebayesthresh(accessD(x.w, j))
+        x.w = putD(x.w, j, x.pm)
+    }
+    mu.est = AvBasis(convert(x.w))
+    return(mu.est)
+}
+```
+
+## Constant trend
+
+### $ntri$ large, $p$ large
+
+The number of trials are generated from a Poisson distribution with $\lambda=50$. $p$ is around 0.8.
+
+```{r}
+n=256
+p=rep(1.5,n)
+set.seed(111)
+ntri=rpois(n,50)
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+
+
+```
+
+### $ntri$ small, $p$ large
+
+The number of trials are generated from a Poisson distribution with $\lambda=8$. $p$ is around 0.8.
+
+```{r}
+n=256
+p=rep(1.5,n)
+set.seed(111)
+ntri=rpois(n,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+
+
+```
+
+### $ntri$ large, $p$ small
+
+The number of trials are generated from a Poisson distribution with $\lambda=50$. $p$ is around 0.05.
+
+```{r}
+n=256
+p=rep(-3,n)
+set.seed(111)
+ntri=rpois(n,50)
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+ggplot(df2gg(result$err[,1:2]),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+
+
+```
+
+As expected, when $n$ is large and $p$ is small, Poisson distribution is a good approximation to binomial distribution. 
+
+### $ntri$ small, $p$ small
+
+The number of trials are generated from a Poisson distribution with $\lambda=5$. $p$ is around 0.05.
+
+```{r}
+n=256
+p=rep(-3,n)
+set.seed(111)
+ntri=rpois(n,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+
+
+```
+
+## Steps
+
+# Large $n$
+
+```{r}
+p=c(rep(-2,64), rep(0, 64), rep(2, 64), rep(-2, 64))
+set.seed(111)
+ntri=rpois(256,50)
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+```
+
+# Small $n$
+
+```{r}
+p=c(rep(-2,64), rep(0, 64), rep(2, 64), rep(-2, 64))
+set.seed(111)
+ntri=rpois(256,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+```
+
+## Bumps
+
+### Large $n$.
+
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+p=f-3
+
+set.seed(111)
+ntri=rpois(256,50)
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+
+```
+
+### Small $n$
+
+```{r}
+set.seed(111)
+ntri=rpois(256,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+```
+
+## Spike mean
+
+### Large $n$
+
+```{r}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+p = spike.f(t)*2-2
+
+set.seed(111)
+ntri=rpois(256,50)
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+```
+
+
+### Small $n$
+
+```{r}
+set.seed(111)
+ntri=rpois(256,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+legend("bottomright", # places a legend at the appropriate place
+       c("truth","smash-binom"), # puts text in the legend
+       lty=c(2,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,2),
+       cex = 1,
+       col=c("black","blue"))
+plot(result$est$x/ntri,col='gray80',ylab='',main='smash-poi_binom')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='TI thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col='gray80',ylab='',main='EBayes thresh')
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)
+```
