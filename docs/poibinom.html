@@ -318,7 +318,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-18</p>
+<p><strong>Last updated:</strong> 2018-05-19</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -342,17 +342,19 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/585d9b1305bf0de1868041fdd7cc5d05705d75fc" target="_blank">585d9b1</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/67830a50297adb4c818bc661d6fde1fd10a28ee2" target="_blank">67830a5</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    log/
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
     Untracked:  analysis/overdis.Rmd
+    Untracked:  analysis/poiwave.Rmd
     Untracked:  analysis/smashtutorial.Rmd
     Untracked:  data/treas_bill.csv
     Untracked:  docs/figure/smashtutorial.Rmd/
@@ -388,6 +390,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/67830a50297adb4c818bc661d6fde1fd10a28ee2/analysis/poibinom.Rmd" target="_blank">67830a5</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-19
+</td>
+<td style="text-align:left;">
+binomial smooth vs poibinom
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/460896d405e298ca13b9f07468e9f698588cba4f/analysis/poibinom.Rmd" target="_blank">460896d</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-19
+</td>
+<td style="text-align:left;">
+binomial smooth vs poibinom
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/poibinom.html" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+<td style="text-align:left;">
+binomial smooth vs poibinom
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -468,17 +521,50 @@ waveti.ebayes = function(x, filter.number = 10, family = &quot;DaubLeAsymm&quot;
 }</code></pre>
 <div id="constant-trend" class="section level2">
 <h2>Constant trend</h2>
-<div id="ntri-large-p-large" class="section level3">
-<h3><span class="math inline">\(ntri\)</span> large, <span class="math inline">\(p\)</span> large</h3>
-<p>The number of trials are generated from a Poisson distribution with <span class="math inline">\(\lambda=50\)</span>. <span class="math inline">\(p\)</span> is around 0.8.</p>
+<div id="ntri-small-p-large" class="section level3">
+<h3><span class="math inline">\(ntri\)</span> small, <span class="math inline">\(p\)</span> large</h3>
+<p>The number of trials are generated from a Poisson distribution with <span class="math inline">\(\lambda=5\)</span>. <span class="math inline">\(p\)</span> is around 0.8.</p>
 <pre class="r"><code>n=256
 p=rep(1.5,n)
 set.seed(111)
-ntri=rpois(n,50)
+ntri=rpois(n,5)+1
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-2-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+  0.0002064033   0.0006906048   0.0029693084   0.0036475976 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
@@ -499,18 +585,81 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-2-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
-<div id="ntri-small-p-large" class="section level3">
-<h3><span class="math inline">\(ntri\)</span> small, <span class="math inline">\(p\)</span> large</h3>
-<p>The number of trials are generated from a Poisson distribution with <span class="math inline">\(\lambda=8\)</span>. <span class="math inline">\(p\)</span> is around 0.8.</p>
+<div id="ntri-large-p-large" class="section level3">
+<h3><span class="math inline">\(ntri\)</span> large, <span class="math inline">\(p\)</span> large</h3>
+<p>We add 44 to the <span class="math inline">\(ntri\)</span> above so that its mean is around 50.</p>
 <pre class="r"><code>n=256
 p=rep(1.5,n)
 set.seed(111)
-ntri=rpois(n,5)+1
+ntri=ntri+44
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-3-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+  0.0001524936   0.0041117817   0.0023245279   0.0026075416 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
@@ -531,30 +680,117 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-3-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="ntri-large-p-small" class="section level3">
 <h3><span class="math inline">\(ntri\)</span> large, <span class="math inline">\(p\)</span> small</h3>
-<p>The number of trials are generated from a Poisson distribution with <span class="math inline">\(\lambda=50\)</span>. <span class="math inline">\(p\)</span> is around 0.05.</p>
+<p><span class="math inline">\(p\)</span> is around 0.05.</p>
 <pre class="r"><code>n=256
 p=rep(-3,n)
 set.seed(111)
-ntri=rpois(n,50)
+ntri=ntri
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-4-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>ggplot(df2gg(result$err[,1:2]),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-4-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+  1.638404e-05   1.696551e-05   1.183316e-03   1.367054e-03 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -565,11 +801,40 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-4-3.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>As expected, when <span class="math inline">\(n\)</span> is large and <span class="math inline">\(p\)</span> is small, Poisson distribution is a good approximation to binomial distribution.</p>
 </div>
 <div id="ntri-small-p-small" class="section level3">
 <h3><span class="math inline">\(ntri\)</span> small, <span class="math inline">\(p\)</span> small</h3>
-<p>The number of trials are generated from a Poisson distribution with <span class="math inline">\(\lambda=5\)</span>. <span class="math inline">\(p\)</span> is around 0.05.</p>
 <pre class="r"><code>n=256
 p=rep(-3,n)
 set.seed(111)
@@ -578,16 +843,43 @@ result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-5-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+  0.0004194395   0.0039619590   0.0068907435   0.0034840933 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -598,31 +890,87 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-5-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="steps" class="section level2">
 <h2>Steps</h2>
-</div>
-</div>
-<div id="large-n" class="section level1">
-<h1>Large <span class="math inline">\(n\)</span></h1>
+<div id="small-n" class="section level3">
+<h3>Small <span class="math inline">\(n\)</span></h3>
 <pre class="r"><code>p=c(rep(-2,64), rep(0, 64), rep(2, 64), rep(-2, 64))
 set.seed(111)
-ntri=rpois(256,50)
+ntri=rpois(256,5)+1
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-6-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+   0.004713551    0.008199597    0.008406726    0.012840545 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
+
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -633,26 +981,84 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-6-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
-<div id="small-n" class="section level1">
-<h1>Small <span class="math inline">\(n\)</span></h1>
+<div id="large-n" class="section level3">
+<h3>Large <span class="math inline">\(n\)</span></h3>
 <pre class="r"><code>p=c(rep(-2,64), rep(0, 64), rep(2, 64), rep(-2, 64))
 set.seed(111)
-ntri=rpois(256,5)+1
+ntri=ntri+44
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-7-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+   0.002653184    0.008115945    0.005058030    0.011180475 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
+
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -663,8 +1069,127 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-7-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
+</div>
 <div id="bumps" class="section level2">
 <h2>Bumps</h2>
+<div id="small-n-1" class="section level3">
+<h3>Small <span class="math inline">\(n\)</span></h3>
+<pre class="r"><code>set.seed(111)
+ntri=rpois(256,5)+1
+result=simu_study(p,ntri=ntri)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poibinom.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-8-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+   0.004713551    0.008199597    0.008406726    0.012840545 </code></pre>
+<pre class="r"><code>par(mfrow=c(2,2))
+plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.binom.out,col=4,lwd=2)
+
+plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$smash.poibinom.out,col=4,lwd=2)
+plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;TI thresh&#39;)
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$ti.thresh.out,col=4,lwd=2)
+plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thresh&#39;)
+lines(exp(p)/(1+exp(p)),lty=2)
+lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
+<p><img src="figure/poibinom.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-8-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
 <div id="large-n." class="section level3">
 <h3>Large <span class="math inline">\(n\)</span>.</h3>
 <pre class="r"><code>m=seq(0,1,length.out = 256)
@@ -678,50 +1203,49 @@ for(i in 1:length(m)){
 p=f-3
 
 set.seed(111)
-ntri=rpois(256,50)
-result=simu_study(p,ntri=ntri)
-
-ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
-<p><img src="figure/poibinom.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfrow=c(2,2))
-plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
-lines(exp(p)/(1+exp(p)),lty=2)
-lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
-plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
-lines(exp(p)/(1+exp(p)),lty=2)
-lines(result$est$smash.poibinom.out,col=4,lwd=2)
-plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;TI thresh&#39;)
-lines(exp(p)/(1+exp(p)),lty=2)
-lines(result$est$ti.thresh.out,col=4,lwd=2)
-plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thresh&#39;)
-lines(exp(p)/(1+exp(p)),lty=2)
-lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
-<p><img src="figure/poibinom.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-<div id="small-n-1" class="section level3">
-<h3>Small <span class="math inline">\(n\)</span></h3>
-<pre class="r"><code>set.seed(111)
-ntri=rpois(256,5)+1
+ntri=ntri+44
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-9-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+    0.01186805     0.02590525     0.01273087     0.03682167 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
+
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -732,34 +1256,86 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-9-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="spike-mean" class="section level2">
 <h2>Spike mean</h2>
-<div id="large-n-1" class="section level3">
-<h3>Large <span class="math inline">\(n\)</span></h3>
-<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
-    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
-n = 256
-t = 1:n/n
-p = spike.f(t)*2-2
-
-set.seed(111)
-ntri=rpois(256,50)
+<div id="small-n-2" class="section level3">
+<h3>Small <span class="math inline">\(n\)</span></h3>
+<pre class="r"><code>set.seed(111)
+ntri=rpois(256,5)+1
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-10-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+    0.01793979     0.02080153     0.02484011     0.04274885 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
+
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -770,25 +1346,89 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-10-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
-<div id="small-n-2" class="section level3">
-<h3>Small <span class="math inline">\(n\)</span></h3>
-<pre class="r"><code>set.seed(111)
-ntri=rpois(256,5)+1
+<div id="large-n-1" class="section level3">
+<h3>Large <span class="math inline">\(n\)</span></h3>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+p = spike.f(t)*2-2
+
+set.seed(111)
+ntri=ntri+44
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-11-1.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>apply(result$err,2,mean)</code></pre>
+<pre><code>   smash.binom smash.poibinom      ti.thresh      eb.thresh 
+   0.005917600    0.017084435    0.009726599    0.010659236 </code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.binom.out,col=4,lwd=2)
-legend(&quot;bottomright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-binom&quot;), # puts text in the legend
-       lty=c(2,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2),
-       cex = 1,
-       col=c(&quot;black&quot;,&quot;blue&quot;))
+
 plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash-poi_binom&#39;)
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$smash.poibinom.out,col=4,lwd=2)
@@ -799,8 +1439,42 @@ plot(result$est$x/ntri,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;EBayes thr
 lines(exp(p)/(1+exp(p)),lty=2)
 lines(result$est$eb.thresh.out,col=4,lwd=2)</code></pre>
 <p><img src="figure/poibinom.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9d6ca0733038eddc5baf08215189c57e4638d34a/docs/figure/poibinom.Rmd/unnamed-chunk-11-2.png" target="_blank">9d6ca07</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>When <span class="math inline">\(p\)</span> is unchanged, smaller number of trials lead to larger MSE for smashgen-binom, TI thresh and EB thresh, while this is not the case for smash-poi_binom. This seems strange. I think the reason is that with the increase of <span class="math inline">\(ntri\)</span>, the variance also increases. Hence, when we treat the data as poisson and try to use ash ‘estimating’ the <span class="math inline">\(\lambda_i\)</span>(or <span class="math inline">\(n_ip_i\)</span>), the estimates are not as good as the smaller variance cases.</p>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
