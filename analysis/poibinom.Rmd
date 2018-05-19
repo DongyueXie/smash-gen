@@ -324,7 +324,7 @@ for(i in 1:length(m)){
 p=f-3
 
 set.seed(111)
-ntri=rntri+44
+ntri=ntri+44
 result=simu_study(p,ntri=ntri)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
