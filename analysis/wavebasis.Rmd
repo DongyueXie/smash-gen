@@ -1,0 +1,144 @@
+---
+title: "Haar V.S. Symmlet 8"
+author: "Dongyue Xie"
+date: "May 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F,message = F)
+```
+
+# Introduction
+We have shown that smashgen-Poisson outperforms smash when smoothing Poisson data with nugget effect. One natural question is: is this true for Poisson data(no nugget effect)? 
+
+One limitation of `smash.pois` is that it can only use an analogue
+of the Haar wavelet transform to the Poisson data. So it may lose power when dealing with wavelet whose signal is better captured by more complex basis functions.
+
+In this analysis, we try to address the above two questions.
+
+What kind of wavelet is suitable for using Haar, which is for symmlet 8? Generally, symmlet 8 would give better decomposition for smoother signals, while for waves like steps or blocks, Haar would do better. We are now going to examine this.
+
+# Experiments
+
+We generate wavelet using different mean functions and applying Haar/symmlet 8 to obtain the wavelet coefficients. We then apply universal thresholding ($\sigma\sqrt{2\log(n)}$) to the coefficients and transform them back and compare the shrinked wavelet with the true mean functions. The closer they are, the better decomposition is. Signal to noise ratio is set to be 1. 
+
+```{r}
+library(wavethresh)
+library(smashr)
+library(smashrgen)
+
+
+waveti.u = function(x,noise.level,filter.number = 10, family = "DaubLeAsymm", min.level = 3) {
+    TT = length(x)
+    thresh = noise.level * sqrt(2 * log(TT))
+    x.w = wd(x, filter.number, family)
+    x.w.t = threshold(x.w, levels = (min.level):(x.w$nlevels - 1), policy = "manual", value = thresh, type = "hard")
+    x.w.t.r = wr(x.w.t)
+    return(x.w.t.r)
+}
+
+simu.basis=function(mu,snr=1,niter=1000,seed=1234){
+  set.seed(seed)
+  n=length(mu)
+  sigma=sqrt(var(mu)/snr)
+  haar=c()
+  symm=c()
+  for(i in 1:niter){
+    y=mu+rnorm(n,0,sigma)
+    haar[i]=mse(waveti.u(y,sigma,family='DaubExPhase',filter.number =  1),mu)
+    symm[i]=mse(waveti.u(y,sigma,family='DaubLeAsymm',filter.number =  8),mu)
+  }
+  return(data.frame(haar=haar,symm=symm))
+}
+# Step function
+mu=c(rep(3,64), rep(5, 64), rep(6, 64), rep(3, 64))
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Step')
+# blocks
+mu=DJ.EX(256,signal = 1)$blocks
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Blocks')
+# heaviSine
+mu=DJ.EX(256,signal = 1)$heavi
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='HeaviSine')
+# Blips
+f=function(x){return((0.32 + 0.6*x + 0.3*exp(−100*(x−0.3)^2))*ifelse(x>=0&x<=0.8,1,0)+
+(−0.28 + 0.6*x + 0.3*exp(−100*(x−1.3)^2))*ifelse(x>0.8&x<=1,1,0))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Blips')
+# doppler
+mu=doppler(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Doppler')
+# parabola
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Parabola')
+# Bumps
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Bumps')
+
+#Spike
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+mu = spike.f(t)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Spike')
+#Wave
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Wave')
+#time shifted
+g=function(x){return((1 − cos(pi*x))/2)}
+f=function(x){return(0.3*sin(3*pi*(g(g(g(g(x)))) + x) + 0.5))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type='l')
+boxplot(result,main='Time shifted sine')
+```
+
+# Summary
+
+Symmlet 8 gives better decomposition for smoother functions, while for functions with spike or sharp changes, the two basis have similar results. 
+
+Haar : Steps
+Symm8 : HeaviSine, Doppler, Parabola, Wave, Time shifted sine
+Draw/very similar: Blocks, Blips, Bumps, Spike
