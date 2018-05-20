@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-05-16" />
+
+<title>Haar V.S. Symmlet 8</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Haar V.S. Symmlet 8</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>May 16, 2018</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-05-19</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/0f77e70e2316c8a6495683f1fc203f04389b6bf3" target="_blank">0f77e70</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    log/
+
+Untracked files:
+    Untracked:  analysis/binom.Rmd
+    Untracked:  analysis/overdis.Rmd
+    Untracked:  analysis/smashtutorial.Rmd
+    Untracked:  data/treas_bill.csv
+    Untracked:  docs/figure/poiwave.Rmd/
+    Untracked:  docs/figure/smashtutorial.Rmd/
+
+Unstaged changes:
+    Modified:   analysis/ashpmean.Rmd
+    Modified:   analysis/nugget.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0f77e70e2316c8a6495683f1fc203f04389b6bf3/analysis/wavebasis.Rmd" target="_blank">0f77e70</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-19
+</td>
+<td style="text-align:left;">
+wave basis
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>We have shown that smashgen-Poisson outperforms smash when smoothing Poisson data with nugget effect. One natural question is: is this true for Poisson data(no nugget effect)?</p>
+<p>One limitation of <code>smash.pois</code> is that it can only use an analogue of the Haar wavelet transform to the Poisson data. So it may lose power when dealing with wavelet whose signal is better captured by more complex basis functions.</p>
+<p>In this analysis, we try to address the above two questions.</p>
+<p>What kind of wavelet is suitable for using Haar, which is for symmlet 8? Generally, symmlet 8 would give better decomposition for smoother signals, while for waves like steps or blocks, Haar would do better. We are now going to examine this.</p>
+</div>
+<div id="experiments" class="section level1">
+<h1>Experiments</h1>
+<p>We generate wavelet using different mean functions and applying Haar/symmlet 8 to obtain the wavelet coefficients. We then apply universal thresholding (<span class="math inline">\(\sigma\sqrt{2\log(n)}\)</span>) to the coefficients and transform them back and compare the shrinked wavelet with the true mean functions. The closer they are, the better decomposition is. Signal to noise ratio is set to be 1.</p>
+<pre class="r"><code>library(wavethresh)
+library(smashr)
+library(smashrgen)
+
+
+waveti.u = function(x,noise.level,filter.number = 10, family = &quot;DaubLeAsymm&quot;, min.level = 3) {
+    TT = length(x)
+    thresh = noise.level * sqrt(2 * log(TT))
+    x.w = wd(x, filter.number, family)
+    x.w.t = threshold(x.w, levels = (min.level):(x.w$nlevels - 1), policy = &quot;manual&quot;, value = thresh, type = &quot;hard&quot;)
+    x.w.t.r = wr(x.w.t)
+    return(x.w.t.r)
+}
+
+simu.basis=function(mu,snr=1,niter=1000,seed=1234){
+  set.seed(seed)
+  n=length(mu)
+  sigma=sqrt(var(mu)/snr)
+  haar=c()
+  symm=c()
+  for(i in 1:niter){
+    y=mu+rnorm(n,0,sigma)
+    haar[i]=mse(waveti.u(y,sigma,family=&#39;DaubExPhase&#39;,filter.number =  1),mu)
+    symm[i]=mse(waveti.u(y,sigma,family=&#39;DaubLeAsymm&#39;,filter.number =  8),mu)
+  }
+  return(data.frame(haar=haar,symm=symm))
+}
+# Step function
+mu=c(rep(3,64), rep(5, 64), rep(6, 64), rep(3, 64))
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Step&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># blocks
+mu=DJ.EX(256,signal = 1)$blocks
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Blocks&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># heaviSine
+mu=DJ.EX(256,signal = 1)$heavi
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;HeaviSine&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Blips
+f=function(x){return((0.32 + 0.6*x + 0.3*exp(−100*(x−0.3)^2))*ifelse(x&gt;=0&amp;x&lt;=0.8,1,0)+
+(−0.28 + 0.6*x + 0.3*exp(−100*(x−1.3)^2))*ifelse(x&gt;0.8&amp;x&lt;=1,1,0))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Blips&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># doppler
+mu=doppler(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Doppler&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># parabola
+r=function(x,c){return((x-c)^2*(x&gt;c)*(x&lt;=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Parabola&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Bumps
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Bumps&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Spike
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+mu = spike.f(t)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Spike&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-8.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Wave
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Wave&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-9.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#time shifted
+g=function(x){return((1 − cos(pi*x))/2)}
+f=function(x){return(0.3*sin(3*pi*(g(g(g(g(x)))) + x) + 0.5))}
+mu=f(1:256/256)
+result=simu.basis(mu)
+par(mfrow=c(1,2))
+plot(mu,type=&#39;l&#39;)
+boxplot(result,main=&#39;Time shifted sine&#39;)</code></pre>
+<p><img src="figure/wavebasis.Rmd/unnamed-chunk-1-10.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Symmlet 8 gives better decomposition for smoother functions, while for functions with spike or sharp changes, the two basis have similar results.</p>
+<p>Haar : Steps Symm8 : HeaviSine, Doppler, Parabola, Wave, Time shifted sine Draw/very similar: Blocks, Blips, Bumps, Spike</p>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.0 (2017-04-21)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 16299)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] smashrgen_0.1.0  caTools_1.17.1   ashr_2.2-7       smashr_1.1-5    
+[5] wavethresh_4.6.8 MASS_7.3-47     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.16        knitr_1.20          whisker_0.3-2      
+ [4] magrittr_1.5        workflowr_1.0.1     pscl_1.4.9         
+ [7] doParallel_1.0.11   SQUAREM_2017.10-1   lattice_0.20-35    
+[10] foreach_1.4.3       stringr_1.3.0       tools_3.4.0        
+[13] parallel_3.4.0      grid_3.4.0          data.table_1.10.4-3
+[16] R.oo_1.21.0         git2r_0.21.0        iterators_1.0.8    
+[19] htmltools_0.3.5     yaml_2.1.19         rprojroot_1.3-2    
+[22] digest_0.6.13       Matrix_1.2-9        bitops_1.0-6       
+[25] codetools_0.2-15    R.utils_2.6.0       evaluate_0.10      
+[28] rmarkdown_1.8       stringi_1.1.6       compiler_3.4.0     
+[31] backports_1.0.5     R.methodsS3_1.7.1   truncnorm_1.0-7    </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

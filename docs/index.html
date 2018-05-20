@@ -216,7 +216,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-14</p>
+<p><strong>Last updated:</strong> 2018-05-19</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -225,7 +225,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/bdddcf68864820ed082efbba0ab0596615f8966d" target="_blank">bdddcf6</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/0f77e70e2316c8a6495683f1fc203f04389b6bf3" target="_blank">0f77e70</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -235,15 +235,15 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
-    Untracked:  analysis/binomial.Rmd
     Untracked:  analysis/overdis.Rmd
-    Untracked:  docs/figure/poiunknown.Rmd/
-    Untracked:  docs/figure/sigma.Rmd/
+    Untracked:  analysis/smashtutorial.Rmd
+    Untracked:  data/treas_bill.csv
+    Untracked:  docs/figure/poiwave.Rmd/
+    Untracked:  docs/figure/smashtutorial.Rmd/
 
 Unstaged changes:
     Modified:   analysis/ashpmean.Rmd
     Modified:   analysis/nugget.Rmd
-    Modified:   analysis/poiunknown.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -272,6 +272,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0f77e70e2316c8a6495683f1fc203f04389b6bf3/analysis/index.Rmd" target="_blank">0f77e70</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-19
+</td>
+<td style="text-align:left;">
+wave basis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/4b2e5d1e79ecc1f2be16ae64efaca39fd39e7dc0/docs/index.html" target="_blank">4b2e5d1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+<td style="text-align:left;">
+add known version
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -581,6 +615,7 @@ Start workflowr project.
 <li><a href="sigma.html">Estimate nugget effect(<span class="math inline">\(\sigma\)</span>)</a></li>
 <li><a href="unknownvar.html"><code>smash.gaus.gen</code> to estimate unknown <span class="math inline">\(\sigma\)</span></a></li>
 <li><a href="poiunknown.html">Poisson nugget simulation(unknown <span class="math inline">\(\sigma\)</span>)</a>: <span class="math inline">\(\sigma\)</span> is unknown.</li>
+<li><a href="wavebasis.html">Haar vs Symmlet 8</a></li>
 <li><a href="poiwave.html">Poisson data, wavelet basis functions</a></li>
 <li><a href="binomial.html">Binomial nugget effect</a></li>
 <li><a href="poibinom.html">Poisson as approximate of Binomial?</a></li>
