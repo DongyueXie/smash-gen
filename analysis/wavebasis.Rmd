@@ -140,5 +140,7 @@ boxplot(result,main='Time shifted sine')
 Symmlet 8 gives better decomposition for smoother functions, while for functions with spike or sharp changes, the two basis have similar results. 
 
 Haar : Steps
+
 Symm8 : HeaviSine, Doppler, Parabola, Wave, Time shifted sine
+
 Draw/very similar: Blocks, Blips, Bumps, Spike
