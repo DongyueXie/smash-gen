@@ -285,6 +285,16 @@ lines(result$est$eb.thresh.out,col=4,lwd=2)
 ### Small $n$
 
 ```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+p=f-3
+
 set.seed(111)
 ntri=rpois(256,5)+1
 result=simu_study(p,ntri=ntri)
@@ -354,6 +364,13 @@ lines(result$est$eb.thresh.out,col=4,lwd=2)
 ### Small $n$
 
 ```{r}
+
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+p = spike.f(t)*2-2
+
 set.seed(111)
 ntri=rpois(256,5)+1
 result=simu_study(p,ntri=ntri)
