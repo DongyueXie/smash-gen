@@ -544,7 +544,7 @@ lines(mat[6,],col=4)
 Obviously, the present of 'outliers' makes the smashgen diverge. We now try the 'robust' version of smashgen, which sets the finest level wavelet cofficients to 0.
 
 ```{r}
-#result.robust=simu_study(m,1,nsimu = 6,return.x = T,robust = T)
+result.robust=simu_study(m,1,nsimu = 6,return.x = T,robust = T)
 mat=matrix(result.robust$est$smashgen.smashu.out$m.est,nrow=6,byrow = T)
 par(mfrow=c(3,2))
 plot(result.robust$est$x[1,],col='gray80')
