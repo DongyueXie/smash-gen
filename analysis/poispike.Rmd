@@ -183,4 +183,4 @@ x.fit=smash_gen(x,robust = T)
 plot(x,col='gray80',main='simga=1')
 lines(exp(m))
 lines(x.fit,col=4)
-``
+```
