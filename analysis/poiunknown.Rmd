@@ -22,27 +22,38 @@ library(ggplot2)
 
 simu_study=function(m,sigma,nsimu=100,seed=12345,
                     niter=1,family='DaubExPhase',ashp=TRUE,verbose=FALSE,robust=FALSE,
-                    tol=1e-2){
+                    tol=1e-2,return.x=F,filter.number=1){
   set.seed(seed)
   smash.err=c()
   smashgen.err=c()
   smashgen.smashu.err=c()
   smashgen.mle.err=c()
+  x.data=c()
+  smashgen.smashu.out=c()
   for(k in 1:nsimu){
     lamda=exp(m+rnorm(length(m),0,sigma))
     x=rpois(length(m),lamda)
+    x.data=rbind(x.data,x)
     #fit data
     smash.out=smash.poiss(x)
-    smashgen.out=smash_gen(x,dist_family = 'poisson',sigma = sigma)
-    smashu.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'smashu')
-    mle.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'mle')
+    smashgen.out=smash_gen(x,dist_family = 'poisson',sigma = sigma,ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
+    smashu.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'smashu',ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
+    smashgen.smashu.out=rbind(smashgen.smashu.out,smashu.out)
+    mle.out=smash_gen(x,dist_family = 'poisson',y_var_est = 'mle',
+                      ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
     smash.err[k]=mse(exp(m),smash.out)
     smashgen.err[k]=mse(exp(m),smashgen.out)
     smashgen.smashu.err[k]=mse(exp(m),smashu.out)
     smashgen.mle.err[k]=mse(exp(m),mle.out)
   }
-  return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x),err=data.frame(smash=smash.err,smashgen=smashgen.err,
+  if(return.x){
+    return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x.data,smashgen.smashu.out=smashgen.smashu.out),err=data.frame(smash=smash.err,smashgen=smashgen.err,
               smashgen.smashu=smashgen.smashu.err,smashgen.mle=smashgen.mle.err)))
+  }else{
+    return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x),err=data.frame(smash=smash.err,smashgen=smashgen.err,
+              smashgen.smashu=smashgen.smashu.err,smashgen.mle=smashgen.mle.err)))
+  }
+  
 }
 ```
 
@@ -67,13 +78,11 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
 ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
+
 
 ## $\sigma=1$
 
@@ -94,10 +103,7 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
@@ -121,10 +127,7 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
@@ -150,10 +153,7 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
@@ -177,11 +177,7 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
-
+round(apply(result$err,2,mean),4)
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
@@ -213,10 +209,7 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
@@ -238,24 +231,22 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
-
+round(apply(result$err,2,mean),4)
 #ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
-# Simulation 4: Spike mean
+# Simulation 4: Doppler
 
 ## $\sigma=0.1$
-```{r,warning=FALSE}
-spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
-    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
-n = 256
-t = 1:n/n
-m = spike.f(t)
 
+### Small range of $\mu$
+
+$\mu$ in around $(0.1,3.6)$.
+```{r,warning=FALSE}
+
+m=DJ.EX(256,signal = 1)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))
 result=simu_study(m,0.1)
 par(mfrow=c(2,2))
 plot(result$est$x,col='gray80',ylab='',main='smash')
@@ -271,16 +262,49 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
-#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+### Large range of $\mu$
+
+$\mu$ in around $(0.1,70)$.
+```{r,warning=FALSE}
+
+m=DJ.EX(256,signal = 20)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
 
 ## $\sigma=1$
+
+### Small range of $\mu$
+
+$\mu$ in around $(0.1,3.6)$.
 ```{r,warning=FALSE}
+
+m=DJ.EX(256,signal = 1)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))
 result=simu_study(m,1)
 par(mfrow=c(2,2))
 plot(result$est$x,col='gray80',ylab='',main='smash')
@@ -296,10 +320,256 @@ plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)
 
-mean(result$err$smash)
-mean(result$err$smashgen)
-mean(result$err$smashgen.smashu)
-mean(result$err$smashgen.mle)
+round(apply(result$err,2,mean),4)
 
-#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
 ```
+
+### Large range of $\mu$
+
+$\mu$ in around $(0.1,70)$.
+```{r,warning=FALSE}
+
+m=DJ.EX(256,signal = 20)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+# Simulation 5: Spike mean
+
+## $\sigma=0.1$
+
+### Small range of $\mu$
+
+$\mu$ in around $(0.1,6)$.
+
+```{r,warning=FALSE}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+range(exp(m))
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+### Large range of $\mu$
+
+$\mu$ in around $(0.1,60)$.
+
+```{r,warning=FALSE}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+range(exp(m))
+result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+## $\sigma=1$
+
+### Small range of $\mu$
+
+$\mu$ in around $(0.1,6)$.
+
+```{r,warning=FALSE}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+range(exp(m))
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+### Large range of $\mu$
+
+$\mu$ in around $(0.1,60)$.
+
+```{r,warning=FALSE}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+range(exp(m))
+result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col='gray80',ylab='',main='smash')
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: known sigma')
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: (sigma^2+s_t^2) from smash')
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col='gray80',ylab='',main='smashgen: sigma from mle')
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)
+
+round(apply(result$err,2,mean),4)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+```
+
+
+
+The performance of smashgen is worse than `smash.pois` for spike mean, especialy when the range of $\mu$ is small. Smashgen cannot capture the spikes properly which results in huge squared errors. The `smash.pois` could capture the spikes and it gives noisy fit for the low mean area so it's MSE is much smaller. Let's figure out the reason.
+
+One possible reason that causes the issue is that smashgen gives very large fit to the spikes.  
+
+Plots of smashgen smoothed wavelets. Blue curves are from smashgen and the black ones are truth.
+
+```{r}
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+
+result=simu_study(m,1,nsimu = 6,return.x = T)
+mat=matrix(result$est$smashgen.smashu.out$m.est,nrow=6,byrow = T)
+par(mfrow=c(3,2))
+plot(result$est$x[1,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[1,],col=4)
+
+plot(result$est$x[2,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[2,],col=4)
+
+plot(result$est$x[3,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[3,],col=4)
+
+plot(result$est$x[4,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat1[4,],col=4)
+
+plot(result$est$x[5,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[5,],col=4)
+
+plot(result$est$x[6,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[6,],col=4)
+```
+
+Obviously, the present of 'outliers' makes the smashgen diverge. We now try the 'robust' version of smashgen, which sets the finest level wavelet cofficients to 0.
+
+```{r}
+#result.robust=simu_study(m,1,nsimu = 6,return.x = T,robust = T)
+mat=matrix(result.robust$est$smashgen.smashu.out$m.est,nrow=6,byrow = T)
+par(mfrow=c(3,2))
+plot(result.robust$est$x[1,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[1,],col=4)
+
+plot(result.robust$est$x[2,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[2,],col=4)
+
+plot(result.robust$est$x[3,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[3,],col=4)
+
+plot(result.robust$est$x[4,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat1[4,],col=4)
+
+plot(result.robust$est$x[5,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[5,],col=4)
+
+plot(result.robust$est$x[6,],col='gray80')
+lines(exp(m),col='gray30')
+lines(mat[6,],col=4)
+```
+
+It seems that this does no help with the issue.
