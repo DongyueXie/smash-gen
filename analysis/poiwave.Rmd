@@ -1,0 +1,170 @@
+---
+title: "Poisson seqence and wave functions"
+author: "Dongyue Xie"
+date: "May 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning=F,message = F)
+```
+
+We have shown that smashgen-Poisson outperforms smash when smoothing Poisson data with nugget effect. One natural question is: is this true for Poisson data(no nugget effect)? 
+
+One limitation of `smash.pois` is that it can only use an analogue
+of the Haar wavelet transform to the Poisson data. So it may lose power when dealing with wavelet whose signal is better captured by more complex basis functions.
+
+In this analysis, we try to address the above two questions.
+
+We have seen in the previous [analysis](wavebasis.html) that Symmlet 8 gives better decomposition for smoother functions, while for functions with spike or sharp changes, the two basis have similar results. 
+
+```{r}
+simu_study_basis=function(mu,nsimu=100,seed=1234,niter=1,robust=F){
+  n=length(mu)
+  set.seed(seed)
+  smash.err=c()
+  gen.haar.err=c()
+  gen.sym.err=c()
+  for(iter in 1:nsimu){
+    y=rpois(n,mu)
+    smash.out=smash.poiss(y)
+    gen.haar.out=smash_gen(y,niter = niter,robust=robust)
+    gen.sym.out=smash_gen(y,wave_family = 'DaubLeAsymm',filter.number = 8,niter=niter,robust=robust)
+    smash.err[iter]=mse(smash.out,mu)
+    gen.haar.err[iter]=mse(gen.haar.out,mu)
+    gen.sym.err[iter]=mse(gen.sym.out,mu)
+  }
+  return(list(est=data.frame(smash=smash.out,smashgen.haar=gen.haar.out,smashgen.sym=gen.sym.out),err=data.frame(smash=smash.err,smashgen.haar=gen.haar.err,smashgen.sym=gen.sym.err)))
+}
+
+```
+
+# HeaviSine
+
+range of $\mu$ roughly $(0.3,7)$.
+```{r}
+library(smashrgen)
+
+mu=DJ.EX(256,signal = 2)$heavi
+mu=mu-min(mu)+0.3
+plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(0.1,67)$.
+```{r}
+mu=DJ.EX(256,signal = 20)$heavi
+mu=mu-min(mu)+0.1
+#plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+# Doppler
+range of $\mu$ roughly $(0.1,7)$.
+```{r}
+mu=DJ.EX(256,signal = 2)$doppler
+mu=mu-min(mu)+0.1
+plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(0.1,70)$.
+```{r}
+mu=DJ.EX(256,signal = 20)$doppler
+mu=mu-min(mu)+0.1
+#plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+# Parabola
+
+range of $\mu$ roughly $(0.1,6)$.
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*10-1.9
+plot(mu,type = 'l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(1,73)$.
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*120-23
+#plot(mu,type = 'l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+# Step
+
+range of $\mu$ roughly $(1,6)$.
+```{r}
+mu=c(rep(1,64), rep(3, 64), rep(6, 64), rep(1, 64))
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(1,80)$.
+```{r}
+mu=c(rep(1,64), rep(30, 64), rep(80, 64), rep(1, 64))
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+# Wave
+
+range of $\mu$ roughly $(0.25,6)$.
+```{r}
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f(1:256/256)
+mu=mu*10-2
+plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(0.3,75)$.
+```{r}
+mu=f(1:256/256)
+mu=mu*130-29
+#plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+# Time shifted sine
+
+range of $\mu$ roughly $(0.1,6)$.
+
+```{r}
+g=function(x){return((1 − cos(pi*x))/2)}
+f=function(x){return(0.3*sin(3*pi*(g(g(g(g(x)))) + x) + 0.5))}
+mu=f(1:256/256)
+mu=mu*10+3.1
+plot(mu,type='l')
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
+range of $\mu$ roughly $(0.1,120)$.
+```{r}
+mu=f(1:256/256)
+mu=mu*200+60.1
+#plot(mu)
+result=simu_study_basis(mu)
+boxplot(result$err)
+```
+
