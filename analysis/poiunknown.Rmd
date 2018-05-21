@@ -503,7 +503,7 @@ One possible reason that causes the issue is that smashgen gives very large fit 
 
 Plots of smashgen smoothed wavelets. Blue curves are from smashgen and the black ones are truth.
 
-```{r}
+```{r,warning=FALSE}
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
     (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
 n = 256
@@ -514,62 +514,65 @@ m=m*2+0.1
 m=log(m)
 
 result=simu_study(m,1,nsimu = 6,return.x = T)
-mat=matrix(result$est$smashgen.smashu.out$m.est,nrow=6,byrow = T)
 par(mfrow=c(3,2))
 plot(result$est$x[1,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[1,],col=4)
+lines(result$est$smashgen.smashu.out[1,],col=4)
 
 plot(result$est$x[2,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[2,],col=4)
+lines(result$est$smashgen.smashu.out[2,],col=4)
 
 plot(result$est$x[3,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[3,],col=4)
+lines(result$est$smashgen.smashu.out[3,],col=4)
 
 plot(result$est$x[4,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat1[4,],col=4)
+lines(result$est$smashgen.smashu.out[4,],col=4)
 
 plot(result$est$x[5,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[5,],col=4)
+lines(result$est$smashgen.smashu.out[5,],col=4)
 
 plot(result$est$x[6,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[6,],col=4)
+lines(result$est$smashgen.smashu.out[6,],col=4)
 ```
 
-Obviously, the present of 'outliers' makes the smashgen diverge. We now try the 'robust' version of smashgen, which sets the finest level wavelet cofficients to 0.
+Larger range of $\mu$.
 
-```{r}
-result.robust=simu_study(m,1,nsimu = 6,return.x = T,robust = T)
-mat=matrix(result.robust$est$smashgen.smashu.out$m.est,nrow=6,byrow = T)
+```{r,warning=FALSE}
+m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+
+result=simu_study(m,1,nsimu = 6,return.x = T)
 par(mfrow=c(3,2))
-plot(result.robust$est$x[1,],col='gray80')
+plot(result$est$x[1,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[1,],col=4)
+lines(result$est$smashgen.smashu.out[1,],col=4)
 
-plot(result.robust$est$x[2,],col='gray80')
+plot(result$est$x[2,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[2,],col=4)
+lines(result$est$smashgen.smashu.out[2,],col=4)
 
-plot(result.robust$est$x[3,],col='gray80')
+plot(result$est$x[3,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[3,],col=4)
+lines(result$est$smashgen.smashu.out[3,],col=4)
 
-plot(result.robust$est$x[4,],col='gray80')
+plot(result$est$x[4,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat1[4,],col=4)
+lines(result$est$smashgen.smashu.out[4,],col=4)
 
-plot(result.robust$est$x[5,],col='gray80')
+plot(result$est$x[5,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[5,],col=4)
+lines(result$est$smashgen.smashu.out[5,],col=4)
 
-plot(result.robust$est$x[6,],col='gray80')
+plot(result$est$x[6,],col='gray80')
 lines(exp(m),col='gray30')
-lines(mat[6,],col=4)
+lines(result$est$smashgen.smashu.out[6,],col=4)
 ```
 
-It seems that this does no help with the issue.
+See [here](poispike.html) for a saperate analysis on this issue.
