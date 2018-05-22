@@ -318,7 +318,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-17</p>
+<p><strong>Last updated:</strong> 2018-05-21</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -342,7 +342,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/f7f727377f9ad99b094e2460d0d928eed3375cc2" target="_blank">f7f7273</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/341aecb0eb5ec491599f01f63a148e84a01ee631" target="_blank">341aecb</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -352,17 +352,16 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
-    Untracked:  analysis/binomial.Rmd
     Untracked:  analysis/overdis.Rmd
     Untracked:  analysis/smashtutorial.Rmd
-    Untracked:  docs/figure/poiunknown.Rmd/
-    Untracked:  docs/figure/sigma.Rmd/
+    Untracked:  analysis/test.Rmd
+    Untracked:  data/treas_bill.csv
     Untracked:  docs/figure/smashtutorial.Rmd/
+    Untracked:  docs/figure/test.Rmd/
 
 Unstaged changes:
     Modified:   analysis/ashpmean.Rmd
     Modified:   analysis/nugget.Rmd
-    Modified:   analysis/unknownvar.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -391,6 +390,74 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/341aecb0eb5ec491599f01f63a148e84a01ee631/analysis/poiunknown.Rmd" target="_blank">341aecb</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+<td style="text-align:left;">
+poi unknown version revise
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ca1e50a9133a129299194d90f1b5bac23395cf74/analysis/poiunknown.Rmd" target="_blank">ca1e50a</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/f7be0e47816f7a4dd9680204ff435adcd5bf7b27/analysis/poiunknown.Rmd" target="_blank">f7be0e4</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/594edf16d57340a667103958020d8692d4f5738b/docs/poiunknown.html" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -455,27 +522,38 @@ library(ggplot2)</code></pre>
 
 simu_study=function(m,sigma,nsimu=100,seed=12345,
                     niter=1,family=&#39;DaubExPhase&#39;,ashp=TRUE,verbose=FALSE,robust=FALSE,
-                    tol=1e-2){
+                    tol=1e-2,return.x=F,filter.number=1){
   set.seed(seed)
   smash.err=c()
   smashgen.err=c()
   smashgen.smashu.err=c()
   smashgen.mle.err=c()
+  x.data=c()
+  smashgen.smashu.out=c()
   for(k in 1:nsimu){
     lamda=exp(m+rnorm(length(m),0,sigma))
     x=rpois(length(m),lamda)
+    x.data=rbind(x.data,x)
     #fit data
     smash.out=smash.poiss(x)
-    smashgen.out=smash_gen(x,dist_family = &#39;poisson&#39;,sigma = sigma)
-    smashu.out=smash_gen(x,dist_family = &#39;poisson&#39;,y_var_est = &#39;smashu&#39;)
-    mle.out=smash_gen(x,dist_family = &#39;poisson&#39;,y_var_est = &#39;mle&#39;)
+    smashgen.out=smash_gen(x,dist_family = &#39;poisson&#39;,sigma = sigma,ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
+    smashu.out=smash_gen(x,dist_family = &#39;poisson&#39;,y_var_est = &#39;smashu&#39;,ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
+    smashgen.smashu.out=rbind(smashgen.smashu.out,smashu.out)
+    mle.out=smash_gen(x,dist_family = &#39;poisson&#39;,y_var_est = &#39;mle&#39;,
+                      ashp=ashp,robust=robust,niter=niter,verbose = verbose,wave_family = family,filter.number = filter.number)
     smash.err[k]=mse(exp(m),smash.out)
     smashgen.err[k]=mse(exp(m),smashgen.out)
     smashgen.smashu.err[k]=mse(exp(m),smashu.out)
     smashgen.mle.err[k]=mse(exp(m),mle.out)
   }
-  return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x),err=data.frame(smash=smash.err,smashgen=smashgen.err,
+  if(return.x){
+    return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x.data,smashgen.smashu.out=smashgen.smashu.out),err=data.frame(smash=smash.err,smashgen=smashgen.err,
               smashgen.smashu=smashgen.smashu.err,smashgen.mle=smashgen.mle.err)))
+  }else{
+    return(list(est=list(smash.out=smash.out,smashgen.out=smashgen.out,smashu.out=smashu.out,mle.out=mle.out,x=x),err=data.frame(smash=smash.err,smashgen=smashgen.err,
+              smashgen.smashu=smashgen.smashu.err,smashgen.mle=smashgen.mle.err)))
+  }
+  
 }</code></pre>
 <div id="simulation-1-constant-trend-poisson-nugget" class="section level1">
 <h1>Simulation 1: Constant trend Poisson nugget</h1>
@@ -497,16 +575,71 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 0.0318433</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 0.02987159</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 0.03133639</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 0.02987841</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-3-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+         0.0318          0.0299          0.0313          0.0299 </code></pre>
 <pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-3-2.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="sigma1" class="section level2">
 <h2><span class="math inline">\(\sigma=1\)</span></h2>
@@ -526,14 +659,39 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 29.73513</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 0.233901</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 0.2236465</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 0.288378</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-4-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+        29.7351          0.2339          0.2236          0.2884 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 <div id="sigma2" class="section level2">
@@ -554,14 +712,39 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 8372.27</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 0.4991542</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 0.5850626</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 0.5626063</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-5-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+      8372.2699          0.4992          0.5851          0.5626 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 </div>
@@ -585,14 +768,39 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 368.4722</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 29.20088</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 31.90063</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 36.42519</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-6-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+       368.4722         29.2009         31.9006         36.4252 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 <div id="sigma1-1" class="section level2">
@@ -613,14 +821,39 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 223491.6</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 1658.668</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 1650.308</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 1660.029</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-7-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+     223491.625        1658.668        1650.308        1660.029 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 </div>
@@ -652,14 +885,39 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 23.25972</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 35.17066</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 276.9639</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 36.6836</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-8-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+        23.2597         35.1707        276.9639         36.6836 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 <div id="sigma1-2" class="section level2">
@@ -679,28 +937,54 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 6462.494</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 480.1025</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 471.428</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 856.6609</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-9-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+      6462.4945        480.1025        471.4280        856.6609 </code></pre>
 <pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
 </div>
 </div>
-<div id="simulation-4-spike-mean" class="section level1">
-<h1>Simulation 4: Spike mean</h1>
+<div id="simulation-4-doppler" class="section level1">
+<h1>Simulation 4: Doppler</h1>
 <div id="sigma0.1-3" class="section level2">
 <h2><span class="math inline">\(\sigma=0.1\)</span></h2>
-<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
-    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
-n = 256
-t = 1:n/n
-m = spike.f(t)
-
-result=simu_study(m,0.1)
+<div id="small-range-of-mu" class="section level3">
+<h3>Small range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,3.6)\)</span>.</p>
+<pre class="r"><code>m=DJ.EX(256,signal = 1)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))</code></pre>
+<pre><code>[1] 0.100000 3.565205</code></pre>
+<pre class="r"><code>result=simu_study(m,0.1)
 par(mfrow=c(2,2))
 plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
 lines(exp(m),col=1)
@@ -715,19 +999,50 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 0.6011156</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 12306.79</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 2931.977</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 12630.5</code></pre>
-<pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-10-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+         0.2596          0.3996          0.3716          0.4022 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="sigma1-3" class="section level2">
-<h2><span class="math inline">\(\sigma=1\)</span></h2>
-<pre class="r"><code>result=simu_study(m,1)
+<div id="large-range-of-mu" class="section level3">
+<h3>Large range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,70)\)</span>.</p>
+<pre class="r"><code>m=DJ.EX(256,signal = 20)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))</code></pre>
+<pre><code>[1]  0.10000 69.40411</code></pre>
+<pre class="r"><code>result=simu_study(m,0.1)
 par(mfrow=c(2,2))
 plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
 lines(exp(m),col=1)
@@ -742,15 +1057,317 @@ plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma
 lines(exp(m),col=1)
 lines(result$est$mle.out,col=4)</code></pre>
 <p><img src="figure/poiunknown.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean(result$err$smash)</code></pre>
-<pre><code>[1] 34.61266</code></pre>
-<pre class="r"><code>mean(result$err$smashgen)</code></pre>
-<pre><code>[1] 7991947410</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.smashu)</code></pre>
-<pre><code>[1] 4418267884</code></pre>
-<pre class="r"><code>mean(result$err$smashgen.mle)</code></pre>
-<pre><code>[1] 13168337929</code></pre>
-<pre class="r"><code>#ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/594edf16d57340a667103958020d8692d4f5738b/docs/figure/poiunknown.Rmd/unnamed-chunk-11-1.png" target="_blank">594edf1</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-17
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+        26.4471         19.4918         30.7811         20.0644 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="sigma1-3" class="section level2">
+<h2><span class="math inline">\(\sigma=1\)</span></h2>
+<div id="small-range-of-mu-1" class="section level3">
+<h3>Small range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,3.6)\)</span>.</p>
+<pre class="r"><code>m=DJ.EX(256,signal = 1)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))</code></pre>
+<pre><code>[1] 0.100000 3.565205</code></pre>
+<pre class="r"><code>result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+   2.053750e+01    2.449446e+06    4.712080e+05    1.169379e+07 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="large-range-of-mu-1" class="section level3">
+<h3>Large range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,70)\)</span>.</p>
+<pre class="r"><code>m=DJ.EX(256,signal = 20)$doppler
+m=log(m-min(m)+0.1)
+range(exp(m))</code></pre>
+<pre><code>[1]  0.10000 69.40411</code></pre>
+<pre class="r"><code>result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+      9545.5716        131.5410        138.5879        132.0084 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="simulation-5-spike-mean" class="section level1">
+<h1>Simulation 5: Spike mean</h1>
+<div id="sigma0.1-4" class="section level2">
+<h2><span class="math inline">\(\sigma=0.1\)</span></h2>
+<div id="small-range-of-mu-2" class="section level3">
+<h3>Small range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,6)\)</span>.</p>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+range(exp(m))</code></pre>
+<pre><code>[1] 0.100000 6.025467</code></pre>
+<pre class="r"><code>result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+          0.173    28345959.626      426017.822    28731128.430 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="large-range-of-mu-2" class="section level3">
+<h3>Large range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,60)\)</span>.</p>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+range(exp(m))</code></pre>
+<pre><code>[1]  0.10000 59.35467</code></pre>
+<pre class="r"><code>result=simu_study(m,0.1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+         3.3231         22.6070          7.3361         26.9417 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="sigma1-4" class="section level2">
+<h2><span class="math inline">\(\sigma=1\)</span></h2>
+<div id="small-range-of-mu-3" class="section level3">
+<h3>Small range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,6)\)</span>.</p>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+range(exp(m))</code></pre>
+<pre><code>[1] 0.100000 6.025467</code></pre>
+<pre class="r"><code>result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+   4.853800e+00    1.250056e+31    4.210894e+29    1.563109e+31 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="large-range-of-mu-3" class="section level3">
+<h3>Large range of <span class="math inline">\(\mu\)</span></h3>
+<p><span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,60)\)</span>.</p>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+range(exp(m))</code></pre>
+<pre><code>[1]  0.10000 59.35467</code></pre>
+<pre class="r"><code>result=simu_study(m,1)
+par(mfrow=c(2,2))
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smash.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: known sigma&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashgen.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: (sigma^2+s_t^2) from smash&#39;)
+lines(exp(m),col=1)
+lines(result$est$smashu.out,col=4)
+plot(result$est$x,col=&#39;gray80&#39;,ylab=&#39;&#39;,main=&#39;smashgen: sigma from mle&#39;)
+lines(exp(m),col=1)
+lines(result$est$mle.out,col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>round(apply(result$err,2,mean),4)</code></pre>
+<pre><code>          smash        smashgen smashgen.smashu    smashgen.mle 
+       704.7864         32.2910         48.5103       1280.0942 </code></pre>
+<pre class="r"><code>ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x=&#39;&#39;)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The performance of smashgen is worse than <code>smash.pois</code> for spike mean, especialy when the range of <span class="math inline">\(\mu\)</span> is small. Smashgen cannot capture the spikes properly which results in huge squared errors. The <code>smash.pois</code> could capture the spikes and it gives noisy fit for the low mean area so it’s MSE is much smaller. Let’s figure out the reason.</p>
+<p>One possible reason that causes the issue is that smashgen gives very large fit to the spikes.</p>
+<p>Plots of smashgen smoothed wavelets. Blue curves are from smashgen and the black ones are truth.</p>
+<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+m=log(m)
+
+result=simu_study(m,1,nsimu = 6,return.x = T)
+par(mfrow=c(3,2))
+plot(result$est$x[1,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[1,],col=4)
+
+plot(result$est$x[2,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[2,],col=4)
+
+plot(result$est$x[3,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[3,],col=4)
+
+plot(result$est$x[4,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[4,],col=4)
+
+plot(result$est$x[5,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[5,],col=4)
+
+plot(result$est$x[6,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[6,],col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Larger range of <span class="math inline">\(\mu\)</span>.</p>
+<pre class="r"><code>m = spike.f(t)
+
+m=m*20+0.1
+m=log(m)
+
+result=simu_study(m,1,nsimu = 6,return.x = T)
+par(mfrow=c(3,2))
+plot(result$est$x[1,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[1,],col=4)
+
+plot(result$est$x[2,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[2,],col=4)
+
+plot(result$est$x[3,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[3,],col=4)
+
+plot(result$est$x[4,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[4,],col=4)
+
+plot(result$est$x[5,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[5,],col=4)
+
+plot(result$est$x[6,],col=&#39;gray80&#39;)
+lines(exp(m),col=&#39;gray30&#39;)
+lines(result$est$smashgen.smashu.out[6,],col=4)</code></pre>
+<p><img src="figure/poiunknown.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>See <a href="poispike.html">here</a> for a saperate analysis on this issue.</p>
+</div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
