@@ -12,19 +12,34 @@ This project aims to study a generalization version of normal version of smash. 
 
 # Analysis
 
+## Intial investigation
+
 1. [Basic review](poireview.html)
 2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
 3. [A robust version of smash-gen](robustalgo.html): set the highest resolution wavelet coeffs to 0.
 4. [Treat Poisson data as normal](iter1.html): only do 1 iteration.
 5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
-6. [Estimate nugget effect($\sigma$)](sigma.html)
-7. [`smash.gaus.gen` to estimate unknown $\sigma$](unknownvar.html)
-8. [Poisson nugget simulation(unknown $\sigma$)](poiunknown.html): $\sigma$ is unknown.
-9. [Haar vs Symmlet 8](wavebasis.html)
-10. [Poisson data, wavelet basis functions](poiwave.html)
-11. [Binomial nugget effect](binomial.html)
-12. [Poisson as approximate of Binomial?](poibinom.html)
-13. [General GLM version?](glm.html)
+
+## Estimate nugget effect
+
+1. [Estimate nugget effect($\sigma$)](sigma.html)
+2. [`smash.gaus.gen` to estimate unknown $\sigma$](unknownvar.html)
+
+## Poisson data with unknown nugget effect
+
+1. [Poisson nugget simulation(unknown $\sigma$)](poiunknown.html): $\sigma$ is unknown.
+2. [Haar vs Symmlet 8](wavebasis.html)
+3. [Poisson data, wavelet basis functions](poiwave.html)
+4. [Poisson data, wavelet basis functions:larger mean function](poiwave2.html)
+
+## Binomial data with unknown nugget effect
+
+1. [Binomial nugget effect](binomial.html)
+2. [Poisson as approximate of Binomial?](poibinom.html)
+
+## Smoothing with covariates
+
+1. [Smoothing with covariates](glm.html)
 
 I have created a [R package](https://github.com/DongyueXie/smashrgen) for the functions used in the analysis.
 
