@@ -1,0 +1,191 @@
+---
+title: "Poisson seq and wave basis"
+author: "Dongyue Xie"
+date: "May 24, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F,message = F,fig.width = 10,fig.height = 8)
+```
+
+
+```{r}
+simu_study_basis=function(mu,nsimu=100,seed=1234,niter=1,robust=F){
+  n=length(mu)
+  set.seed(seed)
+  smash.err=c()
+  gen.haar.err=c()
+  gen.sym.err=c()
+  for(iter in 1:nsimu){
+    y=rpois(n,mu)
+    smash.out=smash.poiss(y)
+    gen.haar.out=smash_gen(y,niter = niter,robust=robust)
+    gen.sym.out=smash_gen(y,wave_family = 'DaubLeAsymm',filter.number = 8,niter=niter,robust=robust)
+    smash.err[iter]=mse(smash.out,mu)
+    gen.haar.err[iter]=mse(gen.haar.out,mu)
+    gen.sym.err[iter]=mse(gen.sym.out,mu)
+  }
+  return(list(est=data.frame(smash=smash.out,smashgen.haar=gen.haar.out,smashgen.sym=gen.sym.out,y=y),err=data.frame(smash=smash.err,smashgen.haar=gen.haar.err,smashgen.sym=gen.sym.err)))
+}
+
+```
+
+# HeaviSine
+
+```{r,fig.width=10,fig.height=8}
+library(smashrgen)
+library(ggplot2)
+mu=DJ.EX(256,signal = 7)$heavi
+mu=(mu-min(mu)+5)*10
+range(mu)
+result=simu_study_basis(mu)
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+# Doppler
+
+```{r}
+mu=DJ.EX(256,signal = 7)$doppler
+mu=(mu-min(mu)+5)*10
+range(mu)
+#plot(mu,type='l')
+result=simu_study_basis(mu)
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+
+# Parabola
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*250
+range(mu)
+result=simu_study_basis(mu)
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+# Step
+
+range of $\mu$ roughly $(1,6)$.
+```{r}
+mu=c(rep(50,64), rep(80, 64), rep(160, 64), rep(50, 64))
+result=simu_study_basis(mu)
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+
+# Wave
+
+
+```{r}
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f(1:256/256)
+mu=mu*250
+range(mu)
+result=simu_study_basis(mu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+
+# Time shifted sine
+
+
+```{r}
+g=function(x){return((1 − cos(pi*x))/2)}
+f=function(x){return(0.3*sin(3*pi*(g(g(g(g(x)))) + x) + 0.5))}
+mu=f(1:256/256)
+mu=mu*250+159
+range(mu)
+result=simu_study_basis(mu)
+
+ggplot(df2gg(result$err),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')
+
+par(mfrow=c(2,2))
+plot(result$est$y,col='gray80',main='smash')
+lines(result$est$smash,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Haar')
+lines(result$est$smashgen.haar,col=4)
+lines(mu)
+
+plot(result$est$y,col='gray80',main='smashgen-Symm8')
+lines(result$est$smashgen.sym,col=4)
+lines(mu)
+```
+
+
+
+
+
