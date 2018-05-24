@@ -184,3 +184,40 @@ plot(x,col='gray80',main='simga=1')
 lines(exp(m))
 lines(x.fit,col=4)
 ```
+
+# Increase 'sample size'!
+
+```{r}
+m = spike.f(t)
+
+m=m*100+100
+m=log(m)
+range(exp(m))
+
+par(mfrow=c(1,2))
+plot(1/exp(m)+0.1,type='l',col=4,ylim=c(0,11),main='sigma=0.1',ylab='variance')
+lines(rep(var(m),n),type='l')
+legend('bottomright',c('noise','signal'),lty=c(1,1),col=c(4,1))
+plot(1/exp(m)+1,type='l',col=4,ylim=c(0,11),main='sigma=1',ylab='variance')
+lines(rep(var(m),n),type='l')
+```
+
+```{r}
+par(mfrow=c(1,2))
+sigma=0.1
+set.seed(12345)
+lamda=exp(m+rnorm(length(m),0,sigma))
+x=rpois(length(m),lamda)
+x.fit=smash_gen(x,robust = T)
+plot(x,col='gray80',main='sigma=0.1')
+lines(exp(m))
+lines(x.fit,col=4)
+sigma=1
+set.seed(12345)
+lamda=exp(m+rnorm(length(m),0,sigma))
+x=rpois(length(m),lamda)
+x.fit=smash_gen(x,robust = T)
+plot(x,col='gray80',main='simga=1')
+lines(exp(m))
+lines(x.fit,col=4)
+```
