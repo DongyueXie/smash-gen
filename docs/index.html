@@ -216,7 +216,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-19</p>
+<p><strong>Last updated:</strong> 2018-05-24</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -225,7 +225,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/0f77e70e2316c8a6495683f1fc203f04389b6bf3" target="_blank">0f77e70</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/35cc4d6363e4cad62200000ecae240220848d9bb" target="_blank">35cc4d6</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -235,11 +235,14 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
+    Untracked:  analysis/covariate.Rmd
+    Untracked:  analysis/glm.Rmd
     Untracked:  analysis/overdis.Rmd
     Untracked:  analysis/smashtutorial.Rmd
+    Untracked:  analysis/test.Rmd
     Untracked:  data/treas_bill.csv
-    Untracked:  docs/figure/poiwave.Rmd/
     Untracked:  docs/figure/smashtutorial.Rmd/
+    Untracked:  docs/figure/test.Rmd/
 
 Unstaged changes:
     Modified:   analysis/ashpmean.Rmd
@@ -272,6 +275,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/35cc4d6363e4cad62200000ecae240220848d9bb/analysis/index.Rmd" target="_blank">35cc4d6</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-24
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ec873237d07a13705a74557c299a9e7b11541c07/analysis/index.Rmd" target="_blank">ec87323</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-24
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/511adb223e7d2cdabfa164c6b6c029741015275a/docs/index.html" target="_blank">511adb2</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-19
+</td>
+<td style="text-align:left;">
+wave basis
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -603,25 +657,49 @@ Start workflowr project.
 <div id="project-overview" class="section level1">
 <h1>Project Overview</h1>
 <p>This project aims to study a generalization version of normal version of smash. It is a version of wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.</p>
+<p>I have created a <a href="https://github.com/DongyueXie/smashrgen">R package</a> for the functions used in the analysis.</p>
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
+<div id="intial-investigation" class="section level2">
+<h2>Intial investigation</h2>
 <ol style="list-style-type: decimal">
 <li><a href="poireview.html">Basic review</a></li>
 <li><a href="nugget2.html">Poisson nugget simulation</a>: assume <span class="math inline">\(\sigma\)</span> is known.</li>
 <li><a href="robustalgo.html">A robust version of smash-gen</a>: set the highest resolution wavelet coeffs to 0.</li>
 <li><a href="iter1.html">Treat Poisson data as normal</a>: only do 1 iteration.</li>
 <li><a href="ashpmean.html">Expanding around ash posterior mean</a>: iterate once but the taylor series expansion is around ash posterior mean(applying ash to Poisson data first).</li>
+</ol>
+</div>
+<div id="estimate-nugget-effect" class="section level2">
+<h2>Estimate nugget effect</h2>
+<ol style="list-style-type: decimal">
 <li><a href="sigma.html">Estimate nugget effect(<span class="math inline">\(\sigma\)</span>)</a></li>
 <li><a href="unknownvar.html"><code>smash.gaus.gen</code> to estimate unknown <span class="math inline">\(\sigma\)</span></a></li>
+</ol>
+</div>
+<div id="poisson-data-with-unknown-nugget-effect" class="section level2">
+<h2>Poisson data with unknown nugget effect</h2>
+<ol style="list-style-type: decimal">
 <li><a href="poiunknown.html">Poisson nugget simulation(unknown <span class="math inline">\(\sigma\)</span>)</a>: <span class="math inline">\(\sigma\)</span> is unknown.</li>
 <li><a href="wavebasis.html">Haar vs Symmlet 8</a></li>
 <li><a href="poiwave.html">Poisson data, wavelet basis functions</a></li>
+<li><a href="poiwave2.html">Poisson data, wavelet basis functions:larger mean function</a></li>
+</ol>
+</div>
+<div id="binomial-data-with-unknown-nugget-effect" class="section level2">
+<h2>Binomial data with unknown nugget effect</h2>
+<ol style="list-style-type: decimal">
 <li><a href="binomial.html">Binomial nugget effect</a></li>
 <li><a href="poibinom.html">Poisson as approximate of Binomial?</a></li>
-<li><a href="glm.html">General GLM version?</a></li>
 </ol>
-<p>I have created a <a href="https://github.com/DongyueXie/smashrgen">R package</a> for the functions used in the analysis.</p>
+</div>
+<div id="smoothing-with-covariates" class="section level2">
+<h2>Smoothing with covariates</h2>
+<ol style="list-style-type: decimal">
+<li><a href="glm.html">Smoothing with covariates</a></li>
+</ol>
+</div>
 </div>
 <div id="credits" class="section level1">
 <h1>Credits</h1>
