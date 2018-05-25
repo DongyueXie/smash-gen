@@ -318,7 +318,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-21</p>
+<p><strong>Last updated:</strong> 2018-05-24</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -342,29 +342,28 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/c4e1e1e00ecb83322447d9efd150d9cde81f4b1a" target="_blank">c4e1e1e</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/f3f3fbf03aef55896b34b5be55d8403b62a99dd0" target="_blank">f3f3fbf</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    log/
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
+    Untracked:  analysis/covariate.Rmd
+    Untracked:  analysis/glm.Rmd
     Untracked:  analysis/overdis.Rmd
     Untracked:  analysis/smashtutorial.Rmd
     Untracked:  analysis/test.Rmd
     Untracked:  data/treas_bill.csv
-    Untracked:  docs/figure/poispike.Rmd/
     Untracked:  docs/figure/smashtutorial.Rmd/
     Untracked:  docs/figure/test.Rmd/
 
 Unstaged changes:
     Modified:   analysis/ashpmean.Rmd
     Modified:   analysis/nugget.Rmd
-    Modified:   analysis/poiunknown.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -393,6 +392,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/f3f3fbf03aef55896b34b5be55d8403b62a99dd0/analysis/poispike.Rmd" target="_blank">f3f3fbf</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-24
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/poispike.html" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+<td style="text-align:left;">
+solve poi spike
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -457,6 +490,36 @@ plot(x,col=&#39;gray80&#39;,main=&#39;sigma=0.1&#39;)
 lines(exp(m))
 lines(x.fit,col=4)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-1-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>To figure out the reason, we make the following plot.</p>
 <pre class="r"><code>x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
 y=log(x.ash)+(x-x.ash)/x.ash
@@ -473,6 +536,36 @@ legend(&#39;topright&#39;,
        
        cex=1,col=c(&#39;gray80&#39;,1,4,3,2,2))</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-2-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-2-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(\sigma=1\)</span></p>
 <pre class="r"><code>sigma=1
 set.seed(12345)
@@ -483,6 +576,36 @@ plot(x,col=&#39;gray80&#39;,main=&#39;sigma=1&#39;)
 lines(exp(m))
 lines(x.fit,col=4)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-3-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-3-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
 y=log(x.ash)+(x-x.ash)/x.ash
 plot(x,col=&#39;gray80&#39;,ylim = c(-2,10))
@@ -498,6 +621,36 @@ legend(&#39;topright&#39;,
        
        cex=1,col=c(&#39;gray80&#39;,1,4,3,2,2))</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-3-2.png" width="1152" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-3-2.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>If we use the robust version:</p>
 <pre class="r"><code>par(mfrow=c(1,2))
 sigma=0.1
@@ -517,6 +670,36 @@ plot(x,col=&#39;gray80&#39;,main=&#39;simga=1&#39;)
 lines(exp(m))
 lines(x.fit,col=4)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-4-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>It does not help for now.</p>
 <p>It seems that ash shrinks the data to the mean too much such that the normal approximated data consistently larger than what we want.</p>
 <p>If we don’t use the ash shinkage and use more iterations:</p>
@@ -538,6 +721,36 @@ plot(x,col=&#39;gray80&#39;,main=&#39;simga=1&#39;)
 lines(exp(m))
 lines(x.fit,col=4)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-5-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Still, the algorithm does not converge so we still see the huge spike on the plot.</p>
 <div id="signal-to-noise-ratio-is-too-high" class="section level1">
 <h1>Signal to noise ratio is too high!</h1>
@@ -549,6 +762,36 @@ legend(&#39;bottomright&#39;,c(&#39;noise&#39;,&#39;signal&#39;),lty=c(1,1),col=
 plot(1/exp(m)+1,type=&#39;l&#39;,col=4,ylim=c(0,11),main=&#39;sigma=1&#39;,ylab=&#39;variance&#39;)
 lines(rep(var(m),n),type=&#39;l&#39;)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-6-1.png" width="1344" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-6-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>#legend(&#39;bottomright&#39;,c(&#39;noise&#39;,&#39;signal&#39;),lty=c(1,1),col=c(4,1))</code></pre>
 <p>If we choose <span class="math inline">\(\mu\)</span> in around <span class="math inline">\((0.1,60)\)</span>:</p>
 <pre class="r"><code>m = spike.f(t)
@@ -564,6 +807,36 @@ legend(&#39;bottomright&#39;,c(&#39;noise&#39;,&#39;signal&#39;),lty=c(1,1),col=
 plot(1/exp(m)+1,type=&#39;l&#39;,col=4,ylim=c(0,11),main=&#39;sigma=1&#39;,ylab=&#39;variance&#39;)
 lines(rep(var(m),n),type=&#39;l&#39;)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-7-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Then the ‘spike’ issue disappears:</p>
 <pre class="r"><code>par(mfrow=c(1,2))
 sigma=0.1
@@ -583,6 +856,70 @@ plot(x,col=&#39;gray80&#39;,main=&#39;simga=1&#39;)
 lines(exp(m))
 lines(x.fit,col=4)</code></pre>
 <p><img src="figure/poispike.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/0df1e15b2a791078deefb06b95dfef6e374d418b/docs/figure/poispike.Rmd/unnamed-chunk-8-1.png" target="_blank">0df1e15</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-21
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
+<div id="increase-sample-size" class="section level1">
+<h1>Increase ‘sample size’!</h1>
+<pre class="r"><code>m = spike.f(t)
+
+m=m*100+100
+m=log(m)
+range(exp(m))</code></pre>
+<pre><code>[1] 100.0000 396.2733</code></pre>
+<pre class="r"><code>par(mfrow=c(1,2))
+plot(1/exp(m)+0.1,type=&#39;l&#39;,col=4,ylim=c(0,11),main=&#39;sigma=0.1&#39;,ylab=&#39;variance&#39;)
+lines(rep(var(m),n),type=&#39;l&#39;)
+legend(&#39;bottomright&#39;,c(&#39;noise&#39;,&#39;signal&#39;),lty=c(1,1),col=c(4,1))
+plot(1/exp(m)+1,type=&#39;l&#39;,col=4,ylim=c(0,11),main=&#39;sigma=1&#39;,ylab=&#39;variance&#39;)
+lines(rep(var(m),n),type=&#39;l&#39;)</code></pre>
+<p><img src="figure/poispike.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(1,2))
+sigma=0.1
+set.seed(12345)
+lamda=exp(m+rnorm(length(m),0,sigma))
+x=rpois(length(m),lamda)
+x.fit=smash_gen(x,robust = T)
+plot(x,col=&#39;gray80&#39;,main=&#39;sigma=0.1&#39;)
+lines(exp(m))
+lines(x.fit,col=4)
+sigma=1
+set.seed(12345)
+lamda=exp(m+rnorm(length(m),0,sigma))
+x=rpois(length(m),lamda)
+x.fit=smash_gen(x,robust = T)
+plot(x,col=&#39;gray80&#39;,main=&#39;simga=1&#39;)
+lines(exp(m))
+lines(x.fit,col=4)</code></pre>
+<p><img src="figure/poispike.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
