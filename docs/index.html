@@ -216,7 +216,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-05-24</p>
+<p><strong>Last updated:</strong> 2018-05-25</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -225,7 +225,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/35cc4d6363e4cad62200000ecae240220848d9bb" target="_blank">35cc4d6</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d810c3e022bb557f0af11c53ada61908e130dde5" target="_blank">d810c3e</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -235,9 +235,10 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
-    Untracked:  analysis/covariate.Rmd
     Untracked:  analysis/glm.Rmd
+    Untracked:  analysis/glmcovariate.Rmd
     Untracked:  analysis/overdis.Rmd
+    Untracked:  analysis/poiwavelog.Rmd
     Untracked:  analysis/smashtutorial.Rmd
     Untracked:  analysis/test.Rmd
     Untracked:  data/treas_bill.csv
@@ -275,6 +276,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/d810c3e022bb557f0af11c53ada61908e130dde5/analysis/index.Rmd" target="_blank">d810c3e</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-25
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/568cf1a4abd59ca86374d12245cfa291c55514da/docs/index.html" target="_blank">568cf1a</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-05-24
+</td>
+<td style="text-align:left;">
+edit
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -668,7 +703,7 @@ Start workflowr project.
 <li><a href="nugget2.html">Poisson nugget simulation</a>: assume <span class="math inline">\(\sigma\)</span> is known.</li>
 <li><a href="robustalgo.html">A robust version of smash-gen</a>: set the highest resolution wavelet coeffs to 0.</li>
 <li><a href="iter1.html">Treat Poisson data as normal</a>: only do 1 iteration.</li>
-<li><a href="ashpmean.html">Expanding around ash posterior mean</a>: iterate once but the taylor series expansion is around ash posterior mean(applying ash to Poisson data first).</li>
+<li><a href="ashpmean.html">Expanding around ash posterior mean</a>: iterate once but the Taylor series expansion is around ash posterior mean(applying ash to Poisson data first).</li>
 </ol>
 </div>
 <div id="estimate-nugget-effect" class="section level2">
@@ -685,6 +720,7 @@ Start workflowr project.
 <li><a href="wavebasis.html">Haar vs Symmlet 8</a></li>
 <li><a href="poiwave.html">Poisson data, wavelet basis functions</a></li>
 <li><a href="poiwave2.html">Poisson data, wavelet basis functions:larger mean function</a></li>
+<li><a href="poiwavelog.html">Poisson seq, compare smash and smashgen on the estimate of <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\log\mu\)</span></a></li>
 </ol>
 </div>
 <div id="binomial-data-with-unknown-nugget-effect" class="section level2">
@@ -697,7 +733,8 @@ Start workflowr project.
 <div id="smoothing-with-covariates" class="section level2">
 <h2>Smoothing with covariates</h2>
 <ol style="list-style-type: decimal">
-<li><a href="glm.html">Smoothing with covariates</a></li>
+<li><a href="covariate.html">Smoothing with covariates: Gaussian</a></li>
+<li><a href="glmcovariate.html">Smoothing with covariates: glm</a></li>
 </ol>
 </div>
 </div>
