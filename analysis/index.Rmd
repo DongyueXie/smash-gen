@@ -20,7 +20,7 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
 3. [A robust version of smash-gen](robustalgo.html): set the highest resolution wavelet coeffs to 0.
 4. [Treat Poisson data as normal](iter1.html): only do 1 iteration.
-5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
+5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the Taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
 
 ## Estimate nugget effect
 
@@ -33,6 +33,7 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 2. [Haar vs Symmlet 8](wavebasis.html)
 3. [Poisson data, wavelet basis functions](poiwave.html)
 4. [Poisson data, wavelet basis functions:larger mean function](poiwave2.html)
+5. [Poisson seq, compare smash and smashgen on the estimate of $\mu$ and $\log\mu$](poiwavelog.html)
 
 ## Binomial data with unknown nugget effect
 
@@ -41,7 +42,8 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 
 ## Smoothing with covariates
 
-1. [Smoothing with covariates](glm.html)
+1. [Smoothing with covariates: Gaussian](covariate.html)
+2. [Smoothing with covariates: glm](glmcovariate.html)
 
 
 # Credits
