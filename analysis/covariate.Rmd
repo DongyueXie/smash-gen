@@ -1,0 +1,115 @@
+---
+title: "Smoothing with covariate"
+author: "Dongyue Xie"
+date: "May 24, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+Now suppose at each $t$, $Y_t=X_t\beta+\mu_t+\epsilon_t$, where $\mu$ has smooth structure and $\epsilon_t\sim N(0,\sigma^2_t)$. 
+
+# Method
+
+1. Fit $Y=X\gamma+\epsilon$ using ordinary least square and compute residual $e=Y-X\hat{\gamma}$.
+2. Apply `smash.gaus` to $e$ and obtain $\hat\mu_t, \hat\sigma_t$, $t=1,2,\dots,T$.
+3. Estimate $\beta$ by ordinary least square or weighted least square: $Y-\hat\mu=X\beta+\hat\epsilon$, where $\hat\epsilon_t\sim N(0,\hat\sigma_t^2)$.
+
+Rationale: the stucture of $\mu$ cannot be explained by the ordinary least square in step 1 so it is contained in the residual $e$. Thus $e$ consists of $\mu$ and noises. Using `smash.gaus` recovers $\mu$ and estimates $\sigma^2$. 
+
+# Experiments
+
+We now show the performance of smash when covariates exist. The signal-to-noise ratio(SNR) is fixed at 2.
+
+(Note: The SNR is the ratio of
+the sample standard deviation of the signal (although it is not random) to the
+standard deviation of the added noise. If the signal is constant, the SNR is mean(signal) to standard deviation of the added noise)
+
+The length of sequence is $n=256$.
+
+```{r}
+simu_study_x=function(mu,beta,snr=2,nsimu=100,filter.number=1,family='DaubExPhase',seed=1234){
+  set.seed(1234)
+  n=length(mu)
+  p=length(beta)
+  X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+  cte=X%*%beta
+  sd.noise=sd(mu)/snr
+  sd.noise=ifelse(sd.noise==0,mean(mu),sd.noise)
+  mse.mu=c()
+  mse.beta=c()
+  for(i in 1:nsimu){
+    y=cte+mu+rnorm(n,0,sd.noise)
+    s.out=smash.gaus.x(X,y,filter.number,family)
+    mu.hat=s.out$mu.hat
+    beta.hat=s.out$beta.hat
+    mse.mu[i]=mse(mu,mu.hat)
+    mse.beta[i]=mse(beta,beta.hat)
+  }
+  return(list(mse.mu=mse.mu,mse.beta=mse.beta,mu.hat=mu.hat,beta.hat=beta.hat,y=y))
+}
+```
+
+## Step trend
+
+```{r}
+library(smashrgen)
+library(ggplot2)
+
+n=256
+
+mu=c(rep(1,64),rep(2,64),rep(5,64),rep(1,64))
+beta=c(1,2,3,4,5)
+beta=beta/norm(beta,'2')
+result=simu_study_x(mu,beta)
+boxplot(result$mse.mu,main='Estimate of mu',ylab='MSE')
+boxplot(result$mse.beta,main='Estimate of beta',ylab='MSE')
+plot(result$y,col='gray80')
+lines(mu)
+lines(result$mu.hat,col=4)
+
+plot(beta,result$beta.hat,xlab = 'True beta', ylab = 'Beta hat')
+abline(0,1)
+
+```
+
+## Wave
+
+```{r}
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f((1:n)/n)
+
+result=simu_study_x(mu,beta,filter.number = 8,family='DaubLeAsymm')
+boxplot(result$mse.mu,main='Estimate of mu',ylab='MSE')
+boxplot(result$mse.beta,main='Estimate of beta',ylab='MSE')
+plot(result$y,col='gray80')
+lines(mu)
+lines(result$mu.hat,col=4)
+
+plot(beta,result$beta.hat,xlab = 'True beta', ylab = 'Beta hat')
+abline(0,1)
+
+```
+
+## Parabola
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:n/n)
+
+result=simu_study_x(mu,beta,filter.number = 8,family='DaubLeAsymm')
+boxplot(result$mse.mu,main='Estimate of mu',ylab='MSE')
+boxplot(result$mse.beta,main='Estimate of beta',ylab='MSE')
+plot(result$y,col='gray80')
+lines(mu)
+lines(result$mu.hat,col=4)
+
+plot(beta,result$beta.hat,xlab = 'True beta', ylab = 'Beta hat')
+abline(0,1)
+
+```
