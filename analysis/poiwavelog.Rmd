@@ -1,0 +1,249 @@
+---
+title: "Poisson wave, wavelet basis and scale of mu"
+author: "Dongyue Xie"
+date: "May 25, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+Compare smash and smashgen on estimating $\mu$ and $\log\mu$. $T=256$, 100 runs. 
+
+```{r,include=FALSE}
+library(smashrgen)
+library(ggplot2)
+simu_study_scale=function(mu,nsimu=100,seed=1234){
+  n=length(mu)
+  logmu=log(mu)
+  set.seed(seed)
+  smash.mu.err=c()
+  haar.mu.err=c()
+  sym.mu.err=c()
+  smash.logmu.err=c()
+  haar.logmu.err=c()
+  sym.logmu.err=c()
+  for(iter in 1:nsimu){
+    y=rpois(n,mu)
+    
+    smash.logmu.out=smash.poiss(y,log = T)
+    haar.logmu.out=smash_gen_lite(y,log_scale =T)
+    sym.logmu.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8,log_scale = T)
+    smash.logmu.err[iter]=mse(smash.logmu.out,logmu)
+    haar.logmu.err[iter]=mse(haar.logmu.out,logmu)
+    sym.logmu.err[iter]=mse(sym.logmu.out,logmu)
+    
+    smash.mu.out=exp(smash.logmu.out)
+    haar.mu.out=exp(haar.logmu.out)
+    sym.mu.out=exp(sym.logmu.out)
+    smash.mu.err[iter]=mse(smash.mu.out,mu)
+    haar.mu.err[iter]=mse(haar.mu.out,mu)
+    sym.mu.err[iter]=mse(sym.mu.out,mu)
+    
+    
+  }
+  return(list(est.mu=data.frame(smash=smash.mu.out,smashgen.haar=haar.mu.out,smashgen.sym=sym.mu.out,y=y),est.logmu=data.frame(smash=smash.logmu.out,smashgen.haar=haar.logmu.out,smashgen.sym=sym.logmu.out,y=y),err.mu=data.frame(smash=smash.mu.err,smashgen.haar=haar.mu.err,smashgen.sym=sym.mu.err),err.logmu=data.frame(smash=smash.logmu.err,smashgen.haar=haar.logmu.err,smashgen.sym=sym.logmu.err)))
+}
+```
+
+# Step Function
+
+## Mean function Range:(1,50)
+
+```{r}
+mu=c(rep(1,64), rep(20, 64), rep(50, 64), rep(1, 64))
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+```
+
+## Mean function Range:(50,100)
+
+```{r}
+mu=c(rep(50,64), rep(70, 64), rep(100, 64), rep(50, 64))
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+```
+
+# HeaviSine
+
+## Range: (1,31)
+
+```{r}
+mu=DJ.EX(256,signal = 9)$heavi
+mu=mu-min(mu)+1
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+```
+
+## Range: (50,100)
+
+```{r}
+mu=DJ.EX(256,signal = 15)$heavi
+mu=mu-min(mu)+50
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+```
+
+# Doppler
+
+## Rnage: (1,32)
+```{r}
+mu=DJ.EX(256,signal = 9)$doppler
+mu=mu-min(mu)+1
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+## Rnage: (50,100)
+```{r}
+mu=DJ.EX(256,signal = 15)$doppler
+mu=mu-min(mu)+50
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+# Parabola
+
+## Range: (1,31)
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*50-9
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+
+## Range: (50,100)
+
+```{r}
+mu=f(1:256/256)
+mu=mu*65+47
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+
+# Wave
+
+## Range: (1,30)
+
+```{r}
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f(1:256/256)
+mu=mu*50-10
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+## Range: (50,96)
+
+```{r}
+mu=f(1:256/256)
+mu=mu*80+32
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+
+# Bumps
+
+## Range: (1,33)
+
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f*6+1
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
+
+## Range: (50,104)
+
+```{r}
+mu=f*10+50
+
+result=simu_study_scale(mu,nsimu=100)
+ggplot(df2gg(result$err.logmu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('log mu')
+ggplot(df2gg(result$err.mu),aes(x=method,y=MSE))+geom_boxplot(aes(fill=method))+labs(x='')+ggtitle('mu')
+
+ggplot(result$est.mu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=mu,colour='mu'))+ggtitle('mu')+labs(x='',y='')+geom_point(aes(y=y),color='gray70',shape=1)+scale_colour_manual(values=c('black',"red", "green",'blue'))
+
+ggplot(result$est.logmu,aes(1:256))+geom_line(aes(y=smash,colour='smash'))+geom_line(aes(y=smashgen.haar,colour='smashgen.haar'))+geom_line(aes(y=smashgen.sym,colour='smashgen.symm8'))+geom_line(aes(y=log(mu),colour='log mu'))+ggtitle('log mu')+labs(x='',y='')+scale_colour_manual(values=c('black',"red", "green",'blue'))
+```
