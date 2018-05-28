@@ -1,0 +1,305 @@
+---
+title: "Smoothing with covariate, GLM version"
+author: "Dongyue Xie"
+date: "May 25, 2018"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+# Introduction
+
+Consider estimating spatially-structured $\mu_t$ from Poisson sequence: $$Y_t\sim Poisson(\lambda_t).$$ We assume that $\lambda_t$ satisfies $$\log(\lambda_t)=X_t'\beta+\mu_t$$, where $X_t$ are $p-$dimensional covaraites and $\beta$ is unknown coefficients.
+
+For Bionomial sequence: $$Y_t\sim Binomial(n_t,p_t).$$ Assume that $$logit(p_t)=X_t'\beta+\mu_t$$, where $\mu_t$ has smooth structure.
+
+# Method
+
+Apply `ash` to $Y_t$ and let the posterior mean be $\tilde\lambda_t$. Define $\tilde Y_t=\log(\tilde\lambda_t)+\frac{Y_t-\tilde\lambda_t}{\tilde\lambda_t}$ and apply [smash.gaus allowing covariates](covariate.html) method to $\tilde Y_t$, which gives $\hat\mu_t$ and $\hat\beta$. The recovered smooth mean structure is given by $\exp(\hat\mu_t)$.
+
+Similarly to Binomial data, $\tilde Y_t=logit(\tilde p_t)+\frac{Y_t/n_t-\tilde p_t}{\tilde p_t(1-\tilde p_t)}$.
+
+# Simulations
+
+**Data generation**
+
+Poisson sequence: Given $\mu_t, t=1,2,\dots,T$, $\lambda_t=\exp(\mu_t+X_t'\beta+N(0,\sigma^2))$, generate $Y_t\sim Poisson(\lambda_t)$.  
+
+Bionimial sequence($p$): Given $\mu_t, t=1,2,\dots,T$,$p_t=logit(\mu_t+X_t'\beta+N(0,\sigma^2))$, generate $Y_t\sim Binomial(n_t,p_t)$, where $n_t$ is given. 
+
+For each case, we run 3 times of simulation and plot the fitted curve.
+
+## Poisson Seq
+
+The length of sequence $T$ is set to be 256, covariates $X_t$ are generate from $N(0,I_{p\times p})$, and $\beta$ is chosen to be $(1,2,-3,-4,5)$ then normalized to have unit norm.
+
+```{r}
+simu_study_poix=function(mu,beta,sigma=1,snr=2,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
+  set.seed(1234)
+  n=length(mu)
+  p=length(beta)
+  X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+  Xbeta=X%*%beta
+  mu.est=c()
+  beta.est=c()
+  y.data=c()
+  #lambda.null=exp(mu+Xbeta)
+  #var.st=1/mean(lambda.null)
+  #var.mu=var(mu)
+  #sigma=sqrt(max(var.mu/(snr^2)-var.st,0))
+  for(s in 1:nsimu){
+    lambda=exp(mu+Xbeta+rnorm(n,0,sigma))
+    yt=rpois(n,lambda)
+    fit=smash_gen_x_lite(yt,X,wave_family = family,filter.number = filter.number,dist_family = 'poisson')
+    mu.est=rbind(mu.est,fit$mu.est)
+    beta.est=rbind(beta.est,fit$beta.est)
+    y.data=rbind(y.data,yt)
+  }
+  return(list(mu.est=mu.est,beta.est=beta.est,y=y.data,X=X,sigma=sigma))
+}
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+```
+
+### Step
+
+```{r}
+mu=c(rep(2,128), rep(5, 128), rep(6, 128), rep(2, 128))
+result=simu_study_poix(mu,beta)
+plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(mu), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(exp(mu),lty=2)
+
+plot(log(result$mu.est[1,]),type='l',col=2,ylab = '',main='Estimated mean function(log mu), 3 runs')
+lines(log(result$mu.est[2,]),col=3)
+lines(log(result$mu.est[3,]),col=4)
+lines(mu,lty=2)
+
+plot(beta,result$beta.est[1,],col=2,pch=1,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[3,],col=4,pch=3,type='p')
+abline(0,1,lty=2)
+```
+
+### Bumps
+
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f*1.2
+
+result=simu_study_poix(mu,beta)
+plot(exp(mu),lty=2,ylab = '',main='Estimated mean function(mu), 3 runs',type = 'l')
+lines(result$mu.est[1,],type='l',col=2)
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+
+plot(mu,lty=2,ylab = '',main='Estimated mean function(log mu), 3 runs',type = 'l')
+lines(log(result$mu.est[1,]),type='l',col=2)
+lines(log(result$mu.est[2,]),col=3)
+lines(log(result$mu.est[3,]),col=4)
+
+plot(beta,result$beta.est[3,],col=4,pch=3,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[1,],col=2,pch=1,type='p')
+abline(0,1,lty=2)
+```
+
+### Parabola
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*7
+
+result=simu_study_poix(mu,beta,filter.number = 8,family = 'DaubLeAsymm')
+plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(mu), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(exp(mu),lty=2)
+
+plot(log(result$mu.est[1,]),type='l',col=2,ylab = '',main='Estimated mean function(log mu), 3 runs')
+lines(log(result$mu.est[2,]),col=3)
+lines(log(result$mu.est[3,]),col=4)
+lines(mu,lty=2)
+
+plot(beta,result$beta.est[1,],col=2,pch=1,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[3,],col=4,pch=3,type='p')
+abline(0,1,lty=2)
+```
+
+### wave
+
+```{r}
+f=function(x){return(0.5 + 2*cos(4*pi*x) + 2*cos(24*pi*x))}
+mu=f(1:256/256)
+mu=mu-min(mu)
+
+result=simu_study_poix(mu,beta,filter.number = 8,family = 'DaubLeAsymm')
+plot(exp(mu),lty=2,ylab = '',main='Estimated mean function(mu), 3 runs',type = 'l')
+lines(result$mu.est[1,],type='l',col=2)
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+
+plot(mu,lty=2,ylab = '',main='Estimated mean function(log mu), 3 runs',type = 'l')
+lines(log(result$mu.est[1,]),type='l',col=2)
+lines(log(result$mu.est[2,]),col=3)
+lines(log(result$mu.est[3,]),col=4)
+
+plot(beta,result$beta.est[1,],col=2,pch=1,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[3,],col=4,pch=3,type='p')
+abline(0,1,lty=2)
+
+```
+
+## Binomial Seq
+
+The length of sequence $T$ is set to be 256, covariates $X_t$ are generate from $N(0,I_{p\times p})$, and $\beta$ is chosen to be $(1,2,-3,-4,5)$ then normalized to have unit norm. $n_t$ is from Poisson(50).
+
+```{r,include=FALSE}
+logit=function(x) log(x/(1-x))
+logistic=function(x) exp(x)/(1+exp(x))
+
+simu_study_binomx=function(mu,beta,ntri,sigma=1,snr=2,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
+  set.seed(1234)
+  n=length(mu)
+  p=length(beta)
+  X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+  Xbeta=X%*%beta
+  mu.est=c()
+  beta.est=c()
+  y.data=c()
+  #lambda.null=logistic(mu+Xbeta)
+  #var.st=1/mean(ntri*mean(lambda.null)*(1-mean(lambda.null)))
+  #var.mu=var(mu)
+  #sigma=sqrt(max(var.mu/(snr^2)-var.st,0))
+  for(s in 1:nsimu){
+    p=logistic(mu+Xbeta+rnorm(n,0,sigma))
+    yt=rbinom(n,ntri,p)
+    fit=smash_gen_x_lite(yt,X,ntri=ntri,wave_family = family,
+                         filter.number = filter.number,dist_family = 'binomial')
+    mu.est=rbind(mu.est,fit$mu.est)
+    beta.est=rbind(beta.est,fit$beta.est)
+    y.data=rbind(y.data,yt)
+  }
+  return(list(mu.est=mu.est,beta.est=beta.est,y=y.data,X=X))
+}
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+set.seed(111);ntri=rpois(256,50)
+```
+
+### Step
+
+```{r}
+mu=c(rep(-3,128), rep(0, 128), rep(3, 128), rep(-3, 128))
+result=simu_study_binomx(mu,beta,ntri)
+plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(p), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(logistic(mu),lty=2)
+
+plot(logit(result$mu.est[1,]),type='l',col=2,ylab = '',main='Estimated mean function(logit p), 3 runs')
+lines(logit(result$mu.est[2,]),col=3)
+lines(logit(result$mu.est[3,]),col=4)
+lines(mu,lty=2)
+
+plot(beta,result$beta.est[3,],col=4,pch=3,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[1,],col=2,pch=1,type='p')
+abline(0,1,lty=2)
+```
+
+### Bumps
+
+```{r}
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f-3
+
+result=simu_study_binomx(mu,beta,ntri)
+plot(logistic(mu),lty=2,type='l',ylab = '',main='Estimated mean function(p), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(result$mu.est[1,],col=2)
+
+plot(mu,lty=2,type='l',ylab = '',main='Estimated mean function(logit p), 3 runs',ylim=c(-4,3))
+lines(logit(result$mu.est[2,]),col=3)
+lines(logit(result$mu.est[3,]),col=4)
+lines(logit(result$mu.est[1,]),col=2)
+
+plot(beta,result$beta.est[2,],col=3,pch=2,xlab = 'True beta',ylab = 'Estimated beta')
+lines(beta,result$beta.est[3,],col=4,pch=3,type='p')
+lines(beta,result$beta.est[1,],col=2,pch=1,type='p')
+abline(0,1,lty=2)
+```
+
+### Parabola
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=(mu-min(mu))*10-3
+
+result=simu_study_binomx(mu,beta,ntri,filter.number = 8,family = 'DaubLeAsymm')
+plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(p), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(logistic(mu),lty=2)
+
+plot(logit(result$mu.est[1,]),type='l',col=2,ylab = '',main='Estimated mean function(logit p), 3 runs')
+lines(logit(result$mu.est[2,]),col=3)
+lines(logit(result$mu.est[3,]),col=4)
+lines(mu,lty=2)
+
+plot(beta,result$beta.est[3,],col=4,pch=3,xlab = 'True beta',ylab = 'Estimated beta',ylim=c(-0.5,0.85))
+lines(beta,result$beta.est[2,],col=3,pch=2,type='p')
+lines(beta,result$beta.est[1,],col=2,pch=1,type='p')
+abline(0,1,lty=2)
+```
+
+### wave
+
+```{r}
+f=function(x){return(0.5 + 2*cos(4*pi*x) + 2*cos(24*pi*x))}
+mu=f(1:256/256)
+
+result=simu_study_binomx(mu,beta,ntri,filter.number = 8,family = 'DaubLeAsymm')
+plot(logistic(mu),lty=2,type='l',ylab = '',main='Estimated mean function(p), 3 runs')
+lines(result$mu.est[2,],col=3)
+lines(result$mu.est[3,],col=4)
+lines(result$mu.est[1,],col=2)
+
+plot(mu,lty=2,type='l',ylab = '',main='Estimated mean function(logit p), 3 runs')
+lines(logit(result$mu.est[2,]),col=3)
+lines(logit(result$mu.est[3,]),col=4)
+lines(logit(result$mu.est[1,]),col=2)
+
+plot(beta,result$beta.est[2,],col=3,pch=2,xlab = 'True beta',ylab = 'Estimated beta',ylim=c(-0.7,0.6))
+lines(beta,result$beta.est[3,],col=4,pch=3,type='p')
+lines(beta,result$beta.est[1,],col=2,pch=1,type='p')
+abline(0,1,lty=2)
+
+```
