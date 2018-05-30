@@ -43,7 +43,8 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 ## Smoothing with covariates
 
 1. [Smoothing with covariates: Gaussian](covariate.html)
-2. [Smoothing with covariates: glm](glmcovariate.html)
+2. [Smoothing with covariates: Gaussian, iterative version](covariateiter.html)
+3. [Smoothing with covariates: glm](glmcovariate.html)
 
 
 # Credits
