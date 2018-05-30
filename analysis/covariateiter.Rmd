@@ -1,0 +1,147 @@
+---
+title: "Smoothing with covariates, iterative algorithm"
+author: "Dongyue Xie"
+date: "May 30, 2018"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+An iterative version of the algorithm described [here](covariate.html). The iterative version is 1. estimate $\mu$ and $\sigma$ from residual using `smash.gaus`; 2.  estimate $\beta$ and set residual=$Y-X\hat\beta$.
+
+# Experiments
+
+We show the performance of smashgen(iterative version) when covariates exist. The signal-to-noise ratio(SNR) is fixed at 2. The length of sequence is $n=256$.
+
+```{r}
+simu_study_x=function(mu,beta,snr=2,nsimu=100,filter.number=1,family='DaubExPhase',seed=1234){
+  set.seed(1234)
+  n=length(mu)
+  p=length(beta)
+  X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+  cte=X%*%beta
+  sd.noise=sd(mu)/snr
+  sd.noise=ifelse(sd.noise==0,mean(mu),sd.noise)
+  mse.mu=c()
+  mse.beta=c()
+  mse.mu.iter=c()
+  mse.beta.iter=c()
+  for(i in 1:nsimu){
+    y=cte+mu+rnorm(n,0,sd.noise)
+    #########
+    s.out=smash.gaus.x(X,y,filter.number=filter.number,family=family)
+    mu.hat=s.out$mu.hat
+    beta.hat=s.out$beta.hat
+    mse.mu[i]=mse(mu,mu.hat)
+    mse.beta[i]=mse(beta,beta.hat)
+    #########
+    s.out.iter=smash.gaus.x(X,y,filter.number=filter.number,family=family,niter=30)
+    mu.hat.iter=s.out.iter$mu.hat
+    beta.hat.iter=s.out.iter$beta.hat
+    mse.mu.iter[i]=mse(mu,mu.hat.iter)
+    mse.beta.iter[i]=mse(beta,beta.hat.iter)
+  }
+  return(list(est=list(mu.hat=mu.hat,beta.hat=beta.hat,y=y,mu.hat.iter=mu.hat.iter,beta.hat.iter=beta.hat.iter),err=data.frame(mse.mu=mse.mu,mse.mu.iter=mse.mu.iter,mse.beta=mse.beta,mse.beta.iter=mse.beta.iter)))
+}
+```
+
+## Step trend
+
+```{r}
+library(smashrgen)
+library(ggplot2)
+
+n=256
+
+mu=c(rep(1,64),rep(2,64),rep(5,64),rep(1,64))
+beta=c(1,-2,-3,4,5)
+beta=beta/norm(beta,'2')
+result=simu_study_x(mu,beta)
+par(mfrow=c(1,2))
+boxplot(result$err[,1:2],main='Estimation of mu',ylab='MSE')
+#boxplot(result$err$mse.mu.iter,main='Estimate of mu, iterative',ylab='MSE')
+
+boxplot(result$err[,3:4],main='Estimation of beta',ylab='MSE')
+#boxplot(result$err$mse.beta.iter,main='Estimate of beta, iterative',ylab='MSE')
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu')
+lines(mu)
+lines(result$est$mu.hat,col=4)
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu, iterative')
+lines(mu)
+lines(result$est$mu.hat.iter,col=4)
+
+plot(beta,result$est$beta.hat,xlab = 'True beta', ylab = 'Beta hat',main='Beta')
+abline(0,1)
+
+plot(beta,result$est$beta.hat.iter,xlab = 'True beta', ylab = 'Beta hat',main='Beta, iterative')
+abline(0,1)
+
+```
+
+## Wave
+
+```{r}
+f=function(x){return(0.5 + 0.2*cos(4*pi*x) + 0.1*cos(24*pi*x))}
+mu=f((1:n)/n)
+
+result=simu_study_x(mu,beta,filter.number = 8,family='DaubLeAsymm')
+par(mfrow=c(1,2))
+boxplot(result$err[,1:2],main='Estimation of mu',ylab='MSE')
+#boxplot(result$err$mse.mu.iter,main='Estimate of mu, iterative',ylab='MSE')
+
+boxplot(result$err[,3:4],main='Estimation of beta',ylab='MSE')
+#boxplot(result$err$mse.beta.iter,main='Estimate of beta, iterative',ylab='MSE')
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu')
+lines(mu)
+lines(result$est$mu.hat,col=4)
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu, iterative')
+lines(mu)
+lines(result$est$mu.hat.iter,col=4)
+
+plot(beta,result$est$beta.hat,xlab = 'True beta', ylab = 'Beta hat',main='Beta')
+abline(0,1)
+
+plot(beta,result$est$beta.hat.iter,xlab = 'True beta', ylab = 'Beta hat',main='Beta, iterative')
+abline(0,1)
+
+
+```
+
+## Parabola
+
+```{r}
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
+500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
+7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:n/n)
+
+result=simu_study_x(mu,beta,filter.number = 8,family='DaubLeAsymm')
+par(mfrow=c(1,2))
+boxplot(result$err[,1:2],main='Estimation of mu',ylab='MSE')
+#boxplot(result$err$mse.mu.iter,main='Estimate of mu, iterative',ylab='MSE')
+
+boxplot(result$err[,3:4],main='Estimation of beta',ylab='MSE')
+#boxplot(result$err$mse.beta.iter,main='Estimate of beta, iterative',ylab='MSE')
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu')
+lines(mu)
+lines(result$est$mu.hat,col=4)
+
+plot(result$est$y,col='gray80',ylab = '',main='Estimated mu, iterative')
+lines(mu)
+lines(result$est$mu.hat.iter,col=4)
+
+plot(beta,result$est$beta.hat,xlab = 'True beta', ylab = 'Beta hat',main='Beta')
+abline(0,1)
+
+plot(beta,result$est$beta.hat.iter,xlab = 'True beta', ylab = 'Beta hat',main='Beta, iterative')
+abline(0,1)
+
+
+```
