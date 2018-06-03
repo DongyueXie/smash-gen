@@ -1,0 +1,166 @@
+---
+title: "Mssing data"
+author: "Dongyue Xie"
+date: "May 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+Treat unevenly spaced data as partly missing data. Set corresponding $s_t$ to $10^6$. The missing data are set to 0.
+
+# Gaussian 
+
+$Y_t=\mu_t+N(0,s_t^2)$
+
+```{r}
+library(smashrgen)
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+mu = spike.f(t)+1
+rsnr=2
+var2 = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) + exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35
+sigma.ini = sqrt(var2)
+sigma.t = sigma.ini/mean(sigma.ini) * sd(mu)/rsnr^2
+set.seed(12345)
+y=mu+rnorm(n,0,sigma.t)
+
+# No missing data fit
+fit=smash.gaus(y,sigma=sigma.t)
+plot(y,type='p',col='gray80',main='No missing data')
+lines(mu)
+lines(fit,type='l',col=4)
+
+# missing data 1%
+idx=sample(1:n,n*0.01)
+
+idx
+
+y.miss=y
+y.miss[idx]=0
+
+sigma.miss=sigma.t
+sigma.miss[idx]=10^6
+
+fit=smash.gaus(y.miss,sigma=sigma.miss)
+plot(y.miss,type='p',col='gray80',main='Missing 1% data')
+lines(fit,col=4)
+lines(idx,fit[idx],type='p',pch=16,col=2)
+lines(mu,type='l')
+legend('topright',c('smash.gaus','Missing points','True mu'),col=c(4,2,1),pch=c(NA,16,NA),lty=c(1,NA,1))
+
+# # pretend variance are unknown
+# fit2=smash.gaus(y.miss)
+# plot(fit2,type='l',col=4,ylim=c(-0.5,3),main='Missing 1% data, variance unknown')
+# lines(mu)
+
+# missing data 5%
+idx=sample(1:n,n*0.05)
+
+sort(idx)
+
+y.miss=y
+y.miss[idx]=0
+
+sigma.miss=sigma.t
+sigma.miss[idx]=10^6
+
+fit=smash.gaus(y.miss,sigma=sigma.miss)
+plot(y.miss,type='p',col='gray80',main='Missing 5% data')
+lines(fit,col=4)
+lines(idx,fit[idx],type='p',pch=16,col=2)
+lines(mu,type='l')
+legend('topright',c('smash.gaus','Missing points','True mu'),col=c(4,2,1),pch=c(NA,16,NA),lty=c(1,NA,1))
+
+# # pretend variance are unknown
+# fit2=smash.gaus(y.miss)
+# plot(fit2,type='l',col=4,ylim=c(-0.5,3),main='Missing 5% data, variance unknown')
+# lines(mu)
+
+# missing data 10%
+idx=sample(1:n,n*0.1)
+
+sort(idx)
+
+y.miss=y
+y.miss[idx]=0
+
+sigma.miss=sigma.t
+sigma.miss[idx]=10^6
+
+fit=smash.gaus(y.miss,sigma=sigma.miss)
+plot(y.miss,type='p',col='gray80',main='Missing 10% data')
+lines(fit,col=4)
+lines(idx,fit[idx],type='p',pch=16,col=2)
+lines(mu,type='l')
+legend('topright',c('smash.gaus','Missing points','True mu'),col=c(4,2,1),pch=c(NA,16,NA),lty=c(1,NA,1))
+
+# missing data 20%
+idx=sample(1:n,n*0.2)
+
+sort(idx)
+
+y.miss=y
+y.miss[idx]=0
+
+sigma.miss=sigma.t
+sigma.miss[idx]=10^6
+
+fit=smash.gaus(y.miss,sigma=sigma.miss)
+plot(y.miss,type='p',col='gray80',main='Missing 20% data')
+lines(fit,col=4)
+lines(idx,fit[idx],type='p',pch=16,col=2)
+lines(mu,type='l')
+legend('topright',c('smash.gaus','Missing points','True mu'),col=c(4,2,1),pch=c(NA,16,NA),lty=c(1,NA,1))
+```
+
+
+# Why it's not working?
+
+$y=\mu+\epsilon$
+
+$Wy=W\mu+W\epsilon \Rightarrow\tilde y=\tilde\mu+N(0,diag(\tilde\sigma^2))$
+
+We are shrinking the wavelet coefficients($\tilde\mu$) not $y$! If we set the missing data's $s_t$ very large, then all the variance of corresponding wavelet coefficients that involve missing data are very large. Thus, a large number of wavelet coefficients(essentially differences) are shirnked to zero, including those should not be done so.
+
+An simple example:
+```{r}
+mu=c(1,1,1,1,4,4,4,4)
+y=mu+rnorm(8,0,0.8)
+sigma=rep(0.8,8)
+
+w=t(GenW(filter.number = 1,family='DaubExPhase'))
+
+y.miss=y
+y.miss[6]=0
+sigma.miss=sigma
+sigma.miss[6]=1e6
+y.tilde=w%*%y.miss
+sigma.tilde=w%*%diag(sigma.miss)%*%t(w)
+y.ash=ash(as.numeric(y.tilde),as.numeric(diag(sigma.tilde)))$result$PosteriorMean
+y.hat=t(w)%*%y.ash
+```
+
+
+
+```{r,message=F}
+plot(wd(y.miss,filter.number = 1,family='DaubExPhase'),main = 'Decomposition of Y with missing data set to 0')
+plot(wd(y,filter.number = 1,family='DaubExPhase'),main='Decomposition with true Y, no missing data')
+```
+
+Let's look at $\tilde\sigma$:
+```{r}
+diag(sigma.tilde)
+```
+The 2nd-5th ones are from level 2, 6th-7th are from level 1 and the last one corresponds to level 0.
+
+From the plot of coefficients, what we really want to set to 0 is 4th and 7th. But the 8th one also has huge variance. 
+
+Can we munually choose what levels to shrink using large variance?
+
+I don't think it's practical, especially when the length of sequence and number of missing data are large. Maybe the only criterion is whether it's visually appealing.
+
