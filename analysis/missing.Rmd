@@ -1,5 +1,5 @@
 ---
-title: "Mssing data"
+title: "Missing data"
 author: "Dongyue Xie"
 date: "May 31, 2018"
 output: html_document
@@ -125,7 +125,7 @@ $y=\mu+\epsilon$
 
 $Wy=W\mu+W\epsilon \Rightarrow\tilde y=\tilde\mu+N(0,diag(\tilde\sigma^2))$
 
-We are shrinking the wavelet coefficients($\tilde\mu$) not $y$! If we set the missing data's $s_t$ very large, then all the variance of corresponding wavelet coefficients that involve missing data are very large. Thus, a large number of wavelet coefficients(essentially differences) are shirnked to zero, including those should not be done so.
+We are shrinking the wavelet coefficients($\tilde\mu$) not $y$! If we set the missing data's $s_t$ very large, then all the variance of corresponding wavelet coefficients that involve missing data are very large. Thus, a large number of wavelet coefficients(essentially differences) are shrinked to zero, including those should not be done so.
 
 An simple example:
 ```{r}
@@ -160,7 +160,7 @@ The 2nd-5th ones are from level 2, 6th-7th are from level 1 and the last one cor
 
 From the plot of coefficients, what we really want to set to 0 is 4th and 7th. But the 8th one also has huge variance. 
 
-Can we munually choose what levels to shrink using large variance?
+Can we manually choose what levels to shrink using large variance?
 
 I don't think it's practical, especially when the length of sequence and number of missing data are large. Maybe the only criterion is whether it's visually appealing.
 
