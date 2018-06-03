@@ -46,6 +46,10 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 2. [Smoothing with covariates: Gaussian, iterative version](covariateiter.html)
 3. [Smoothing with covariates: glm](glmcovariate.html)
 
+## Unevenly spaced data
+
+1. [Treat as missing data?](missing.html)
+
 
 # Credits
 
