@@ -149,7 +149,7 @@ y.hat=t(w)%*%y.ash
 
 ```{r,message=F}
 plot(wd(y.miss,filter.number = 1,family='DaubExPhase'),main = 'Decomposition of Y with missing data set to 0')
-plot(wd(y,filter.number = 1,family='DaubExPhase'),main='Decomposition with true Y, no missing data')
+plot(wd(y,filter.number = 1,family='DaubExPhase'),main='Decomposition of Y, no missing data')
 ```
 
 Let's look at $\tilde\sigma$:
