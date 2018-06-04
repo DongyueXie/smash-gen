@@ -50,6 +50,11 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 
 1. [Treat as missing data?](missing.html)
 
+## Chip-Exo and Chip-seq data smoothing
+
+1. [CTCF Chip-exo data, reflection](chipexo.html)
+2. [CTCF Chip-exo data, cut](chipexocut.html)
+3. [CTCF Chip-seq data](chipseqref.html)
 
 # Credits
 
