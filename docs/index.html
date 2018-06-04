@@ -225,7 +225,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/09118ad6dabe4c46e7a09db2665021e3ae4f3e48" target="_blank">09118ad</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/7095e130c8afa78bb60463d18b088221125d17d4" target="_blank">7095e13</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -235,17 +235,20 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/binom.Rmd
-    Untracked:  analysis/chipexo.Rmd
     Untracked:  analysis/glm.Rmd
     Untracked:  analysis/overdis.Rmd
     Untracked:  analysis/smashtutorial.Rmd
     Untracked:  analysis/test.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
     Untracked:  data/treas_bill.csv
+    Untracked:  docs/figure/chipseqref.Rmd/
     Untracked:  docs/figure/smashtutorial.Rmd/
     Untracked:  docs/figure/test.Rmd/
 
 Unstaged changes:
     Modified:   analysis/ashpmean.Rmd
+    Modified:   analysis/missing.Rmd
     Modified:   analysis/nugget.Rmd
 
 </code></pre>
@@ -275,6 +278,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/7095e130c8afa78bb60463d18b088221125d17d4/analysis/index.Rmd" target="_blank">7095e13</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-06-03
+</td>
+<td style="text-align:left;">
+chip seq data analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/54238d8dd25393520f2329cc4c7700cdc448b6dc/docs/index.html" target="_blank">54238d8</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-06-03
+</td>
+<td style="text-align:left;">
+missing data
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -809,6 +846,14 @@ Start workflowr project.
 <h2>Unevenly spaced data</h2>
 <ol style="list-style-type: decimal">
 <li><a href="missing.html">Treat as missing data?</a></li>
+</ol>
+</div>
+<div id="chip-exo-and-chip-seq-data-smoothing" class="section level2">
+<h2>Chip-Exo and Chip-seq data smoothing</h2>
+<ol style="list-style-type: decimal">
+<li><a href="chipexo.html">CTCF Chip-exo data, reflection</a></li>
+<li><a href="chipexocut.html">CTCF Chip-exo data, cut</a></li>
+<li><a href="chipseqref.html">CTCF Chip-seq data</a></li>
 </ol>
 </div>
 </div>
