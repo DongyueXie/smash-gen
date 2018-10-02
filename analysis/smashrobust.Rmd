@@ -1,0 +1,149 @@
+---
+title: "smashrobust"
+author: "Dongyue Xie"
+date: "2018-10-02"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+We see that `smash.gaus` still gives similar mean estimations given inaccurate variance(to ones given accurate variance) in [previous](sigma2.html) section. We now try some more examples on this.
+
+## spike mean
+
+```{r}
+library(smashr)
+n = 2^9
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+plot(mu.t, type = "l",main='main function')
+
+# Create the baseline variance function. (The function V2 from Cai &
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = "l")
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+```
+
+```{t}
+
+set.seed(12345)
+y=mu.t+rnorm(n,0,sigma.t)
+plot(y,col='grey80',main='n=512,SNR=3')
+lines(smash.gaus(y))
+lines(smash.gaus(y,mean(sigma.t)),col=2)
+lines(smash.gaus(y,sigma.t),col=3)
+lines(mu.t,col='grey80')
+legend('topleft',c('smashu','smash.mean.sigma','smash.true.sigma','true mean'),col=c(1,2,3,'grey80'),lty=c(1,1,1,1))
+
+plot(sqrt(smash.gaus(y,joint=T)$var.res),type='l',ylim=c(0.02,0.05),main='sigma')
+lines(rep(mean(sigma.t),n),col=2)
+lines(sigma.t,col=3)
+
+mean(sigma.t)
+mean(sqrt(smash.gaus(y,joint=T)$var.res))
+```
+
+Decrease n:
+
+```{r}
+n = 64
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = "l",main='main function')
+
+# Create the baseline variance function. (The function V2 from Cai &
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = "l")
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+set.seed(12345)
+y=mu.t+rnorm(n,0,sigma.t)
+plot(y,col='grey80',main='n=64,SNR=3')
+lines(smash.gaus(y))
+lines(smash.gaus(y,mean(sigma.t)),col=2)
+lines(smash.gaus(y,sigma.t),col=3)
+lines(mu.t,col='grey80')
+legend('topleft',c('smashu','smash.mean.sigma','smash.true.sigma','true mean'),col=c(1,2,3,'grey80'),lty=c(1,1,1,1))
+
+plot(sqrt(smash.gaus(y,joint=T)$var.res),type='l',ylim=c(0.01,0.08),main='sigma')
+lines(rep(mean(sigma.t),n),col=2)
+lines(sigma.t,col=3)
+
+mean(sigma.t)
+mean(sqrt(smash.gaus(y,joint=T)$var.res))
+```
+
+Decrease SNR:
+
+```{r}
+n = 512
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = "l",main='main function')
+
+# Create the baseline variance function. (The function V2 from Cai &
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = "l")
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(1)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+set.seed(12345)
+y=mu.t+rnorm(n,0,sigma.t)
+plot(y,col='grey80',main='n=512,SNR=1')
+lines(smash.gaus(y))
+lines(smash.gaus(y,mean(sigma.t)),col=2)
+lines(smash.gaus(y,sigma.t),col=3)
+lines(mu.t,col='grey80')
+legend('topleft',c('smashu','smash.mean.sigma','smash.true.sigma','true mean'),col=c(1,2,3,'grey80'),lty=c(1,1,1,1))
+
+plot(sqrt(smash.gaus(y,joint=T)$var.res),type='l',ylim=c(0.07,0.15),main='sigma')
+lines(rep(mean(sigma.t),n),col=2)
+lines(sigma.t,col=3)
+
+mean(sigma.t)
+mean(sqrt(smash.gaus(y,joint=T)$var.res))
+```
+
+# Summary
+
+1. `smash.gaus` is sensitive to the scale of variance instead of the shape of variance.
+2. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satifactory shape, then `smash.gaus` can still give similar mean estimation.
