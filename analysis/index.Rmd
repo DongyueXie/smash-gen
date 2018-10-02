@@ -8,39 +8,65 @@ output:
 
 # Project Overview
 
-This project aims to study a generalization version of normal version of smash. It is a version of wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.
+We generalize `smash`(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, typically Poisson and Binomial sequence data.
 
-I have created a [R package](https://github.com/DongyueXie/smashrgen) for the functions used in the analysis.
+This [R package](https://github.com/DongyueXie/smashrgen) contains functions used in this project.
 
 # Analysis
 
+## A general introduction and method
+
+This is a new review and summary I wrote in Sept 2018.
+
+[Introduction and method](smoothing.html)
+
 ## Intial investigation
 
-1. [Basic review](poireview.html)
+This section contains analysis from very early stage of the project. At this stage, we assume the nugget effect is known. 
+
+We were trying to use sample mean as the initial estimate of parameter to formulate $y_t$ and doing iterative algorithm. The problem is that the algorithm does not converge sometimes especially when there is outliers(see 2). One way to solve this is to set the finest level coefficients to zero so that the outliers are kind of removed(at least not very extreme any more). This indeed seems solving the problem but maybe this is a kind of 'cheating'? 
+
+Another way is try to get rid of iterations and use only one iteration. But obviously it does not work well since $\Sigma_tx_t/T$ is not a good approximation of parameters. Finally, we decided to expand around posterior mean from `ash`(see 5 below). The default choice is to use a grid of uniform priors on the parameter($\lambda$ in Poi($\lambda$) and $p$ in Binomial(n,p)). 
+
+1. [review](poireview.html)
 2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
 3. [A robust version of smash-gen](robustalgo.html): set the highest resolution wavelet coeffs to 0.
-4. [Treat Poisson data as normal](iter1.html): only do 1 iteration.
+4. [One iteration version](iter1.html): only do 1 iteration.
 5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the Taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
 
 ## Estimate nugget effect
 
-1. [Estimate nugget effect($\sigma$)](sigma.html)
-2. [`smash.gaus.gen` to estimate unknown $\sigma$](unknownvar.html)
+Nugget effect is unknown in practice. To apply our smashgen method, we need to know $\sigma^2+s_t^2$. My initial idea is that we can either estimate $\sigma^2$ or $\sigma^2+s_t^2$ together. The method proposed for estimating nugget effect works well as shown in 1 below. Estimating $\sigma^2$ first then plus $s_t^2$ gives better estimation than estimating $\sigma^2+s_t^2$ together($*$). The phenomena I observed is that though the fact $(*)$, `smash.gaus` gives very similar estimate of $\mu_t$ in terms of MSE. This is because `smash.gaus` is sensitive to the scale of variance instead of the shape of variance. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satisfactory shape, then smash.gaus can still give similar mean estimation(see 2 below).
+
+1. [Estimate nugget effect($\sigma$)](sigma2.html)
+2. [Smash robust to variance?](smashrobust.html)
+
 
 ## Poisson data with unknown nugget effect
 
+
+Now we are ready to apply smashgen to Poisson data with unknown nugget effect. It's very important to note that when the range of mean function is small, the $SNR=\frac{sd(mu)}{mean[sd(noise)]}$ could be very large. For example, if the mean function is spike and has range [1,3]. Then the stand deviation of mean function is around 0.48 and the average of $s_t^2=1/e^\mu_t$ is around 0.92. So even without nugget effect, the SNR is already about 0.52. Adding the nugget effect would make it smaller. SNR in this situation matters to smashgen because we are using Gaussian approximation to it so a very low SNR would make it very difficult to recover the true mean. This is the reason why smashgen performs poorly when the range of mean function is small.
+
+From 3, when the scale of mean function is small(smallest around 0.1-0.3),  smash outperforms smashgen under all the mean functions. From 4, when we increased the scale of mean function(smallest around 50, largest around 200), smashgen outperforms smash for almost all the functions except Doppler. Smashgen cannot capture the high frequency fluctuation of Doppler at the beginning. For Heavysine, Parabola, Wave and timeshifted mean functions, using symmlet8 basis outperforms using Haar basis.
+
+In 5, we compared smash and smashgen on estimating on estimating $\mu$ and $\log\mu$. For step function, smashgen gives better estimate of $\log\mu$ but worse estimation of $\mu$. For heavysine, smash and smashgen are similar while smashgen with symmlet8 achieved lower MSE when mean function range is (50,100). For Doppler, smashgen with symmlet8 achieved lower MSE when mean function range is (50,100). For parabola, the two methods are similar. For wave, smashgen with symmlet8 won. It's very interesting to see that though smashgen gave smaller MSE for estimating $\log\mu$, the MSE for estimating $\mu$ became larger, for example in step and bump functions. 
+
 1. [Poisson nugget simulation(unknown $\sigma$)](poiunknown.html): $\sigma$ is unknown.
-2. [Haar vs Symmlet 8](wavebasis.html)
-3. [Poisson data, wavelet basis functions](poiwave.html)
+2. [Haar vs Symmlet 8](wavebasis.html): a comparison of different wavelet basis.
+3. [Poisson data, wavelet basis functions](poiwave.html): no nugget effect.
 4. [Poisson data, wavelet basis functions:larger mean function](poiwave2.html)
 5. [Poisson seq, compare smash and smashgen on the estimate of $\mu$ and $\log\mu$](poiwavelog.html)
 
 ## Binomial data with unknown nugget effect
 
+We extend smashgen to allow it smoothing probabilities. Simulations in 1 show that smashgen gives reasonable fits. When n is large and p is small in Binomial(n,p), we can use Poisson to approximate binomial distribution. In 2, we compared smashgen-binomial and smashgen-poi.binomial, as well as other popular smoothing methods(ti.thresh and eb.thresh). In general, smashgen-binomial outperforms the other methods. While we expect that as $n_t$ increases smashgen-poi.binomial should give smaller MSE, this is not the case. 
+
 1. [Binomial nugget effect](binomial.html)
 2. [Poisson as approximate of Binomial?](poibinom.html)
 
 ## Smoothing with covariates
+
+Now suppose at each $t$, $Y_t=X_t\beta+\mu_t+\epsilon_t$, where $\mu$ has smooth structure and $\epsilon_t\sim N(0,\sigma^2_t)$. The structure of $\mu$ cannot be explained by the ordinary least square so it is contained in the residual $e$. Thus $e$ consists of $\mu$ and noises. Using `smash.gaus` recovers $\mu$ and estimates $\sigma^2$. 
 
 1. [Smoothing with covariates: Gaussian](covariate.html)
 2. [Smoothing with covariates: Gaussian, iterative version](covariateiter.html)
@@ -48,9 +74,13 @@ I have created a [R package](https://github.com/DongyueXie/smashrgen) for the fu
 
 ## Unevenly spaced data
 
-1. [Treat as missing data?](missing.html)
+We treat unevenly spaced data as missing and set them to 0 with corresponding standard error $10^6$. The idea is that if standard error is very big then value of y becomes irrelevant.
+
+1. [Missing data?](missing.html)
 
 ## Chip-Exo and Chip-seq data smoothing
+
+Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?
 
 1. [CTCF Chip-exo data, reflection](chipexo.html)
 2. [CTCF Chip-exo data, cut](chipexocut.html)
