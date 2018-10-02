@@ -22,7 +22,9 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -90,6 +92,9 @@ img {
 }
 .tabbed-pane {
   padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
 }
 button.code-folding-btn:focus {
   outline: none;
@@ -216,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-06-03</p>
+<p><strong>Last updated:</strong> 2018-10-02</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -225,31 +230,18 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/7095e130c8afa78bb60463d18b088221125d17d4" target="_blank">7095e13</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/eddcacf671dcca5c0beaacaf0bb4a92f4cb0c0c3" target="_blank">eddcacf</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
-    Ignored:    .Rproj.user/
-    Ignored:    log/
 
 Untracked files:
-    Untracked:  analysis/binom.Rmd
-    Untracked:  analysis/glm.Rmd
-    Untracked:  analysis/overdis.Rmd
-    Untracked:  analysis/smashtutorial.Rmd
-    Untracked:  analysis/test.Rmd
-    Untracked:  data/chipexo_examples/
-    Untracked:  data/chipseq_examples/
-    Untracked:  data/treas_bill.csv
-    Untracked:  docs/figure/chipseqref.Rmd/
-    Untracked:  docs/figure/smashtutorial.Rmd/
-    Untracked:  docs/figure/test.Rmd/
+    Untracked:  analysis/literature.Rmd
 
 Unstaged changes:
-    Modified:   analysis/ashpmean.Rmd
-    Modified:   analysis/missing.Rmd
-    Modified:   analysis/nugget.Rmd
+    Modified:   analysis/sigma.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -278,6 +270,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/eddcacf671dcca5c0beaacaf0bb4a92f4cb0c0c3/analysis/index.Rmd" target="_blank">eddcacf</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+revise
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/b3c65ef6e8a8b5a7eb708a33e752928459e1a65d/docs/index.html" target="_blank">b3c65ef</a>
+</td>
+<td style="text-align:left;">
+Dongyue
+</td>
+<td style="text-align:left;">
+2018-06-03
+</td>
+<td style="text-align:left;">
+chip seq data analysis
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -795,40 +821,53 @@ Start workflowr project.
 <hr />
 <div id="project-overview" class="section level1">
 <h1>Project Overview</h1>
-<p>This project aims to study a generalization version of normal version of smash. It is a version of wavelet denoising for Gaussian where each observation has additional known measurement error. The method is expected to handle the Poisson nugget effect.</p>
-<p>I have created a <a href="https://github.com/DongyueXie/smashrgen">R package</a> for the functions used in the analysis.</p>
+<p>We generalize <code>smash</code>(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, typically Poisson and Binomial sequence data.</p>
+<p>This <a href="https://github.com/DongyueXie/smashrgen">R package</a> contains functions used in this project.</p>
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
+<div id="a-general-introduction-and-method" class="section level2">
+<h2>A general introduction and method</h2>
+<p>This is a new review and summary I wrote in Sept 2018.</p>
+<p><a href="smoothing.html">Introduction and method</a></p>
+</div>
 <div id="intial-investigation" class="section level2">
 <h2>Intial investigation</h2>
+<p>This section contains analysis from very early stage of the project. At this stage, we assume the nugget effect is known.</p>
+<p>We were trying to use sample mean as the initial estimate of parameter to formulate <span class="math inline">\(y_t\)</span> and doing iterative algorithm. The problem is that the algorithm does not converge sometimes especially when there is outliers(see 2). One way to solve this is to set the finest level coefficients to zero so that the outliers are kind of removed(at least not very extreme any more). This indeed seems solving the problem but maybe this is a kind of ‘cheating’?</p>
+<p>Another way is try to get rid of iterations and use only one iteration. But obviously it does not work well since <span class="math inline">\(\Sigma_tx_t/T\)</span> is not a good approximation of parameters. Finally, we decided to expand around posterior mean from <code>ash</code>(see 5 below). The default choice is to use a grid of uniform priors on the parameter(<span class="math inline">\(\lambda\)</span> in Poi(<span class="math inline">\(\lambda\)</span>) and <span class="math inline">\(p\)</span> in Binomial(n,p)).</p>
 <ol style="list-style-type: decimal">
-<li><a href="poireview.html">Basic review</a></li>
+<li><a href="poireview.html">review</a></li>
 <li><a href="nugget2.html">Poisson nugget simulation</a>: assume <span class="math inline">\(\sigma\)</span> is known.</li>
 <li><a href="robustalgo.html">A robust version of smash-gen</a>: set the highest resolution wavelet coeffs to 0.</li>
-<li><a href="iter1.html">Treat Poisson data as normal</a>: only do 1 iteration.</li>
+<li><a href="iter1.html">One iteration version</a>: only do 1 iteration.</li>
 <li><a href="ashpmean.html">Expanding around ash posterior mean</a>: iterate once but the Taylor series expansion is around ash posterior mean(applying ash to Poisson data first).</li>
 </ol>
 </div>
 <div id="estimate-nugget-effect" class="section level2">
 <h2>Estimate nugget effect</h2>
+<p>Nugget effect is unknown in practice. To apply our smashgen method, we need to know <span class="math inline">\(\sigma^2+s_t^2\)</span>. My initial idea is that we can either estimate <span class="math inline">\(\sigma^2\)</span> or <span class="math inline">\(\sigma^2+s_t^2\)</span> together. The method proposed for estimating nugget effect works well as shown in 1 below. Estimating <span class="math inline">\(\sigma^2\)</span> first then plus <span class="math inline">\(s_t^2\)</span> gives better estimation than estimating <span class="math inline">\(\sigma^2+s_t^2\)</span> together(<span class="math inline">\(*\)</span>). The phenomena I observed is that though the fact <span class="math inline">\((*)\)</span>, <code>smash.gaus</code> gives very similar estimate of <span class="math inline">\(\mu_t\)</span> in terms of MSE. This is because <code>smash.gaus</code> is sensitive to the scale of variance instead of the shape of variance. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satisfactory shape, then smash.gaus can still give similar mean estimation(see 2 below).</p>
 <ol style="list-style-type: decimal">
-<li><a href="sigma.html">Estimate nugget effect(<span class="math inline">\(\sigma\)</span>)</a></li>
-<li><a href="unknownvar.html"><code>smash.gaus.gen</code> to estimate unknown <span class="math inline">\(\sigma\)</span></a></li>
+<li><a href="sigma2.html">Estimate nugget effect(<span class="math inline">\(\sigma\)</span>)</a></li>
+<li><a href="smashrobust.html">Smash robust to variance?</a></li>
 </ol>
 </div>
 <div id="poisson-data-with-unknown-nugget-effect" class="section level2">
 <h2>Poisson data with unknown nugget effect</h2>
+<p>Now we are ready to apply smashgen to Poisson data with unknown nugget effect. It’s very important to note that when the range of mean function is small, the <span class="math inline">\(SNR=\frac{sd(mu)}{mean[sd(noise)]}\)</span> could be very large. For example, if the mean function is spike and has range [1,3]. Then the stand deviation of mean function is around 0.48 and the average of <span class="math inline">\(s_t^2=1/e^\mu_t\)</span> is around 0.92. So even without nugget effect, the SNR is already about 0.52. Adding the nugget effect would make it smaller. SNR in this situation matters to smashgen because we are using Gaussian approximation to it so a very low SNR would make it very difficult to recover the true mean. This is the reason why smashgen performs poorly when the range of mean function is small.</p>
+<p>From 3, when the scale of mean function is small(smallest around 0.1-0.3), smash outperforms smashgen under all the mean functions. From 4, when we increased the scale of mean function(smallest around 50, largest around 200), smashgen outperforms smash for almost all the functions except Doppler. Smashgen cannot capture the high frequency fluctuation of Doppler at the beginning. For Heavysine, Parabola, Wave and timeshifted mean functions, using symmlet8 basis outperforms using Haar basis.</p>
+<p>In 5, we compared smash and smashgen on estimating on estimating <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\log\mu\)</span>. For step function, smashgen gives better estimate of <span class="math inline">\(\log\mu\)</span> but worse estimation of <span class="math inline">\(\mu\)</span>. For heavysine, smash and smashgen are similar while smashgen with symmlet8 achieved lower MSE when mean function range is (50,100). For Doppler, smashgen with symmlet8 achieved lower MSE when mean function range is (50,100). For parabola, the two methods are similar. For wave, smashgen with symmlet8 won. It’s very interesting to see that though smashgen gave smaller MSE for estimating <span class="math inline">\(\log\mu\)</span>, the MSE for estimating <span class="math inline">\(\mu\)</span> became larger, for example in step and bump functions.</p>
 <ol style="list-style-type: decimal">
 <li><a href="poiunknown.html">Poisson nugget simulation(unknown <span class="math inline">\(\sigma\)</span>)</a>: <span class="math inline">\(\sigma\)</span> is unknown.</li>
-<li><a href="wavebasis.html">Haar vs Symmlet 8</a></li>
-<li><a href="poiwave.html">Poisson data, wavelet basis functions</a></li>
+<li><a href="wavebasis.html">Haar vs Symmlet 8</a>: a comparison of different wavelet basis.</li>
+<li><a href="poiwave.html">Poisson data, wavelet basis functions</a>: no nugget effect.</li>
 <li><a href="poiwave2.html">Poisson data, wavelet basis functions:larger mean function</a></li>
 <li><a href="poiwavelog.html">Poisson seq, compare smash and smashgen on the estimate of <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\log\mu\)</span></a></li>
 </ol>
 </div>
 <div id="binomial-data-with-unknown-nugget-effect" class="section level2">
 <h2>Binomial data with unknown nugget effect</h2>
+<p>We extend smashgen to allow it smoothing probabilities. Simulations in 1 show that smashgen gives reasonable fits. When n is large and p is small in Binomial(n,p), we can use Poisson to approximate binomial distribution. In 2, we compared smashgen-binomial and smashgen-poi.binomial, as well as other popular smoothing methods(ti.thresh and eb.thresh). In general, smashgen-binomial outperforms the other methods. While we expect that as <span class="math inline">\(n_t\)</span> increases smashgen-poi.binomial should give smaller MSE, this is not the case.</p>
 <ol style="list-style-type: decimal">
 <li><a href="binomial.html">Binomial nugget effect</a></li>
 <li><a href="poibinom.html">Poisson as approximate of Binomial?</a></li>
@@ -836,6 +875,7 @@ Start workflowr project.
 </div>
 <div id="smoothing-with-covariates" class="section level2">
 <h2>Smoothing with covariates</h2>
+<p>Now suppose at each <span class="math inline">\(t\)</span>, <span class="math inline">\(Y_t=X_t\beta+\mu_t+\epsilon_t\)</span>, where <span class="math inline">\(\mu\)</span> has smooth structure and <span class="math inline">\(\epsilon_t\sim N(0,\sigma^2_t)\)</span>. The structure of <span class="math inline">\(\mu\)</span> cannot be explained by the ordinary least square so it is contained in the residual <span class="math inline">\(e\)</span>. Thus <span class="math inline">\(e\)</span> consists of <span class="math inline">\(\mu\)</span> and noises. Using <code>smash.gaus</code> recovers <span class="math inline">\(\mu\)</span> and estimates <span class="math inline">\(\sigma^2\)</span>.</p>
 <ol style="list-style-type: decimal">
 <li><a href="covariate.html">Smoothing with covariates: Gaussian</a></li>
 <li><a href="covariateiter.html">Smoothing with covariates: Gaussian, iterative version</a></li>
@@ -844,12 +884,14 @@ Start workflowr project.
 </div>
 <div id="unevenly-spaced-data" class="section level2">
 <h2>Unevenly spaced data</h2>
+<p>We treat unevenly spaced data as missing and set them to 0 with corresponding standard error <span class="math inline">\(10^6\)</span>. The idea is that if standard error is very big then value of y becomes irrelevant.</p>
 <ol style="list-style-type: decimal">
-<li><a href="missing.html">Treat as missing data?</a></li>
+<li><a href="missing.html">Missing data?</a></li>
 </ol>
 </div>
 <div id="chip-exo-and-chip-seq-data-smoothing" class="section level2">
 <h2>Chip-Exo and Chip-seq data smoothing</h2>
+<p>Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?</p>
 <ol style="list-style-type: decimal">
 <li><a href="chipexo.html">CTCF Chip-exo data, reflection</a></li>
 <li><a href="chipexocut.html">CTCF Chip-exo data, cut</a></li>
@@ -878,7 +920,7 @@ footer is added to webpages before the MathJax javascript. -->
 <p>
   This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
   analysis was created with
-  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
 </p>
 <hr>
 
