@@ -1,0 +1,324 @@
+---
+title: "Estimate unknown variance $\sigma$"
+author: "Dongyue Xie"
+date: "09/30/2018"
+output: workflowr::wflow_html:
+  code_folding: hide
+---
+
+To recap, the model we are considering is $Y_t=\mu_t+u_t+\epsilon_t$ where $u_t\sim N(0,\sigma^2)$ and $\epsilon_t\sim N(0,s_t^2)$.
+
+In previous analysis, we assume $\sigma$ is known so when estimating $\mu_t$, we simply plug $\sigma$ in the `smash.gaus` function. However, in practice we don't know the $\sigma$. 
+
+Note: 
+
+1. If sigma is NULL in `smash.gaus`, then `smash.gaus` runs 1-2-1 of the algorithm in paper. If `v.est=F`, then it returns estimated $\mu_t$ from the last 1.  If `v.est=T`, then it runs 2 one more time.
+
+2. If sigma is given, then it runs 1 to give $\hat\mu_t$. If `v.est=T`, then it runs 2 one more time. So: even if sigma is given, `smash.gaus` could still estimate it.
+
+3. Names of the methods are marked in **bold** for convenience.
+
+# Estimate ($\sigma^2+s_t^2$) together
+
+When estimating $\mu_t$, what we actually need is $\sigma^2+s_t^2$ for `smash.gaus`.
+
+Method 1(**smashu**):  We can simply feed $y_t$ to `smash.gaus` then get estimated $\mu_t$ and $\sigma^2+s_t^2$. This is simple and easy. But this method does not take advantage of known $s_t^2$.
+
+Method 2(**rmad**): Using "running MAD"(RMAD) method: $1.4826\times MAD$. MAD stands for median absolute deviation, $MAD(x)=median|x-median(x)|$. (For normal distribution $x\sim N(\mu,\sigma^2)$, $MAD(x)=\sigma MAD(z)$, where $z\sim N(0,1)$ so $\sigma=\frac{MAD(x)}{MAD(z)}=1.4826\times MAD(x)$.($1/[\Phi^{-1}(3/4)] \approx 1.4826$ )). One advantage of MAD is the robustness. In Xing$\&$Stephens(2016), simulations show that SMASH outperforms RMA. So we won't use rmad in the experiments.
+
+# Estimate $\sigma^2$ 
+
+Method 1(**moment**): It's easy to show that $E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2\sigma^2$. Similarly, $E(Y_t-Y_{t-1})^2=s_t^2+s_{t-1}^2+2\sigma^2$. Combining two equations and solving for $\sigma^2$, we have a natural way to estimate it:  $\hat\sigma^2_t=\frac{((Y_t-Y_{t+1})^2+(Y_t-Y_{t+1})^2-2s_t^2-s_{t-1}^2-s_{t+1}^2)}{4}$ for each $t$. The estimate of $\sigma^2$ is given by the mean of $\hat\sigma^2_t$. This is similar to the initilization step in smash paper. We won't include this method in the experiments.
+
+Method 2: This method follows the same idea for estimating variance in Xing$\&$Stephens(2016). Since $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$, we define  $Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{2}{3}Z_t^4$. It's then transferred to a mean estimating problem: $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Let $\tilde Z_t^2=Z_t^2-s_t^2$, then $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can then use maximum likelihood estimation(**mle**) estimate $\sigma^2$.
+
+# Simulation: estimate unknown $\sigma$.
+
+In this section, we examine the performance of method 2 for estimating $\sigma$. In the experiments, $n=512$, SNR=3, mean function spike with range (0.2,0.8), $s_t$ has range (0.015,0.045) and $\sigma=0.02$.
+
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+```{r}
+library(smashrgen)
+library(ggplot2)
+```
+
+```{r default}
+#simulations
+# Create the baseline mean function. Here we use the "spikes" function.
+n = 2^9
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+plot(mu.t, type = "l",main='main function')
+
+# Create the baseline variance function. (The function V2 from Cai &
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = "l")
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.02
+st=sqrt(sigma.t^2-sigma^2)
+plot(st, type = "l", main='s_t')
+
+
+mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+set.seed(12345)
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab='sigma hat')
+abline(h=sigma,lty=2)
+
+```
+
+
+
+# Simulation: estimate $\sqrt{\sigma^2+s_t^2}$
+
+Since what we eventually need is $\sqrt(\sigma^2+s_t^2)$, we compare the following methods: 1. Estimate $\sigma^2$ first then add to $s_t^2$; 2. Estimate $\sqrt(\sigma^2+s_t^2)$ directly using smash. The measure of accuracy is mean squared error.
+
+
+
+```{r spike}
+
+s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))
+
+s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
+
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+lines(sst.mu[1,],col=2)
+lines(mu.t,col='grey80')
+
+
+
+```
+
+
+
+Now let's reduce sample size from 512 to 128.
+```{r smalln}
+n = 128
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = "l",main='main function')
+
+# Create the baseline variance function. (The function V2 from Cai &
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = "l")
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.02
+st=sqrt(sigma.t^2-sigma^2)
+#plot(st, type = "l", main='s_t')
+
+
+mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+set.seed(12345)
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab='sigma hat')
+abline(h=sigma,lty=2)
+
+s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))
+
+s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
+
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+lines(sst.mu[1,],col=2)
+lines(mu.t,col='grey80')
+```
+
+
+## Spike mean, non-spatial variance
+
+One assumption of smash is that the variance has spatial features. We now check the performance if this assumption is violated.
+
+```{r nonspatial}
+n=512
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+	    3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+	    0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = "l",main='main function')
+
+set.seed(12345)
+
+var.fn=runif(n,0,1)/10
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.0015
+st=sqrt(sigma.t^2-sigma^2)
+#plot(st, type = "l", main='s_t')
+
+mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab='sigma hat')
+abline(h=sigma,lty=2)
+
+s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))
+
+s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
+
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+lines(sst.mu[1,],col=2)
+lines(mu.t,col='grey80')
+
+```
+
+
