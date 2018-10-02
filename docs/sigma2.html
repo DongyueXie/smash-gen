@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+
+<title>Estimate unknown variance</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate unknown variance</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-10-02</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/de731cb8bf912de6c54861ede1f18885b5a2a867" target="_blank">de731cb</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    log/
+
+Untracked files:
+    Untracked:  analysis/binom.Rmd
+    Untracked:  analysis/glm.Rmd
+    Untracked:  analysis/overdis.Rmd
+    Untracked:  analysis/smashtutorial.Rmd
+    Untracked:  analysis/test.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
+    Untracked:  data/treas_bill.csv
+    Untracked:  docs/figure/smashtutorial.Rmd/
+    Untracked:  docs/figure/test.Rmd/
+
+Unstaged changes:
+    Modified:   analysis/ashpmean.Rmd
+    Modified:   analysis/missing.Rmd
+    Modified:   analysis/nugget.Rmd
+    Modified:   analysis/sigma2.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/de731cb8bf912de6c54861ede1f18885b5a2a867/analysis/sigma2.Rmd" target="_blank">de731cb</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+revise
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/6218ae258b007861ae16262ad3aabac8a474b63a/analysis/sigma2.Rmd" target="_blank">6218ae2</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+revised nugget effect estimation
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<p>To recap, the model we are considering is <span class="math inline">\(Y_t=\mu_t+u_t+\epsilon_t\)</span> where <span class="math inline">\(u_t\sim N(0,\sigma^2)\)</span> and <span class="math inline">\(\epsilon_t\sim N(0,s_t^2)\)</span>.</p>
+<p>In previous analysis, we assume <span class="math inline">\(\sigma\)</span> is known so when estimating <span class="math inline">\(\mu_t\)</span>, we simply plug <span class="math inline">\(\sigma\)</span> in the <code>smash.gaus</code> function. However, in practice we don’t know the <span class="math inline">\(\sigma\)</span>.</p>
+<p>Note:</p>
+<ol style="list-style-type: decimal">
+<li><p>If sigma is NULL in <code>smash.gaus</code>, then <code>smash.gaus</code> runs 1-2-1 of the algorithm in paper. If <code>v.est=F</code>, then it returns estimated <span class="math inline">\(\mu_t\)</span> from the last 1. If <code>v.est=T</code>, then it runs 2 one more time.</p></li>
+<li><p>If sigma is given, then it runs 1 to give <span class="math inline">\(\hat\mu_t\)</span>. If <code>v.est=T</code>, then it runs 2 one more time. So: even if sigma is given, <code>smash.gaus</code> could still estimate it.</p></li>
+<li><p>Names of the methods are marked in <strong>bold</strong> for convenience.</p></li>
+</ol>
+<div id="estimate-sigma2s_t2-together" class="section level1">
+<h1>Estimate (<span class="math inline">\(\sigma^2+s_t^2\)</span>) together</h1>
+<p>When estimating <span class="math inline">\(\mu_t\)</span>, what we actually need is <span class="math inline">\(\sigma^2+s_t^2\)</span> for <code>smash.gaus</code>.</p>
+<p>Method 1(<strong>smashu</strong>): We can simply feed <span class="math inline">\(y_t\)</span> to <code>smash.gaus</code> then get estimated <span class="math inline">\(\mu_t\)</span> and <span class="math inline">\(\sigma^2+s_t^2\)</span>. This is simple and easy. But this method does not take advantage of known <span class="math inline">\(s_t^2\)</span>.</p>
+<p>Method 2(<strong>rmad</strong>): Using “running MAD”(RMAD) method: <span class="math inline">\(1.4826\times MAD\)</span>. MAD stands for median absolute deviation, <span class="math inline">\(MAD(x)=median|x-median(x)|\)</span>. (For normal distribution <span class="math inline">\(x\sim N(\mu,\sigma^2)\)</span>, <span class="math inline">\(MAD(x)=\sigma MAD(z)\)</span>, where <span class="math inline">\(z\sim N(0,1)\)</span> so <span class="math inline">\(\sigma=\frac{MAD(x)}{MAD(z)}=1.4826\times MAD(x)\)</span>.(<span class="math inline">\(1/[\Phi^{-1}(3/4)] \approx 1.4826\)</span> )). One advantage of MAD is the robustness. In Xing<span class="math inline">\(\&amp;\)</span>Stephens(2016), simulations show that SMASH outperforms RMA. So we won’t use rmad in the experiments.</p>
+</div>
+<div id="estimate-sigma2" class="section level1">
+<h1>Estimate <span class="math inline">\(\sigma^2\)</span></h1>
+<p>Method 1(<strong>moment</strong>): It’s easy to show that <span class="math inline">\(E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2\sigma^2\)</span>. Similarly, <span class="math inline">\(E(Y_t-Y_{t-1})^2=s_t^2+s_{t-1}^2+2\sigma^2\)</span>. Combining two equations and solving for <span class="math inline">\(\sigma^2\)</span>, we have a natural way to estimate it: <span class="math inline">\(\hat\sigma^2_t=\frac{((Y_t-Y_{t+1})^2+(Y_t-Y_{t+1})^2-2s_t^2-s_{t-1}^2-s_{t+1}^2)}{4}\)</span> for each <span class="math inline">\(t\)</span>. The estimate of <span class="math inline">\(\sigma^2\)</span> is given by the mean of <span class="math inline">\(\hat\sigma^2_t\)</span>. This is similar to the initilization step in smash paper. We won’t include this method in the experiments.</p>
+<p>Method 2: This method follows the same idea for estimating variance in Xing<span class="math inline">\(\&amp;\)</span>Stephens(2016). Since <span class="math inline">\(Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)\)</span>, we define <span class="math inline">\(Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2\)</span>. <span class="math inline">\(E(z_t^2)=\sigma^2+s_t^2\)</span> and an estimate of <span class="math inline">\(var(Z_t^2)\)</span> is <span class="math inline">\(\frac{2}{3}Z_t^4\)</span>. It’s then transferred to a mean estimating problem: <span class="math inline">\(Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)\)</span>. Let <span class="math inline">\(\tilde Z_t^2=Z_t^2-s_t^2\)</span>, then <span class="math inline">\(\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)\)</span>. We can then use maximum likelihood estimation(<strong>mle</strong>) estimate <span class="math inline">\(\sigma^2\)</span>.</p>
+</div>
+<div id="simulation" class="section level1">
+<h1>Simulation</h1>
+<p>In this section, we examine the performance of method 2 for estimating <span class="math inline">\(\sigma\)</span>. In the experiments, <span class="math inline">\(n=512\)</span>, SNR=3, mean function spike with range (0.2,0.8), <span class="math inline">\(s_t\)</span> has range (0.015,0.045) and <span class="math inline">\(\sigma=0.02\)</span>.</p>
+<p>Since what we eventually need is <span class="math inline">\(\sqrt(\sigma^2+s_t^2)\)</span>, we compare the following methods: 1. Estimate <span class="math inline">\(\sigma^2\)</span> first then add to <span class="math inline">\(s_t^2\)</span>; 2. Estimate <span class="math inline">\(\sqrt(\sigma^2+s_t^2)\)</span> directly using smash. The measure of accuracy is mean squared error. We also compared the mean estimation based the estimated variance.</p>
+<pre class="r"><code>library(smashrgen)
+library(ggplot2)</code></pre>
+<pre class="r"><code>#simulations
+# Create the baseline mean function. Here we use the &quot;spikes&quot; function.
+n = 2^9
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+        3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+        0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+plot(mu.t, type = &quot;l&quot;,main=&#39;main function&#39;)</code></pre>
+<p><img src="figure/sigma2.Rmd/default-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Create the baseline variance function. (The function V2 from Cai &amp;
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = &quot;l&quot;)
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.02
+st=sqrt(sigma.t^2-sigma^2)
+plot(st, type = &quot;l&quot;, main=&#39;s_t&#39;)</code></pre>
+<p><img src="figure/sigma2.Rmd/default-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+set.seed(12345)
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab=&#39;sigma hat&#39;)
+abline(h=sigma,lty=2)</code></pre>
+<p><img src="figure/sigma2.Rmd/default-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/spike-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st[1,],type=&#39;l&#39;,ylim=c(0.01,0.06),ylab=&#39;sigma^2+s_t^2&#39;,main=&#39;An example of estimated total variance&#39;)
+lines(sst[1,],col=2)
+lines(sigma.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/spike-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/spike-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st.mu[1,],type=&#39;l&#39;,ylim=c(0.15,0.8),ylab = &#39;mu&#39;,main=&#39;An example of mean estimation&#39;)
+lines(sst.mu[1,],col=2)
+lines(mu.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/spike-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Given the true mean, method 2 for estimating <span class="math inline">\(\sigma^2\)</span> gives mean sigma estimations very close to true sigma. When the true mean is unknown, we can see one iteration of smash.gaus.gen gives best estimation.</p>
+<p>Estimating <span class="math inline">\(\sigma^2\)</span> then adding to <span class="math inline">\(s_t^2\)</span> give better estimation of total variance. However,<br />
+<code>smash.gaus</code> gives better mean estimation under worse variance estimation.</p>
+<p>Now let’s reduce sample size from 512 to 128.</p>
+<pre class="r"><code>n = 128
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+        3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+        0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = &quot;l&quot;,main=&#39;main function&#39;)
+
+# Create the baseline variance function. (The function V2 from Cai &amp;
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = &quot;l&quot;)
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.02
+st=sqrt(sigma.t^2-sigma^2)
+#plot(st, type = &quot;l&quot;, main=&#39;s_t&#39;)
+
+
+mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+set.seed(12345)
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab=&#39;sigma hat&#39;)
+abline(h=sigma,lty=2)</code></pre>
+<p><img src="figure/sigma2.Rmd/smalln-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/smalln-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st[1,],type=&#39;l&#39;,ylim=c(0.01,0.06),ylab=&#39;sigma^2+s_t^2&#39;,main=&#39;An example of estimated total variance&#39;)
+lines(sst[1,],col=2)
+lines(sigma.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/smalln-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/smalln-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st.mu[1,],type=&#39;l&#39;,ylim=c(0.15,0.8),ylab = &#39;mu&#39;,main=&#39;An example of mean estimation&#39;)
+lines(sst.mu[1,],col=2)
+lines(mu.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/smalln-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Still, one iteration of smash.gaus.gen gives best estimation. Estimating <span class="math inline">\(\sigma^2\)</span> then adding to <span class="math inline">\(s_t^2\)</span> give better estimation of total variance. This time, <code>smash.gaus</code> gives smaller MSE under better variance estimation.</p>
+<div id="non-spatial-variance" class="section level3">
+<h3>non-spatial variance</h3>
+<p>One assumption of smash is that the variance has spatial features. We now check the performance if this assumption is violated.</p>
+<pre class="r"><code>n=512
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+        3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+        0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = &quot;l&quot;,main=&#39;main function&#39;)
+
+set.seed(12345)
+
+var.fn=runif(n,0.3,1)/10
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(3)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+sigma=0.02
+st=sqrt(sigma.t^2-sigma^2)
+plot(st, type = &quot;l&quot;, main=&#39;s_t&#39;)</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mle.s=c()
+mle.tm=c()
+mle.sg1=c()
+mle.sg2=c()
+mle.sg3=c()
+mle.sg4=c()
+
+s.p.st=c()
+s.p.st.mu=c()
+sst=c()
+sst.mu=c()
+
+
+for (i in 1:100) {
+  y=mu.t+rnorm(n,0,sigma)+rnorm(n,0,st)
+  mle.s[i]=sigma_est(y,st=st)
+  mle.sg1[i]=smash.gaus.gen(y,st,niters = 1)$sd.hat
+  mle.tm[i]=sigma_est(y,mu=mu.t,st=st)
+  mle.sg2[i]=smash.gaus.gen(y,st,niters = 2)$sd.hat
+  mle.sg3[i]=smash.gaus.gen(y,st,niters = 3)$sd.hat
+  mle.sg4[i]=smash.gaus.gen(y,st,niters = 4)$sd.hat
+  
+  smash.est=smash.gaus(y,joint=T)
+  
+  ##s+st,sst
+  s.p.st=rbind(s.p.st,sqrt(mle.sg1[i]^2+st^2))
+  sst=rbind(sst,sqrt(smash.est$var.res))
+  ##mean
+  s.p.st.mu=rbind(s.p.st.mu,smash.gaus(y,s.p.st[i,]))
+  sst.mu=rbind(sst.mu,smash.est$mu.res)
+}
+
+boxplot(cbind(mle.tm,mle.s,mle.sg1,mle.sg2,mle.sg3,mle.sg4),ylab=&#39;sigma hat&#39;)
+abline(h=sigma,lty=2)</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
+sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
+
+boxplot(cbind(s.p.st.mse,sst.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st[1,],type=&#39;l&#39;,ylim=c(0.01,0.06),ylab=&#39;sigma^2+s_t^2&#39;,main=&#39;An example of estimated total variance&#39;)
+lines(sst[1,],col=2)
+lines(sigma.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
+sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
+
+boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(s.p.st.mu[1,],type=&#39;l&#39;,ylim=c(0.15,0.8),ylab = &#39;mu&#39;,main=&#39;An example of mean estimation&#39;)
+lines(sst.mu[1,],col=2)
+lines(mu.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;sigma+s_t&#39;,&#39;smashu&#39;,&#39;true&#39;),col=c(1,2,&#39;grey80&#39;),lty=c(1,1,1))</code></pre>
+<p><img src="figure/sigma2.Rmd/nonspatial-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Again, though the differences in estimating the total variance, the mean estimations are very similar.</p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.0 (2017-04-21)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 17134)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggplot2_2.2.1    smashrgen_0.1.0  wavethresh_4.6.8 MASS_7.3-47     
+[5] caTools_1.17.1   ashr_2.2-7       smashr_1.1-5    
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18        plyr_1.8.4          compiler_3.4.0     
+ [4] git2r_0.21.0        workflowr_1.0.1     R.methodsS3_1.7.1  
+ [7] R.utils_2.6.0       bitops_1.0-6        iterators_1.0.8    
+[10] tools_3.4.0         digest_0.6.13       tibble_1.3.3       
+[13] evaluate_0.10       gtable_0.2.0        lattice_0.20-35    
+[16] rlang_0.1.2         Matrix_1.2-9        foreach_1.4.4      
+[19] yaml_2.1.19         parallel_3.4.0      stringr_1.3.0      
+[22] knitr_1.20          REBayes_1.3         rprojroot_1.3-2    
+[25] grid_3.4.0          data.table_1.10.4-3 rmarkdown_1.8      
+[28] magrittr_1.5        whisker_0.3-2       backports_1.0.5    
+[31] scales_0.4.1        codetools_0.2-15    htmltools_0.3.5    
+[34] assertthat_0.2.0    colorspace_1.3-2    stringi_1.1.6      
+[37] Rmosek_8.0.69       lazyeval_0.2.1      munsell_0.4.3      
+[40] doParallel_1.0.11   pscl_1.5.2          truncnorm_1.0-8    
+[43] SQUAREM_2017.10-1   R.oo_1.21.0        </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.0.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
