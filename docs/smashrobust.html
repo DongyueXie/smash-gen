@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/a8961315313b9029f9786fbdc484fa24d5af92cf" target="_blank">a896131</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4f4e8fc606af5fc158dda07ef3cc6acc7e2bea2d" target="_blank">4f4e8fc</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -405,6 +405,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/4f4e8fc606af5fc158dda07ef3cc6acc7e2bea2d/analysis/smashrobust.Rmd" target="_blank">4f4e8fc</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+smash robust
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/aacfc46a0daa47a2fc194d4b986a7002f85784d8/docs/smashrobust.html" target="_blank">aacfc46</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -526,15 +560,75 @@ lines(smash.gaus(y,sigma.t),col=3)
 lines(mu.t,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/aacfc46a0daa47a2fc194d4b986a7002f85784d8/docs/figure/smashrobust.Rmd/unnamed-chunk-2-1.png" target="_blank">aacfc46</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.02,0.05),main=&#39;sigma&#39;)
 lines(rep(mean(sigma.t),n),col=2)
 lines(sigma.t,col=3)</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/aacfc46a0daa47a2fc194d4b986a7002f85784d8/docs/figure/smashrobust.Rmd/unnamed-chunk-2-2.png" target="_blank">aacfc46</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>mean(sigma.t)</code></pre>
 <pre><code>[1] 0.03185823</code></pre>
 <pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
 <pre><code>[1] 0.02924347</code></pre>
-<p>Decrease n to 64:</p>
+<p>Decrease n to 256:</p>
 <pre class="r"><code>n = 64
 t = 1:n/n
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
@@ -560,7 +654,7 @@ sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
 
 set.seed(12345)
 y=mu.t+rnorm(n,0,sigma.t)
-plot(y,col=&#39;grey80&#39;,main=&#39;n=64,SNR=3&#39;)
+plot(y,col=&#39;grey80&#39;,main=&#39;n=256,SNR=3&#39;)
 lines(smash.gaus(y))
 lines(smash.gaus(y,mean(sigma.t)),col=2)
 lines(smash.gaus(y,sigma.t),col=3)
@@ -635,8 +729,8 @@ Dongyue Xie
 <pre><code>[1] 0.03423118</code></pre>
 <pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
 <pre><code>[1] 0.07396342</code></pre>
-<p>Decrease SNR:</p>
-<pre class="r"><code>n = 512
+<p>Decrease n to 64:</p>
+<pre class="r"><code>n = 64
 t = 1:n/n
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
             1.5  * exp(-2000 * (x - 0.33)^2) +
@@ -656,12 +750,12 @@ var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
 #plot(var.fn, type = &quot;l&quot;)
 
 # Set the signal-to-noise ratio.
-rsnr = sqrt(1)
+rsnr = sqrt(3)
 sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
 
 set.seed(12345)
 y=mu.t+rnorm(n,0,sigma.t)
-plot(y,col=&#39;grey80&#39;,main=&#39;n=512,SNR=1&#39;)
+plot(y,col=&#39;grey80&#39;,main=&#39;n=64,SNR=3&#39;)
 lines(smash.gaus(y))
 lines(smash.gaus(y,mean(sigma.t)),col=2)
 lines(smash.gaus(y,sigma.t),col=3)
@@ -698,7 +792,7 @@ Dongyue Xie
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.07,0.15),main=&#39;sigma&#39;)
+<pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.01,0.08),main=&#39;sigma&#39;)
 lines(rep(mean(sigma.t),n),col=2)
 lines(sigma.t,col=3)</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
@@ -733,6 +827,47 @@ Dongyue Xie
 </table>
 <p></details></p>
 <pre class="r"><code>mean(sigma.t)</code></pre>
+<pre><code>[1] 0.03423118</code></pre>
+<pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
+<pre><code>[1] 0.07396342</code></pre>
+<p>Decrease SNR:</p>
+<pre class="r"><code>n = 512
+t = 1:n/n
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
+            1.5  * exp(-2000 * (x - 0.33)^2) +
+        3    * exp(-8000 * (x - 0.47)^2) + 
+            2.25 * exp(-16000 * (x - 0.69)^2) +
+        0.5  * exp(-32000 * (x - 0.83)^2))
+mu.s = spike.f(t)
+
+# Scale the signal to be between 0.2 and 0.8.
+mu.t = (1 + mu.s)/5
+#plot(mu.t, type = &quot;l&quot;,main=&#39;main function&#39;)
+
+# Create the baseline variance function. (The function V2 from Cai &amp;
+# Wang 2008 is used here.)
+var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
+  exp(-200 * (t - 0.5)^2) + exp(-950 * (t - 0.8)^2)))/1.35+1
+#plot(var.fn, type = &quot;l&quot;)
+
+# Set the signal-to-noise ratio.
+rsnr = sqrt(1)
+sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
+
+set.seed(12345)
+y=mu.t+rnorm(n,0,sigma.t)
+plot(y,col=&#39;grey80&#39;,main=&#39;n=512,SNR=1&#39;)
+lines(smash.gaus(y))
+lines(smash.gaus(y,mean(sigma.t)),col=2)
+lines(smash.gaus(y,sigma.t),col=3)
+lines(mu.t,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/smashrobust.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.07,0.15),main=&#39;sigma&#39;)
+lines(rep(mean(sigma.t),n),col=2)
+lines(sigma.t,col=3)</code></pre>
+<p><img src="figure/smashrobust.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(sigma.t)</code></pre>
 <pre><code>[1] 0.0955747</code></pre>
 <pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
 <pre><code>[1] 0.09278895</code></pre>
@@ -740,7 +875,7 @@ Dongyue Xie
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ol style="list-style-type: decimal">
-<li><code>smash.gaus</code> is sensitive to the scale of variance instead of the shape of variance.</li>
+<li><code>smash.gaus</code> is more sensitive to the scale of variance instead of the shape of variance.</li>
 <li>As long as n is large enough so that smash can give good estimation of scale of variance and roughly satifactory shape, then <code>smash.gaus</code> can still give similar mean estimation.</li>
 </ol>
 <div id="session-information" class="section level2">
