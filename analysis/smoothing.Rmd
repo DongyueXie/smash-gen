@@ -1,0 +1,87 @@
+---
+title: "smoothing"
+author: "Dongyue Xie"
+date: "2018-09-28"
+output: workflowr::wflow_html
+---
+
+# Introduction
+
+The question we are interested in is for iid sample $x_i,y_i$, we can write $y_i=f_0(x_i)+\epsilon_i$ where $f_0(x)=E(Y|X=x)$, $\epsilon_i$ iid with mean zero, $x_i=i/n, i=1,...,n$ and it's typical to assume that x and $\epsilon$ are independent. 
+
+Classical signal denisoing/non-parametric regression methods are KNN, kernal smoothing, local polynomials, splines, Reproducing kernel Hilbert spaces, wavelets, trend filtering and etc.
+
+We first consider wavelet method for smoothing data.
+
+## Wavelet smoothing
+
+General wavelet representation of a function: $f(x)=\Sigma_kc_{j_0,k}\phi_{j_0,k}(x)+\Sigma_{j=j_0}^\infty \Sigma_kd_{j,k}\psi_{j,k}(x)$ where $\phi(x)$ is father wavelet and $\psi(x)$ is mother wavelet. One can think of the first set of terms of $\phi_{j_0,k}(x)$ representing the ‘average’ or ‘overall’ level of function and the rest representing the detail.
+
+Vanishing moments are important because if a wavelet has m vanishing
+moments, then all wavelet coefficients of any polynomial of degree m or less
+will be exactly zero. Thus, if one has a function that is quite smooth and only interrupted by the occasional discontinuity or other singularity, then the wavelet coefficients ‘on the smooth parts’ will be very small or even zero if the behaviour at that point is polynomial of a certain order or less.
+
+Wavelet method is based on discrete wavelet transformation(DWT). Non-decimated wavelet transformation(NDWT) gives n coefficients for each level where n is the length of the sequences.(idea: if considering original sequence only, we are missing $y_3-y_2$; so NDWT rotate the sequence so that each possible paris are considered.)
+
+The SNR is merely the ratio of the sample standard deviation of the signal (although it is not random) to the standard deviation of the added noise(Nason, 2010).
+
+## Smash
+
+Gaussian nonparametric regression(Gaussian sequence model) is defined as $y_i=\mu_i+\sigma_iz_i$ where $z_i\sim N(0,1)$, $i=1,2,\dots,T$. In multivariate form, it can be formulated as $y|\mu\sim N_T(\mu,D)$ where D is the diagonal matrix with diagonal elements ($\sigma_1^2,\dots,\sigma_T^2$). Applying a discrete wavelet transform(DWT) represented as an orthogonal matrix $W$, we have $Wy|W\mu\sim N(W\mu,WDW^T)$ which is $\tilde y|\tilde \mu\sim N(\tilde\mu,WDW^T)$. If $\mu$ has spatial structure, then $\tilde\mu$ would be sparse.
+
+In heterokedastic variance case, we only use the diagonal of $WDW^T$ so we can apply EB shrinkage to $\tilde y_j|\tilde\mu_j\sim N(\tilde\mu_j,w_j^2)$ where $w_j^2=\Sigma_{t=1}^T\sigma_t^2W_{jt}^2$.
+
+If $D$ is unknown, we estimate it using shrinkage methods under the assumption that the variances are also spatially structured. Since $y_t-\mu_t\sim N(0,\sigma_t^2)$, we have $Z_t^2=(y_t-\mu_t)^2\sim\sigma_t^2\chi_1^2$ and $E(Z_t^2)=\sigma_t^2$. Though $Z_t^2$ is chi-squared distributed, we treat it as Gaussian and use $\frac{2}{3}Z_t^4$ to estimate $Var(Z_t^2)$.($Var(Z_t^2)=2\sigma_t^4$, $E(Z_t^4)=3\sigma_t^4$.) 
+
+note: apply EB shrinkage to each level seperately(each level has T coefficients due to NDWT). Then the final estiamte is the average of total $\log_2T$ inversed signal.
+
+# Non-Gaussian sequence smoothing
+
+So far, we have assumed that data are normal distributed. However, non-Gaussian sequences are common such as poisson sequences, binomial sequences and etc. Here, we generalize smash to allow non-Gaussian sequence smoothing.
+
+## Poisson data
+
+Consider a Poisson sequence $x_t\sim Poi(m_t)$, $t=1,2,...,T$. From generalized linear model theory, we know $\log$ is a natrual link function for poisson data and $\log(E(x_t))=\log(m_t)=\mu_t$. A Taylor series expansion of $\log x_t$ around $m_t$ is $\log(x_t)= \log(m_t)+\frac{1}{m_t}(x_t-m_t)-\frac{1}{2m_t^2}(x_t-m_t)^2+O(x_t^4)$. Here, taking the first order approxiamtion, we have $\log(x_t)\approx \log(m_t)+\frac{1}{m_t}(x_t-m_t)$(This is similar to iteratively reweighted least square where we define the working variable). Define $y_t=\log(m_t)+\frac{1}{m_t}(x_t-m_t)$ hence $E(y_t|m_t)=\log(m_t)$ and $Var(y_t|m_t)=\frac{1}{m_t}$. Then we transform the Poisson sequence to a Gaussian sequence $y_t=\mu_t+s_tz_t$ where $\mu_t=\log(m_t)$ and $s^2_t=\frac{1}{m_t}$.
+
+In spatial studies, nugget effect refers to the sum of geological microstructure and measurement error. It is the intercept in a [variogram](http://www.goldensoftware.com/variogramTutorial.pdf). To account for nuggect effect, we assume the model $\log(m_t)=\mu_t+\epsilon_t$ where $\epsilon_t\sim N(0,\sigma^2)$ and $\sigma^2$ is unknown. Hence, the above Gaussian sequence now becomes $y_t=\mu_t+\epsilon_t+s_tz_t\sim N(\mu_t,\sigma^2+s_t^2)$.
+
+## Binomial data
+
+Consider a Binomial sequence $x_t\sim Binomial(n_t,p_t)$ where $n_t$ are known and $p_t$ are to be estimated. Similar to Poisson sequence approach, we transform Binomial sequence to Gaussian sequence $y_t=\mu_t+s_tz_t$ where $y_t=\log\frac{p_t}{1-p_t}+\frac{x_t-n_tp_t}{n_tp_t(1-p_t)}$ $\mu_t=\log\frac{p_t}{1-p_t}$ and $s_t^2=\frac{1}{n_tp_t(1-p_t)}$. The model dealing with nugget effect is $y_t=\mu_t+\epsilon_t+s_tz_t\sim N(\mu_t,\sigma^2+s_t^2)$.
+
+# Smashgen Algorithm
+
+Our defined variable $y_t$ depends on unknown parameters, so does the $s_t^2$. We need an initial estimate of unknown parameters to plug in to smash function. We apply [generalized adaptive shrinkage](https://mengyin.github.io/general_ash/genash.pdf) method to Poisson or Binomial sequences and obtain the posterior mean as an initial estimate.
+
+Smashgen algorithm:
+
+1. Apply `ash` to sequence data and obtain posterior mean $\hat\theta$.
+2. Formulate $y_t$. For Poisson data, $y_t=\log(\hat\theta_t)+\frac{x_t-\hat\theta_t}{\hat\theta_t}$; for binomial data, $y_t=\log\frac{\hat \theta_t}{1-\hat \theta_t}+\frac{X_t-n_t\hat \theta_t}{n_t\hat \theta_t(1-\hat \theta_t)}$.
+3. If nugget effect $\sigma^2$ is known then apply `smash.gaus` to $y_t$ with standard deviation $\sqrt{\sigma^2+s_t^2}$(For Poisson data, $s_t^2=\frac{1}{\hat\theta}$; for binomial data, $s_t^2=\frac{1}{n_t\hat \theta_t(1-\hat \theta_t)}$); Otherwise, apply `smash.gaus` to $y_t$ with unknown variance. The output of `smash.gaus` is denoted as $\mu_t$.
+4. Export $e^{\mu_t}$ for Poisson data or $\frac{\exp(\mu_t)}{1+\exp(\mu_t)}$ for binomial data.
+
+## Estimate nugget effect
+
+Nugget effect is usually unknown in model $y_t=\mu_t+\epsilon_t+s_tz_t$. Since $y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$, we define  $Z_t^2=(y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. Then we have $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{2}{3}Z_t^4$. It's transferred to a mean estimation problem: $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Let $\tilde Z_t^2=Z_t^2-s_t^2$, then $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. In practice, $\mu_t$ is from `smash.gaus` applying to $y_t$ with unknown variance and we estiamte nuggect effect as $\hat\sigma^2=\frac{1}{T}\Sigma_{t=1}^T\tilde Z_t$. **Q: should we re-formulate $s_t$ or using original ones from ash posterior mean?**
+
+# Experiments
+
+Some common smooth mean functions used in simulation studies.
+
+constant, step, blocks, Bursts, spikes, heavisine
+
+Simulation settings: For poisson data, (0.01, 3), (1/8,8) and (1/128,128) intensities. 256 data points, each with 100 dataset.
+
+For binomial data, 
+
+# Reference
+
+Nason, G. (2010). Wavelet methods in statistics with R. Springer Science & Business Media.
+
+Johnstone, I.M. (2017). Gaussian estimation : Sequence and wavelet models.
+
+
+```{r}
+
+```
+
