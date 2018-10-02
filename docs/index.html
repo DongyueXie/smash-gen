@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/eddcacf671dcca5c0beaacaf0bb4a92f4cb0c0c3" target="_blank">eddcacf</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d7c4a01f99b4c53371d1c92b438b20cdb7e76ff2" target="_blank">d7c4a01</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -270,6 +270,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/d7c4a01f99b4c53371d1c92b438b20cdb7e76ff2/analysis/index.Rmd" target="_blank">d7c4a01</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+revise
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/eaee67b7473115979a7b73a2eb0ce516a37dd7d3/docs/index.html" target="_blank">eaee67b</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -884,7 +918,7 @@ Start workflowr project.
 </div>
 <div id="unevenly-spaced-data" class="section level2">
 <h2>Unevenly spaced data</h2>
-<p>We treat unevenly spaced data as missing and set them to 0 with corresponding standard error <span class="math inline">\(10^6\)</span>. The idea is that if standard error is very big then value of y becomes irrelevant.</p>
+<p>We treat unevenly spaced data as missing and set them to 0 with corresponding standard error <span class="math inline">\(10^6\)</span>. The idea is that if standard error is very big then value of y becomes irrelevant. It doesn’t work.</p>
 <ol style="list-style-type: decimal">
 <li><a href="missing.html">Missing data?</a></li>
 </ol>
@@ -893,8 +927,8 @@ Start workflowr project.
 <h2>Chip-Exo and Chip-seq data smoothing</h2>
 <p>Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?</p>
 <ol style="list-style-type: decimal">
-<li><a href="chipexo.html">CTCF Chip-exo data, reflection</a></li>
-<li><a href="chipexocut.html">CTCF Chip-exo data, cut</a></li>
+<li><a href="chipexo.html">CTCF Chip-exo data, reflection</a>: use symmetric reflection to extend sequence.</li>
+<li><a href="chipexocut.html">CTCF Chip-exo data, cut</a>: cut the sequence.</li>
 <li><a href="chipseqref.html">CTCF Chip-seq data</a></li>
 </ol>
 </div>
