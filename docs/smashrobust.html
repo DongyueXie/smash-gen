@@ -364,13 +364,12 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/ba36f402ce54b67005d4ade58c1ec056360c1f2b" target="_blank">ba36f40</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/a8961315313b9029f9786fbdc484fa24d5af92cf" target="_blank">a896131</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
-    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/literature.Rmd
@@ -411,6 +410,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a8961315313b9029f9786fbdc484fa24d5af92cf/analysis/smashrobust.Rmd" target="_blank">a896131</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+smash robust
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/e7afb4d203920a347d28d6d6df901118d8460996/docs/smashrobust.html" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/ba36f402ce54b67005d4ade58c1ec056360c1f2b/analysis/smashrobust.Rmd" target="_blank">ba36f40</a>
 </td>
 <td style="text-align:left;">
@@ -445,6 +478,36 @@ mu.s = spike.f(t)
 mu.t = (1 + mu.s)/5
 plot(mu.t, type = &quot;l&quot;,main=&#39;main function&#39;)</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e7afb4d203920a347d28d6d6df901118d8460996/docs/figure/smashrobust.Rmd/unnamed-chunk-1-1.png" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code># Create the baseline variance function. (The function V2 from Cai &amp;
 # Wang 2008 is used here.)
 var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
@@ -454,23 +517,24 @@ var.fn = (1e-04 + 4 * (exp(-550 * (t - 0.2)^2) +
 # Set the signal-to-noise ratio.
 rsnr = sqrt(3)
 sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2</code></pre>
-<pre class="t"><code>
-set.seed(12345)
+<pre class="r"><code>set.seed(12345)
 y=mu.t+rnorm(n,0,sigma.t)
 plot(y,col=&#39;grey80&#39;,main=&#39;n=512,SNR=3&#39;)
 lines(smash.gaus(y))
 lines(smash.gaus(y,mean(sigma.t)),col=2)
 lines(smash.gaus(y,sigma.t),col=3)
 lines(mu.t,col=&#39;grey80&#39;)
-legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))
-
-plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.02,0.05),main=&#39;sigma&#39;)
+legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/smashrobust.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.02,0.05),main=&#39;sigma&#39;)
 lines(rep(mean(sigma.t),n),col=2)
-lines(sigma.t,col=3)
-
-mean(sigma.t)
-mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
-<p>Decrease n:</p>
+lines(sigma.t,col=3)</code></pre>
+<p><img src="figure/smashrobust.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(sigma.t)</code></pre>
+<pre><code>[1] 0.03185823</code></pre>
+<pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
+<pre><code>[1] 0.02924347</code></pre>
+<p>Decrease n to 64:</p>
 <pre class="r"><code>n = 64
 t = 1:n/n
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
@@ -503,10 +567,70 @@ lines(smash.gaus(y,sigma.t),col=3)
 lines(mu.t,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e7afb4d203920a347d28d6d6df901118d8460996/docs/figure/smashrobust.Rmd/unnamed-chunk-3-1.png" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.01,0.08),main=&#39;sigma&#39;)
 lines(rep(mean(sigma.t),n),col=2)
 lines(sigma.t,col=3)</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e7afb4d203920a347d28d6d6df901118d8460996/docs/figure/smashrobust.Rmd/unnamed-chunk-3-2.png" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>mean(sigma.t)</code></pre>
 <pre><code>[1] 0.03423118</code></pre>
 <pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
@@ -544,10 +668,70 @@ lines(smash.gaus(y,sigma.t),col=3)
 lines(mu.t,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;smashu&#39;,&#39;smash.mean.sigma&#39;,&#39;smash.true.sigma&#39;,&#39;true mean&#39;),col=c(1,2,3,&#39;grey80&#39;),lty=c(1,1,1,1))</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e7afb4d203920a347d28d6d6df901118d8460996/docs/figure/smashrobust.Rmd/unnamed-chunk-4-1.png" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(sqrt(smash.gaus(y,joint=T)$var.res),type=&#39;l&#39;,ylim=c(0.07,0.15),main=&#39;sigma&#39;)
 lines(rep(mean(sigma.t),n),col=2)
 lines(sigma.t,col=3)</code></pre>
 <p><img src="figure/smashrobust.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e7afb4d203920a347d28d6d6df901118d8460996/docs/figure/smashrobust.Rmd/unnamed-chunk-4-2.png" target="_blank">e7afb4d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>mean(sigma.t)</code></pre>
 <pre><code>[1] 0.0955747</code></pre>
 <pre class="r"><code>mean(sqrt(smash.gaus(y,joint=T)$var.res))</code></pre>
