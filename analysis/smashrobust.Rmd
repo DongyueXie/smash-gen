@@ -38,8 +38,7 @@ sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
 
 ```
 
-```{t}
-
+```{r}
 set.seed(12345)
 y=mu.t+rnorm(n,0,sigma.t)
 plot(y,col='grey80',main='n=512,SNR=3')
@@ -57,7 +56,7 @@ mean(sigma.t)
 mean(sqrt(smash.gaus(y,joint=T)$var.res))
 ```
 
-Decrease n:
+Decrease n to 64:
 
 ```{r}
 n = 64
