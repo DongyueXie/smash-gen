@@ -1,5 +1,5 @@
 ---
-title: "Estimate unknown variance $\sigma$"
+title: "Estimate unknown variance"
 author: "Dongyue Xie"
 date: "09/30/2018"
 output: workflowr::wflow_html:
@@ -32,11 +32,12 @@ Method 1(**moment**): It's easy to show that $E(Y_t-Y_{t+1})^2=s_t^2+s_{t+1}^2+2
 
 Method 2: This method follows the same idea for estimating variance in Xing$\&$Stephens(2016). Since $Y_t-\mu_t\sim N(0,\sigma^2+s_t^2)$, we define  $Z_t^2=(Y_t-\mu_t)^2\sim (\sigma^2+s_t^2)\chi_1^2$. $E(z_t^2)=\sigma^2+s_t^2$ and an estimate of $var(Z_t^2)$ is $\frac{2}{3}Z_t^4$. It's then transferred to a mean estimating problem: $Z_t^2=\sigma^2+s_t^2+N(0,\frac{4}{3}Z_t^4)$. Let $\tilde Z_t^2=Z_t^2-s_t^2$, then $\tilde Z_t^2=\sigma^2+N(0,\frac{2}{3}Z_t^4)$. We can then use maximum likelihood estimation(**mle**) estimate $\sigma^2$.
 
-# Simulation: estimate unknown $\sigma$.
+# Simulation
 
 In this section, we examine the performance of method 2 for estimating $\sigma$. In the experiments, $n=512$, SNR=3, mean function spike with range (0.2,0.8), $s_t$ has range (0.015,0.045) and $\sigma=0.02$.
 
 
+Since what we eventually need is $\sqrt(\sigma^2+s_t^2)$, we compare the following methods: 1. Estimate $\sigma^2$ first then add to $s_t^2$; 2. Estimate $\sqrt(\sigma^2+s_t^2)$ directly using smash. The measure of accuracy is mean squared error. We also compared the mean estimation based the estimated variance.
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
@@ -117,13 +118,6 @@ abline(h=sigma,lty=2)
 ```
 
 
-
-# Simulation: estimate $\sqrt{\sigma^2+s_t^2}$
-
-Since what we eventually need is $\sqrt(\sigma^2+s_t^2)$, we compare the following methods: 1. Estimate $\sigma^2$ first then add to $s_t^2$; 2. Estimate $\sqrt(\sigma^2+s_t^2)$ directly using smash. The measure of accuracy is mean squared error.
-
-
-
 ```{r spike}
 
 s.p.st.mse=apply(s.p.st, 1, function(x){mean((x-sigma.t)^2)})
@@ -131,24 +125,30 @@ sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
 
 boxplot(cbind(s.p.st.mse,sst.mse))
 
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06),ylab='sigma^2+s_t^2',main='An example of estimated total variance')
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
+
 s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
 sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
 
 boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
 
-plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
-lines(sst[1,],col=2)
-lines(sigma.t,col='grey80')
 
-plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8),ylab = 'mu',main='An example of mean estimation')
 lines(sst.mu[1,],col=2)
 lines(mu.t,col='grey80')
-
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
 
 
 ```
 
+Given the true mean, method 2 for estimating $\sigma^2$ gives mean sigma estimations very close to true sigma. When the true mean is unknown, we can see one iteration of smash.gaus.gen gives best estimation.
 
+Estimating $\sigma^2$ then adding to $s_t^2$ give better estimation of total variance. However,  
+`smash.gaus` gives better mean estimation under worse variance estimation. 
 
 Now let's reduce sample size from 512 to 128.
 ```{r smalln}
@@ -221,22 +221,27 @@ sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
 
 boxplot(cbind(s.p.st.mse,sst.mse))
 
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06),ylab='sigma^2+s_t^2',main='An example of estimated total variance')
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
+
 s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
 sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
 
 boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
 
-plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
-lines(sst[1,],col=2)
-lines(sigma.t,col='grey80')
 
-plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8),ylab = 'mu',main='An example of mean estimation')
 lines(sst.mu[1,],col=2)
 lines(mu.t,col='grey80')
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
 ```
 
+Still, one iteration of smash.gaus.gen gives best estimation. Estimating $\sigma^2$ then adding to $s_t^2$ give better estimation of total variance. This time, `smash.gaus` gives smaller MSE under better variance estimation.
 
-## Spike mean, non-spatial variance
+### non-spatial variance
 
 One assumption of smash is that the variance has spatial features. We now check the performance if this assumption is violated.
 
@@ -256,15 +261,15 @@ mu.t = (1 + mu.s)/5
 
 set.seed(12345)
 
-var.fn=runif(n,0,1)/10
+var.fn=runif(n,0.3,1)/10
 
 # Set the signal-to-noise ratio.
 rsnr = sqrt(3)
 sigma.t = sqrt(var.fn)/mean(sqrt(var.fn)) * sd(mu.t)/rsnr^2
 
-sigma=0.0015
+sigma=0.02
 st=sqrt(sigma.t^2-sigma^2)
-#plot(st, type = "l", main='s_t')
+plot(st, type = "l", main='s_t')
 
 mle.s=c()
 mle.tm=c()
@@ -306,19 +311,22 @@ sst.mse=apply(sst, 1, function(x){mean((x-sigma.t)^2)})
 
 boxplot(cbind(s.p.st.mse,sst.mse))
 
+plot(s.p.st[1,],type='l',ylim=c(0.01,0.06),ylab='sigma^2+s_t^2',main='An example of estimated total variance')
+lines(sst[1,],col=2)
+lines(sigma.t,col='grey80')
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
+
 s.p.st.mu.mse=apply(s.p.st.mu, 1, function(x){mean((x-mu.t)^2)})
 sst.mu.mse=apply(sst.mu, 1, function(x){mean((x-mu.t)^2)})
 
 boxplot(cbind(s.p.st.mu.mse,sst.mu.mse))
 
-plot(s.p.st[1,],type='l',ylim=c(0.01,0.06))
-lines(sst[1,],col=2)
-lines(sigma.t,col='grey80')
-
-plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8))
+plot(s.p.st.mu[1,],type='l',ylim=c(0.15,0.8),ylab = 'mu',main='An example of mean estimation')
 lines(sst.mu[1,],col=2)
 lines(mu.t,col='grey80')
+legend('topleft',c('sigma+s_t','smashu','true'),col=c(1,2,'grey80'),lty=c(1,1,1))
+
 
 ```
 
-
+Again, though the differences in estimating the total variance, the mean estimations are very similar.
