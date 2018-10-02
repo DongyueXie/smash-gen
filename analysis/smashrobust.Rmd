@@ -59,7 +59,7 @@ mean(sqrt(smash.gaus(y,joint=T)$var.res))
 Decrease n to 256:
 
 ```{r}
-n = 64
+n = 256
 t = 1:n/n
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) +
             1.5  * exp(-2000 * (x - 0.33)^2) +
