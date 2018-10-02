@@ -74,7 +74,7 @@ Now suppose at each $t$, $Y_t=X_t\beta+\mu_t+\epsilon_t$, where $\mu$ has smooth
 
 ## Unevenly spaced data
 
-We treat unevenly spaced data as missing and set them to 0 with corresponding standard error $10^6$. The idea is that if standard error is very big then value of y becomes irrelevant.
+We treat unevenly spaced data as missing and set them to 0 with corresponding standard error $10^6$. The idea is that if standard error is very big then value of y becomes irrelevant. It doesn't work.
 
 1. [Missing data?](missing.html)
 
@@ -82,8 +82,8 @@ We treat unevenly spaced data as missing and set them to 0 with corresponding st
 
 Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?
 
-1. [CTCF Chip-exo data, reflection](chipexo.html)
-2. [CTCF Chip-exo data, cut](chipexocut.html)
+1. [CTCF Chip-exo data, reflection](chipexo.html): use symmetric reflection to extend sequence.
+2. [CTCF Chip-exo data, cut](chipexocut.html): cut the sequence.
 3. [CTCF Chip-seq data](chipseqref.html)
 
 # Credits
