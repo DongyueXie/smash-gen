@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-02</p>
+<p><strong>Last updated:</strong> 2018-10-05</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,15 +230,21 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d7c4a01f99b4c53371d1c92b438b20cdb7e76ff2" target="_blank">d7c4a01</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/2f295fbd0f9c04ba09fbf0c190869acf51f818d2" target="_blank">2f295fb</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
 
 Untracked files:
+    Untracked:  analysis/bsseq.Rmd
+    Untracked:  analysis/gam.Rmd
     Untracked:  analysis/literature.Rmd
+    Untracked:  analysis/meeting1005.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
 
 Unstaged changes:
     Modified:   analysis/sigma.Rmd
@@ -270,6 +276,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/ba619d60df17d86093c1671854b0ca09b16e2128/docs/index.html" target="_blank">ba619d6</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-02
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -926,12 +949,26 @@ Start workflowr project.
 <div id="chip-exo-and-chip-seq-data-smoothing" class="section level2">
 <h2>Chip-Exo and Chip-seq data smoothing</h2>
 <p>Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?</p>
+<p>The primary role of CTCF is thought to be in regulating the 3D structure of chromatin.CTCF binds together strands of DNA, thus forming chromatin loops, and anchors DNA to cellular structures like the nuclear lamina. It also defines the boundaries between active and heterochromatic DNA.</p>
 <ol style="list-style-type: decimal">
 <li><a href="chipexo.html">CTCF Chip-exo data, reflection</a>: use symmetric reflection to extend sequence.</li>
 <li><a href="chipexocut.html">CTCF Chip-exo data, cut</a>: cut the sequence.</li>
 <li><a href="chipseqref.html">CTCF Chip-seq data</a></li>
 </ol>
 </div>
+<div id="dna-methylation-data-smoothing" class="section level2">
+<h2>DNA methylation data smoothing</h2>
+<ol style="list-style-type: decimal">
+<li><a href="bsseq.html">BS Cancer data</a>: DNA methylation data from normal and cancer.</li>
+</ol>
+</div>
+</div>
+<div id="literatures-on-smoothing" class="section level1">
+<h1>Literatures on smoothing</h1>
+<ol style="list-style-type: decimal">
+<li><a href="literature.html">A collection of literatures</a></li>
+<li><a href="gam.html">Generalized additive model</a></li>
+</ol>
 </div>
 <div id="credits" class="section level1">
 <h1>Credits</h1>
