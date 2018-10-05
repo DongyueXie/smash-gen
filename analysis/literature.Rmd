@@ -1,0 +1,47 @@
+---
+title: "Literature review of smoothing non-Gaussian sequence data "
+author: "Dongyue Xie"
+date: "2018-09-29"
+output: workflowr::wflow_html
+---
+
+
+
+This is a broad list of literature on smoothing Gaussian/non-Gaussian data.
+
+## Nonparametric methods
+
+KNN
+
+Kernel smootihng methods: Chapter 6 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/).
+
+Local regression(linear & higher order): [Loader, C. (2006). Local regression and likelihood. Springer Science & Business Media.](http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/LocalRegressionBook_1999.pdf)
+
+Note: Local regression makes no global assumptions about the function but assume that locally it can be well approximated with a member of a simple class of parametric function. Only observations in certain window are used.
+
+Splines: regression splines, smoothing splines; More generally, reproducing kernel Hilbert space: Chapter 5 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)
+
+Locally adaptive estimators: wavelet( [Mallat, S. (1999). A wavelet tour of signal processing. Elsevier](https://www.di.ens.fr/~mallat/papiers/WaveletTourChap1-2-3.pdf) ), Locally adaptive regression splines(A varaiant of smooting splines achieves better local adaptivity. [Mammen, E., & van de Geer, S. (1997). Locally adaptive regression splines. The Annals of Statistics, 25(1), 387-413.](https://projecteuclid.org/euclid.aos/1034276635)), Trend filtering( [Kim, S. J., Koh, K., Boyd, S., & Gorinevsky, D. (2009). l_1 Trend Filtering. SIAM review, 51(2), 339-360.](http://web.stanford.edu/~boyd/papers/l1_trend_filter.html) ).
+
+Additive models: Sparse additive models, Generalized additive mixed models.
+
+
+
+
+
+## Poisson
+
+[Kolaczyk, E. (1999). Bayesian Multiscale Models for Poisson Processes. Journal of the American Statistical Association, 94(447), 920-933. doi:10.2307/2670007](https://www.jstor.org/stable/2670007?seq=1#metadata_info_tab_contents)
+
+[Fryzlewicz, P., & Nason, G. P. (2004). A Haar-Fisz algorithm for Poisson intensity estimation. Journal of computational and graphical statistics, 13(3), 621-638.](http://stats.lse.ac.uk/fryzlewicz/Poisson/jcgs.pdf)
+
+[Timmerman, K., & Nowak, R. D. (1999). Multiscale modeling and estimation of Poisson processes with application to photon-limited imaging. IEEE Transactions on Information Theory, 45(3), 846-842.](https://ieeexplore.ieee.org/document/761328)
+
+## Binomial
+
+[Marchand, P., & Marmet, L. (1983). Binomial smoothing filter: A way to avoid some pitfalls of least‐squares polynomial smoothing. Review of scientific instruments, 54(8), 1034-1041. ](https://aip.scitation.org/doi/10.1063/1.1137498)
+
+[Hansen, K. D., Langmead, B., & Irizarry, R. A. (2012). BSmooth: from whole genome bisulfite sequencing reads to differentially methylated regions. Genome biology, 13(10), R83.](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2012-13-10-r83#Abs1)
+
+Note: It actually uses local likelihood moother and assumes $logit(\pi)$ is approximated by a second degree polynomial. They assume that data follow a binomial distribution and the parameters defining the polynomial are estimated by fitting a weighted generalized linear model to the data inside the genomic window.
+
