@@ -82,9 +82,20 @@ We treat unevenly spaced data as missing and set them to 0 with corresponding st
 
 Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?
 
+The primary role of CTCF is thought to be in regulating the 3D structure of chromatin.CTCF binds together strands of DNA, thus forming chromatin loops, and anchors DNA to cellular structures like the nuclear lamina. It also defines the boundaries between active and heterochromatic DNA.
+
 1. [CTCF Chip-exo data, reflection](chipexo.html): use symmetric reflection to extend sequence.
 2. [CTCF Chip-exo data, cut](chipexocut.html): cut the sequence.
 3. [CTCF Chip-seq data](chipseqref.html)
+
+## DNA methylation data smoothing
+
+1. [BS Cancer data](bsseq.html): DNA methylation data from normal and cancer.
+
+# Literatures on smoothing
+
+1. [A collection of literatures](literature.html)
+2. [Generalized additive model](gam.html)
 
 # Credits
 
