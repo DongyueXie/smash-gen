@@ -1,0 +1,28 @@
+---
+title: "meeting1005"
+author: "Dongyue Xie"
+date: "2018-10-05"
+output: workflowr::wflow_html
+---
+
+1. Briefly talk about smash/smashgen: 
+
+a. smash for smoothing gaussian data, why equally spacing is important? 
+
+Issues with smash: some ad-hoc methods. For example, estimate $\sigma$ given $\mu$: assumptions of structure, eastimate variance of $Z_t^2$ as $\frac{4}{3}Z_t^4$; iterative alorithms..
+
+b. idea of smashgen: expand the likehood around a point(mean); why don't we just take $\log x_t$ as $y_t$? why use ash shrinked version worked better? what is ash_pois shrinking toward? 
+
+c. Issues with smashgen: i. estimate nugget effect: is smash kind of robust to the shape of variance? ii. When the range of mean function is small, smashgen does not meet our expectation. iii. Also for the case when min(mean) is small. iv. smashgen cannot capture high fluctruation/very detailed changes. v. While we expect that as $n_t$ increases smashgen-poi.binomial should give smaller MSE, this is not the case. vi. unable to deal with unevenly spaced data.
+
+2. real examples:
+
+Data is not a power of 2, reflect it? How to reflect it?
+
+poisson: chip-seq and chip-exo data from [Rhee and Pugh(2011)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3243364/).
+
+binomial: DNA methylation data from [Hansen](http://bioconductor.org/packages/release/bioc/vignettes/bsseq/inst/doc/bsseq_analysis.html#5_plotting).
+
+3. Literatures
+
+4. Future work.
