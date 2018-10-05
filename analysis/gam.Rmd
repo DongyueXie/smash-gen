@@ -1,0 +1,62 @@
+---
+title: "gam"
+author: "Dongyue Xie"
+date: "2018-10-05"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+## Introduction
+
+Generalized additve model can be written as $g(E(Y))=\beta_0+f_1(x_1)+f_2(x_2)+...+f_p(x_p)$, where $f_i$ is smooth, either parametric, nonparametric or semi-parametric. The model is interpretable and flexible.
+
+Let's try GAM on smoothing poisson and binomial data.
+
+## Poisson
+
+
+```{r}
+library(mgcv)
+set.seed(12345)
+n=512
+m=c(rep(3,128), rep(5, 128), rep(6, 128), rep(3, 128))
+y=rpois(n,m)
+x=1:n
+gam.mod=gam(y~s(x,bs='cr'),family = poisson())
+plot(y,col='grey80',main='cubic regression splines')
+lines(gam.mod$fitted.values)
+lines(m,col='grey80')
+```
+
+
+
+```{r}
+set.seed(12345)
+n=512
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+t = 1:n/n
+m = spike.f(t)
+y=rpois(n,m)
+x=t
+gam.mod=gam(y~s(x,bs='cr'),family = poisson())
+plot(y,col='grey80',main='cubic regression splines')
+lines(gam.mod$fitted.values)
+lines(m,col='grey80')
+```
+
+## Binomial
+
+```{r,warning=FALSE}
+set.seed(12345)
+p=c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128))
+p=exp(p)/(1+exp(p))
+ntri=rpois(n,30)
+y=rbinom(n,ntri,p)
+gam.mod=gam(y/ntri~s(x,bs='cr'),family = binomial())
+plot(y/ntri,col='grey80',main='cubic regression splines')
+lines(gam.mod$fitted.values)
+lines(p,col='grey80')
+
+```
