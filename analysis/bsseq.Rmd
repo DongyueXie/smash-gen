@@ -1,0 +1,189 @@
+---
+title: "bsseq"
+author: "Dongyue Xie"
+date: "2018-10-04"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+## Introduction
+
+I found a DNA methylation dataset from Hansen et al 2011. This dataset can be assessed through R pacakge [bsseqData](https://www.bioconductor.org/packages/release/data/experiment/html/bsseqData.html). A detailed tutorial on the dataset and method from Hansen et al 2011 is also avaiable [here](http://bioconductor.org/packages/release/bioc/html/bsseq.html).
+
+There are total 6 samples where three are from normal and three are from cancer. Each sample has 958541 CpGs from Chromesome 21 and 22. There are roughly 136019 CpGs with no data at all in any of the 6 samples. There are 572628 CpGs which are covered by at least 1 read in all 6 samples. Smoothing is done separately for each sample, only using the data where the coverage (for that sample) is non-zero. This estimates a genome-wide methylation profile, which is then evaluated in all CpGs in the BSseq object. As a result, after smoothing, every CpG in the object has an estimated methylation value. 
+
+They use t-test to find differentially methylated regions(DMRs). Before computing t-statistics, CpGs with little or no coverage are removed.
+
+
+## Initial try
+
+I tried to apply smashgen to this DNA methylation dataset. 
+
+1. The CpGs loci with no data at all in any of the 6 samples were removed. Should I?
+2. Choose bin size s.t. the resulted binomial sequence length is a power of 2. The last interval constains less CpGs. Any impreovement on this?
+3. In each bin, $n_t$ is the total coverage, $x_t$ is the total possible methylation. For example, coverages are 0,1,2,3,4; methylations are 0,0,1,3,1, then $n_t=10$, $x_t=5$. Should I remove no coverage area? If removed, how to compare diffwerent samples?
+4. After obtaining binomial sequence, I do a reflection on both side then smooth the data.
+
+I may misunderstand it...Inside each window(at least 2000kb), they treat each base methylation follows binomial. So is Bionimial($n_{reads},p_{meth}$)???
+
+```{r,warning=FALSE,message=FALSE,eval=FALSE}
+library(bsseqData)
+library(bsseq)
+data("BS.cancer.ex")
+
+reflect=function(x,direct='left',len){
+  n=length(x)
+  if(direct=='left'){
+    x=c(rev(x[1:len]),x)
+  }
+  if(direct=='right'){
+    x=c(x,rev(x[(n-len+1):n]))
+  }
+  if(direct=='both'){
+    x=c(rev(x[1:len[1]]),x,rev(x[(n-len[2]+1):n]))
+  }
+  return(x)
+}
+
+
+# remove no coverage bases for all 6 sampels
+remove.idx=which(rowSums(getCoverage(BS.cancer.ex)) == 0)
+result=list()
+for (s in 1:6) {
+  # Cancer 1 samples
+BS1=BS.cancer.ex[,s]
+BS1=BS1[-remove.idx]
+# Obtain coverage
+BS1.cov=getCoverage(BS1,type='Cov')
+# Obtain possible methylation
+BS1.M=getCoverage(BS1,type='M')
+# choose 2kb windows. 
+w=1607
+nw=floor(length(BS1)/w)
+# Obtain binomial data n_t and x_t
+n_t=c()
+x_t=c()
+for (i in 1:nw) {
+  n_t[i]=sum(BS1.cov[(w*(i-1)+1):(w*i)])
+  x_t[i]=sum(BS1.M[(w*(i-1)+1):(w*i)])
+}
+
+n_T=sum(BS1.cov[-w*nw])
+x_T=sum(BS1.M[-w*nw])
+n_t=c(n_t,n_T)
+x_t=c(x_t,x_T)
+
+#bio.sm=smash_gen_lite(x_t,ntri=n_t,dist_family = 'binomial')
+result[[s]]=list(n_t=n_t,x_t=x_t)
+}
+
+sm.ref=c()
+for (k in 1:6) {
+  nn=reflect(result[[k]]$n_t,direct = 'both',len = c(256,256))
+  xx=reflect(result[[k]]$x_t,direct = 'both',len = c(256,256))
+  ss=smash_gen_lite(xx,ntri=nn,dist_family = 'binomial')
+  sm.ref=rbind(sm.ref,ss[257:(512+256)])
+}
+
+
+plot(sm.ref[1,],type='l',ylim=c(0.2,1),main='n=512',ylab='')
+for(j in 2:6){
+  if(j>3){col=3}else{col=1}
+  lines(sm.ref[j,],col=col)
+}
+
+plot(result[[1]]$x_t/result[[1]]$n_t,main='Normal1',col='grey80')
+lines(sm.ref[1,])
+
+legend('topleft',c('normal','cancer'),col=c(1,3),lty=c(1,1))
+paste('smallest x_t')
+unlist(lapply(result, function(x){min(x$x_t)}))
+paste('smallest n_t')
+unlist(lapply(result, function(x){min(x$n_t)}))
+
+```
+
+```{r,eval=FALSE}
+result=list()
+for (s in 1:6) {
+  # Cancer 1 samples
+BS1=BS.cancer.ex[,s]
+BS1=BS1[-remove.idx]
+# Obtain coverage
+BS1.cov=getCoverage(BS1,type='Cov')
+# Obtain possible methylation
+BS1.M=getCoverage(BS1,type='M')
+# choose 2kb windows. 
+w=804
+nw=floor(length(BS1)/w)
+# Obtain binomial data n_t and x_t
+n_t=c()
+x_t=c()
+for (i in 1:nw) {
+  n_t[i]=sum(BS1.cov[(w*(i-1)+1):(w*i)])
+  x_t[i]=sum(BS1.M[(w*(i-1)+1):(w*i)])
+}
+
+n_T=sum(BS1.cov[-w*nw])
+x_T=sum(BS1.M[-w*nw])
+n_t=c(n_t,n_T)
+x_t=c(x_t,x_T)
+
+#bio.sm=smash_gen_lite(x_t,ntri=n_t,dist_family = 'binomial')
+result[[s]]=list(n_t=n_t,x_t=x_t)
+}
+
+sm.ref=c()
+for (k in 1:6) {
+  nn=reflect(result[[k]]$n_t,direct = 'both',len = c(512,512))
+  xx=reflect(result[[k]]$x_t,direct = 'both',len = c(512,512))
+  ss=smash_gen_lite(xx,ntri=nn,dist_family = 'binomial')
+  sm.ref=rbind(sm.ref,ss[513:(1024+512)])
+}
+
+
+plot(sm.ref[1,],type='l',ylim=c(0.2,1),main='n=1024',ylab='')
+for(j in 2:6){
+  if(j>3){col=3}else{col=1}
+  lines(sm.ref[j,],col=col)
+}
+
+legend('topleft',c('normal','cancer'),col=c(1,3),lty=c(1,1))
+paste('smallest x_t')
+unlist(lapply(result, function(x){min(x$x_t)}))
+paste('smallest n_t')
+unlist(lapply(result, function(x){min(x$n_t)}))
+```
+
+What if remove all the no coverage area?
+
+For normal 1:
+
+```{r,eval=FALSE}
+BS1=BS.cancer.ex[,s]
+idx=which(getCoverage(BS1,type='Cov')==0)
+BS1=BS1[-idx]
+w=ceiling(length(BS1)/512)
+nw=floor(length(BS1)/w)
+
+n_t=c()
+x_t=c()
+for (i in 1:nw) {
+  n_t[i]=sum(BS1.cov[(w*(i-1)+1):(w*i)])
+  x_t[i]=sum(BS1.M[(w*(i-1)+1):(w*i)])
+}
+
+n_T=sum(BS1.cov[-w*nw])
+x_T=sum(BS1.M[-w*nw])
+n_t=c(n_t,n_T)
+x_t=c(x_t,x_T)
+
+
+nn=reflect(n_t,direct = 'both',len = c(256,256))
+xx=reflect(x_t,direct = 'both',len = c(256,256))
+ss=smash_gen_lite(xx,ntri=nn,dist_family = 'binomial')
+
+plot(x_t/n_t,col='grey80')
+lines(ss[257:(512+256)])
+```
