@@ -1,0 +1,188 @@
+---
+title: "Poisson spike issues"
+author: "Dongyue Xie"
+date: "2018-10-07"
+output: 
+  workflowr::wflow_html:
+  code_folding: hide
+---
+
+# The problem
+
+Model: $X\sim Poi(\mu)$ and define $y=\log m+\frac{x-m}{m}$
+
+Previously, we used $m=$ash posterior mean of x. The problem is that shrinkage effect is too strong that for large observations $x$, the approximated normal data points are too large. Hence, after taking exponential of estimated normal mean, the estimation 'blow up'. 
+
+Now we try to do Taylor series expansion around $\log x$(MLE) for non-zero $x$ and around ash posterior mean around zero $x$. In other words, now $m=$ash posterior mean of zero $x$s and $m=x$ for non-zero $x$s. 
+
+# Spike mean function
+
+```{r,message=FALSE,warning=FALSE,fig.width=12,fig.height=10}
+library(ashr)
+library(smashrgen)
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 256
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+range(m)
+
+sig=0
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=256,nugget=0')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+#################
+
+sig=0.1
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=256,nugget=0.1')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+
+#################
+
+sig=1
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=256,nugget=1')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+
+plot(x,col='grey80',ylab='',xlab='',main='Previous verison using ash posterior mean, nugget=1')
+lines(m,col='grey60')
+lines(smash_gen_lite(x))
+legend('topleft',c('data','true mean','fit'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey60',1))
+```
+
+
+```{r,fig.width=12,fig.height=10}
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+range(m)
+
+sig=0
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=512,nugget=0')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+#################
+
+sig=0.1
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=512,nugget=0.1')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+
+#################
+
+sig=1
+
+set.seed(12345)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+m.hat=x.ash
+m.hat[which(x!=0)]=(x[which(x!=0)])
+y=log(m.hat)+(x-m.hat)/m.hat
+m.tilde=exp(smash.gaus(y,sigma = sqrt(sig^2+1/m.hat)))
+m.tilde2=exp(smash.gaus(y))
+
+plot(x,col='grey80',ylab='',xlab='',main='n=512,nugget=1')
+lines(m,col='grey60')
+lines(m.tilde,col=2)
+lines(m.tilde2,col=4)
+
+legend('topleft',c('data','true mean','smashgen-known var','smashgen-unknown var'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey60',2,4))
+
+plot(x,col='grey80',ylab='',xlab='',main='Previous verison using ash posterior mean, nugget=1')
+lines(m,col='grey60')
+lines(smash_gen_lite(x))
+legend('topleft',c('data','true mean','fit'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey60',1))
+```
