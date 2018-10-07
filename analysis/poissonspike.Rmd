@@ -4,7 +4,7 @@ author: "Dongyue Xie"
 date: "2018-10-07"
 output: 
   workflowr::wflow_html:
-  code_folding: hide
+    code_folding: hide
 ---
 
 # The problem
