@@ -56,6 +56,7 @@ In 5, we compared smash and smashgen on estimating on estimating $\mu$ and $\log
 3. [Poisson data, wavelet basis functions](poiwave.html): no nugget effect.
 4. [Poisson data, wavelet basis functions:larger mean function](poiwave2.html)
 5. [Poisson seq, compare smash and smashgen on the estimate of $\mu$ and $\log\mu$](poiwavelog.html)
+6. [Fix spike issues](poissonspike.html): updated version, 10/07/2018
 
 ## Binomial data with unknown nugget effect
 
