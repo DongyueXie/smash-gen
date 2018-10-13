@@ -25,6 +25,27 @@ Locally adaptive estimators: wavelet( [Mallat, S. (1999). A wavelet tour of sign
 
 Additive models: Sparse additive models, Generalized additive mixed models.
 
+More on trend filtering and additive models:
+
+Trend filtering:
+
+[Wang, Y. X., Sharpnack, J., Smola, A. J., & Tibshirani, R. J. (2016). Trend filtering on graphs. The Journal of Machine Learning Research, 17(1), 3651-3691.](http://www.jmlr.org/papers/volume17/15-147/15-147.pdf)
+
+[Ramdas, A., & Tibshirani, R. J. (2016). Fast and flexible ADMM algorithms for trend filtering. Journal of Computational and Graphical Statistics, 25(3), 839-858.](https://www.tandfonline.com/doi/abs/10.1080/10618600.2015.1054033) The R package for this algo is glmgen.
+
+[Tibshirani, R. J. (2014). Adaptive piecewise polynomial estimation via trend filtering. The Annals of Statistics, 42(1), 285-323.](http://www.stat.cmu.edu/~ryantibs/papers/trendfilter.pdf)
+
+Additive models:
+
+[Sadhanala, V., & Tibshirani, R. J. (2017). Additive Models with Trend Filtering. arXiv preprint arXiv:1702.05037.](http://www.stat.cmu.edu/~ryantibs/papers/additivetf.pdf)
+
+[Petersen, A., Witten, D., & Simon, N. (2016). Fused lasso additive model. Journal of Computational and Graphical Statistics, 25(4), 1005-1025.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5321231/)
+
+[Yin Lou, Jacob Bien, Rich Caruana & Johannes Gehrke (2016) Sparse Partially Linear Additive Models, Journal of Computational and Graphical Statistics, 25:4, 1126-1140](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2015.1089775#.W8J4Ci2ZPfZ)
+
+[Generalized Sparse Additive Models](http://faculty.chicagobooth.edu/workshops/econometrics/pdf/pdf/Fall%202018/Shojaie,%20GSAM.pdf)
+
+[Chouldechova, A., & Hastie, T. (2015). Generalized additive model selection. arXiv preprint arXiv:1506.03850.](https://web.stanford.edu/~hastie/Papers/gamsel.pdf)
 
 
 
