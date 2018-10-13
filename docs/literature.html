@@ -323,7 +323,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-05</p>
+<p><strong>Last updated:</strong> 2018-10-13</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -332,18 +332,23 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/2ca2f50ad7ff7f774b0ea62fb728f4250026995a" target="_blank">2ca2f50</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/44e7e44ea8c8a752732a22b10b667d27f932350c" target="_blank">44e7e44</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
     Ignored:    data/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/meeting1005.Rmd
+    Untracked:  analysis/chipexoeg.Rmd
+    Untracked:  analysis/talk1011.Rmd
+    Untracked:  analysis/vst.Rmd
     Untracked:  data/chipexo_examples/
     Untracked:  data/chipseq_examples/
+    Untracked:  talk.Rmd
+    Untracked:  talk.pdf
 
 Unstaged changes:
     Modified:   analysis/sigma.Rmd
@@ -352,6 +357,67 @@ Unstaged changes:
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
 </li>
 </ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/44e7e44ea8c8a752732a22b10b667d27f932350c/analysis/literature.Rmd" target="_blank">44e7e44</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-13
+</td>
+<td style="text-align:left;">
+add tf
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/a21393a2ec5c7ef6125027bd8524dfc0f0ae70c1/docs/literature.html" target="_blank">a21393a</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-05
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
 <hr />
 <p>This is a broad list of literature on smoothing Gaussian/non-Gaussian data.</p>
 <div id="nonparametric-methods" class="section level2">
@@ -363,6 +429,17 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <p>Splines: regression splines, smoothing splines; More generally, reproducing kernel Hilbert space: Chapter 5 of <a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL</a></p>
 <p>Locally adaptive estimators: wavelet( <a href="https://www.di.ens.fr/~mallat/papiers/WaveletTourChap1-2-3.pdf">Mallat, S. (1999). A wavelet tour of signal processing. Elsevier</a> ), Locally adaptive regression splines(A varaiant of smooting splines achieves better local adaptivity. <a href="https://projecteuclid.org/euclid.aos/1034276635">Mammen, E., &amp; van de Geer, S. (1997). Locally adaptive regression splines. The Annals of Statistics, 25(1), 387-413.</a>), Trend filtering( <a href="http://web.stanford.edu/~boyd/papers/l1_trend_filter.html">Kim, S. J., Koh, K., Boyd, S., &amp; Gorinevsky, D. (2009). l_1 Trend Filtering. SIAM review, 51(2), 339-360.</a> ).</p>
 <p>Additive models: Sparse additive models, Generalized additive mixed models.</p>
+<p>More on trend filtering and additive models:</p>
+<p>Trend filtering:</p>
+<p><a href="http://www.jmlr.org/papers/volume17/15-147/15-147.pdf">Wang, Y. X., Sharpnack, J., Smola, A. J., &amp; Tibshirani, R. J. (2016). Trend filtering on graphs. The Journal of Machine Learning Research, 17(1), 3651-3691.</a></p>
+<p><a href="https://www.tandfonline.com/doi/abs/10.1080/10618600.2015.1054033">Ramdas, A., &amp; Tibshirani, R. J. (2016). Fast and flexible ADMM algorithms for trend filtering. Journal of Computational and Graphical Statistics, 25(3), 839-858.</a> The R package for this algo is glmgen.</p>
+<p><a href="http://www.stat.cmu.edu/~ryantibs/papers/trendfilter.pdf">Tibshirani, R. J. (2014). Adaptive piecewise polynomial estimation via trend filtering. The Annals of Statistics, 42(1), 285-323.</a></p>
+<p>Additive models:</p>
+<p><a href="http://www.stat.cmu.edu/~ryantibs/papers/additivetf.pdf">Sadhanala, V., &amp; Tibshirani, R. J. (2017). Additive Models with Trend Filtering. arXiv preprint arXiv:1702.05037.</a></p>
+<p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5321231/">Petersen, A., Witten, D., &amp; Simon, N. (2016). Fused lasso additive model. Journal of Computational and Graphical Statistics, 25(4), 1005-1025.</a></p>
+<p><a href="https://amstat.tandfonline.com/doi/full/10.1080/10618600.2015.1089775#.W8J4Ci2ZPfZ">Yin Lou, Jacob Bien, Rich Caruana &amp; Johannes Gehrke (2016) Sparse Partially Linear Additive Models, Journal of Computational and Graphical Statistics, 25:4, 1126-1140</a></p>
+<p><a href="http://faculty.chicagobooth.edu/workshops/econometrics/pdf/pdf/Fall%202018/Shojaie,%20GSAM.pdf">Generalized Sparse Additive Models</a></p>
+<p><a href="https://web.stanford.edu/~hastie/Papers/gamsel.pdf">Chouldechova, A., &amp; Hastie, T. (2015). Generalized additive model selection. arXiv preprint arXiv:1506.03850.</a></p>
 </div>
 <div id="poisson" class="section level2">
 <h2>Poisson</h2>
