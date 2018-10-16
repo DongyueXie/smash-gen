@@ -1,8 +1,15 @@
 ---
 title: "Variance stablizing transformation"
 author: "Dongyue Xie"
-output: workflowr::wflow_html
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+  
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = F,warning = F)
+```
 
 ## Introduction
 
