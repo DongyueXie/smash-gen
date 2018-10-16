@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -169,6 +170,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -313,6 +322,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Variance stablizing transformation</h1>
@@ -345,7 +362,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/0d956ea65a096970356c48ca9410ff095ec02a99" target="_blank">0d956ea</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/ce75caeddfb8e3552a69c5f2ff54ba4843e7cf58" target="_blank">ce75cae</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -398,6 +415,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ce75caeddfb8e3552a69c5f2ff54ba4843e7cf58/analysis/vst.Rmd" target="_blank">ce75cae</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+<td style="text-align:left;">
+vst analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/e24d0a71dd6966891e751ff833b685aa982f0990/docs/vst.html" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/0d956ea65a096970356c48ca9410ff095ec02a99/analysis/vst.Rmd" target="_blank">0d956ea</a>
 </td>
 <td style="text-align:left;">
@@ -436,6 +487,36 @@ lines(mu,sr,col=4)
 abline(a=0.25,b=0,lty=2)
 legend(&#39;bottomright&#39;,c(&#39;anscombe&#39;,&#39;square root&#39;),lty=c(1,1),col=c(1,4))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-1-1.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="compare-log-and-anscombe-transformation" class="section level1">
 <h1>Compare log and anscombe transformation</h1>
@@ -484,15 +565,8 @@ legend(&#39;bottomright&#39;,c(&#39;anscombe&#39;,&#39;square root&#39;),lty=c(1
 }</code></pre>
 <p>When there are a number of <span class="math inline">\(0s\)</span> in the observation:</p>
 <pre class="r"><code>library(ashr)
-library(smashrgen)</code></pre>
-<pre><code>Loading required package: smashr</code></pre>
-<pre><code>Loading required package: caTools</code></pre>
-<pre><code>Loading required package: MASS</code></pre>
-<pre><code>Loading required package: wavethresh</code></pre>
-<pre><code>WaveThresh: R wavelet software, release 4.6.8, installed</code></pre>
-<pre><code>Copyright Guy Nason and others 1993-2016</code></pre>
-<pre><code>Note: nlevels has been renamed to nlevelsWT</code></pre>
-<pre class="r"><code>spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+library(smashrgen)
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
     (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
 n = 512
 t = 1:n/n
@@ -508,12 +582,72 @@ mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 boxplot(mses,names = c(&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-4-1.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(m,type=&#39;l&#39;,main=&#39;nugget=0&#39;)
 lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend(&#39;topright&#39;,c(&#39;mean&#39;,&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-4-2.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>########
 result=simu_study(m,sig=0.5)
 
@@ -522,12 +656,72 @@ mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 boxplot(mses,names = c(&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-4-3.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(m,type=&#39;l&#39;,main=&#39;nugget=0.5&#39;)
 #lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend(&#39;topright&#39;,c(&#39;mean&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;),lty=c(1,1,1),col=c(1,3,4))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-4-4.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>#legend(&#39;topright&#39;,c(&#39;mean&#39;,&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))
 
 ###############</code></pre>
@@ -541,24 +735,144 @@ mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 boxplot(mses,names = c(&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-5-1.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(m,type=&#39;l&#39;,main=&#39;nugget=0&#39;)
 lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend(&#39;topright&#39;,c(&#39;mean&#39;,&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-5-2.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>result=simu_study(m,sig=0.5)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 boxplot(mses,names = c(&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-5-3.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(m,type=&#39;l&#39;,main=&#39;nugget=0.5&#39;)
 lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend(&#39;topright&#39;,c(&#39;mean&#39;,&#39;square root&#39;,&#39;anscombe&#39;,&#39;smashgen&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/vst.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/e24d0a71dd6966891e751ff833b685aa982f0990/docs/figure/vst.Rmd/unnamed-chunk-5-4.png" target="_blank">e24d0a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
