@@ -1,0 +1,175 @@
+---
+title: "Variance stablizing transformation"
+author: "Dongyue Xie"
+output: workflowr::wflow_html
+---
+
+## Introduction
+
+Variance stablizing transformation.
+
+$E(X)=\mu$ and $Var(X)=g(\mu)$, want to find $f(\cdot)$ s.t $Var(f(X))$ has constant variance. Consider the Taylor series expansion of $f(X)$ around $\mu$: $f(X)\approx f(\mu)+(Y-\mu)f'(\mu)$ so we have $[f(X)-f(\mu)]^2\approx (X-\mu)^2(f'(\mu))^2 \Rightarrow Var(f(X))\approx Var(X)(f'(\mu))^2$. 
+
+For poisson distribution, $(f'(\mu))^2\propto \mu^{-1}$ so if we take $Y=\sqrt{X}$ then $Var(Y)\approx \frac{1}{4}$. This was original proposed by Bartlett in 1936.
+
+For Binomial data, $(f'(\mu))^2\propto 1/(np(1-p))$ so if we take $Y=sin^{-1}(\sqrt{X/n})$ then $Var(Y)\approx \frac{1}{2}$.
+
+Anscombe(1948) shows that for $Y=\sqrt{X+c}$, $Var(Y)\approx \frac{1}{4}[1+\frac{3-8c}{8\mu}+\frac{32c^2-52c+17}{2\mu^2}]]$. If take $c=3/8$ and for large $\mu$, $Var(Y)\approx 1/4$. Also clearly, $\lim_{\mu\to 0}Var(\sqrt{X+c})=0$. 
+
+```{r}
+mu=c(seq(0,1,length.out = 50),seq(1,10,length.out = 50))
+ans=c()
+sr=c()
+set.seed(12345)
+for (i  in 1:100) {
+  x=rpois(1e6,mu[i])
+  ans[i]=var(sqrt(x+3/8))
+  sr[i]=var(sqrt(x))
+}
+plot(mu,ans,type='l',ylim=c(0,0.5),ylab='')
+lines(mu,sr,col=4)
+abline(a=0.25,b=0,lty=2)
+legend('bottomright',c('anscombe','square root'),lty=c(1,1),col=c(1,4))
+```
+
+# Compare log and anscombe transformation
+
+Poisson variance stablizing trasformations: square root and Anscombe transformation.
+
+For vst, if we observe $x=0$, then I use $var(\sqrt{X+3/8})=0$ instead of $1/4$.
+
+```{r}
+vst_smooth=function(x,method,ep=1e-5){
+  n=length(x)
+  if(method=='sr'){
+    x.t=sqrt(x)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2
+    
+  }
+  if(method=='anscombe'){
+    x.t=sqrt(x+3/8)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2-3/8
+  }
+  if(method=='log'){
+    x.t=x
+    x.t[x==0]=ep
+    x.var=1/x.t
+    x.t=log(x.t)
+    mu.hat=exp(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))
+  }
+  return(mu.hat)
+}
+
+
+```
+
+```{r}
+simu_study=function(m,sig=0,nsimu=5,seed=12345){
+  set.seed(seed)
+  sr=c()
+  an=c()
+  ashp=c()
+  for (i in 1:nsimu) {
+    lambda=exp(log(m)+rnorm(n,0,sig))
+    x=rpois(n,lambda)
+    mu.sr=vst_smooth(x,'sr')
+    mu.an=vst_smooth(x,'anscombe')
+    mu.ash=smash_gen_lite(x)
+    sr=rbind(sr,mu.sr)
+    an=rbind(an,mu.an)
+    ashp=rbind(ashp,mu.ash)
+  }
+  return(list(sr=sr,an=an,ashp=ashp))
+}
+
+```
+
+When there are a number of $0s$ in the observation:
+
+```{r}
+library(ashr)
+library(smashrgen)
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+range(m)
+
+
+result=simu_study(m)
+
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+boxplot(mses,names = c('square root','anscombe','smashgen'))
+
+
+plot(m,type='l',main='nugget=0')
+lines(result$sr[1,],col=2)
+lines(result$an[1,],col=3)
+lines(result$ashp[1,],col=4)
+legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+
+########
+result=simu_study(m,sig=0.5)
+
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+boxplot(mses,names = c('square root','anscombe','smashgen'))
+
+
+plot(m,type='l',main='nugget=0.5')
+#lines(result$sr[1,],col=2)
+lines(result$an[1,],col=3)
+lines(result$ashp[1,],col=4)
+legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
+#legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+###############
+```
+
+Increase range of mean function:
+
+```{r}
+m=m*20+30
+range(m)
+
+result=simu_study(m)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+boxplot(mses,names = c('square root','anscombe','smashgen'))
+
+
+plot(m,type='l',main='nugget=0')
+lines(result$sr[1,],col=2)
+lines(result$an[1,],col=3)
+lines(result$ashp[1,],col=4)
+legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+
+result=simu_study(m,sig=0.5)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+boxplot(mses,names = c('square root','anscombe','smashgen'))
+
+
+plot(m,type='l',main='nugget=0.5')
+lines(result$sr[1,],col=2)
+lines(result$an[1,],col=3)
+lines(result$ashp[1,],col=4)
+legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+
