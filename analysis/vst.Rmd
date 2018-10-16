@@ -75,7 +75,7 @@ vst_smooth=function(x,method,ep=1e-5){
 ```
 
 ```{r}
-simu_study=function(m,sig=0,nsimu=5,seed=12345){
+simu_study=function(m,sig=0,nsimu=100,seed=12345){
   set.seed(seed)
   sr=c()
   an=c()
@@ -115,7 +115,7 @@ result=simu_study(m)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-boxplot(mses,names = c('square root','anscombe','smashgen'))
+
 
 
 plot(m,type='l',main='nugget=0')
@@ -124,6 +124,7 @@ lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
 
 ########
 result=simu_study(m,sig=0.5)
@@ -131,7 +132,7 @@ result=simu_study(m,sig=0.5)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-boxplot(mses,names = c('square root','anscombe','smashgen'))
+
 
 
 plot(m,type='l',main='nugget=0.5')
@@ -140,6 +141,8 @@ lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
 #legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0.5')
 
 ###############
 ```
@@ -154,7 +157,7 @@ result=simu_study(m)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-boxplot(mses,names = c('square root','anscombe','smashgen'))
+
 
 
 plot(m,type='l',main='nugget=0')
@@ -163,12 +166,13 @@ lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
 
 result=simu_study(m,sig=0.5)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-boxplot(mses,names = c('square root','anscombe','smashgen'))
+
 
 
 plot(m,type='l',main='nugget=0.5')
@@ -176,6 +180,8 @@ lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0.5')
 
 ```
 
