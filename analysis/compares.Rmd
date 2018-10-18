@@ -124,7 +124,7 @@ m = spike.f(t)
 m=m*2+0.1
 range(m)
 
-result=simu_study(m,sigma=0,nsimu = 4)
+result=simu_study(m,sigma=0,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
@@ -156,7 +156,7 @@ Now we increase nugget effect to $\sigma=1$. Obviously, using anscombe transform
 
 
 ```{r}
-result=simu_study(m,sigma=1,nsimu = 4)
+result=simu_study(m,sigma=1,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
@@ -189,7 +189,7 @@ m=m*5+20
 
 range(m)
 
-result=simu_study(m,sigma=0,nsimu = 4)
+result=simu_study(m,sigma=0,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
