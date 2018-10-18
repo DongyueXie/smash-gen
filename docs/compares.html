@@ -364,14 +364,13 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/8407596f579a7c146d9548ac3ccb5b10364da12b" target="_blank">8407596</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/1c63212f452a646c9e99a56d17b8eb0ae4b29af7" target="_blank">1c63212</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    data/.DS_Store
 
 Untracked files:
@@ -413,6 +412,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/1c63212f452a646c9e99a56d17b8eb0ae4b29af7/analysis/compares.Rmd" target="_blank">1c63212</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/compares.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/ad9f50ef2e674d87438420ba1186620e985155d8/docs/compares.html" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -577,15 +610,15 @@ m = spike.f(t)
 m=m*2+0.1
 range(m)</code></pre>
 <pre><code>[1] 0.100000 6.076316</code></pre>
-<pre class="r"><code>result=simu_study(m,sigma=0,nsimu = 4)
+<pre class="r"><code>result=simu_study(m,sigma=0,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 unlist(lapply(mses, mean))</code></pre>
 <pre><code>         idk          idu         id0k         id0u         logk 
-5.369863e+02 2.095411e+02 2.827456e-01 1.419588e-01 3.213241e+47 
+6.805100e+05 7.167519e+04 3.837905e-01 2.060559e-01 4.102731e+51 
         logu        log0k        log0u          ans 
-2.343187e+15 1.163829e+00 4.926503e-01 7.836854e-02 </code></pre>
+1.042183e+32 1.171031e+00 5.780713e-01 1.192800e-01 </code></pre>
 <pre class="r"><code>boxplot(mses[-c(1,2,5,6)],main=&#39;nugget=0&#39;,ylab=&#39;MSE&#39;)</code></pre>
 <p><img src="figure/compares.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
@@ -604,6 +637,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-2-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-2-1.png" target="_blank">2a5f8dd</a>
@@ -648,6 +692,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-3-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-3-1.png" target="_blank">2a5f8dd</a>
 </td>
 <td style="text-align:left;">
@@ -661,15 +716,15 @@ Dongyue Xie
 </table>
 <p></details></p>
 <p>Now we increase nugget effect to <span class="math inline">\(\sigma=1\)</span>. Obviously, using anscombe transformation, we are estimating <span class="math inline">\(exp(\log(\mu)+N(0,\sigma^2))\)</span> so its mse is large and gives spiky fit.</p>
-<pre class="r"><code>result=simu_study(m,sigma=1,nsimu = 4)
+<pre class="r"><code>result=simu_study(m,sigma=1,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 unlist(lapply(mses, mean))</code></pre>
 <pre><code>         idk          idu         id0k         id0u         logk 
-2.773795e+12 4.929459e+10 5.789335e-01 3.372019e-01 5.332768e+45 
+2.345193e+36 2.710025e+35 6.004389e-01 3.633385e-01 2.281759e+48 
         logu        log0k        log0u          ans 
-6.281977e+09 1.168559e+00 6.925573e-01 1.955617e+00 </code></pre>
+2.059211e+10 1.167105e+00 7.626772e-01 4.053297e+00 </code></pre>
 <pre class="r"><code>boxplot(mses[-c(1,2,5,6)],main=&#39;nugget=1&#39;,ylab=&#39;MSE&#39;)</code></pre>
 <p><img src="figure/compares.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
@@ -688,6 +743,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-4-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-4-1.png" target="_blank">2a5f8dd</a>
@@ -720,6 +786,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-4-2.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-4-2.png" target="_blank">2a5f8dd</a>
@@ -762,6 +839,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-5-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-5-1.png" target="_blank">2a5f8dd</a>
 </td>
 <td style="text-align:left;">
@@ -779,15 +867,15 @@ Dongyue Xie
 
 range(m)</code></pre>
 <pre><code>[1] 20.50000 50.38158</code></pre>
-<pre class="r"><code>result=simu_study(m,sigma=0,nsimu = 4)
+<pre class="r"><code>result=simu_study(m,sigma=0,nsimu = 30)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 unlist(lapply(mses, mean))</code></pre>
 <pre><code>     idk      idu     id0k     id0u     logk     logu    log0k    log0u 
-2.903710 2.899550 3.317807 3.663308 3.054792 3.054326 3.317807 3.663308 
+2.286589 2.359016 2.684149 3.041295 2.420107 2.486034 2.684149 3.041295 
      ans 
-2.815178 </code></pre>
+2.229038 </code></pre>
 <pre class="r"><code>boxplot(mses,main=&#39;nugget=0&#39;,ylab=&#39;MSE&#39;)</code></pre>
 <p><img src="figure/compares.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
@@ -806,6 +894,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-6-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-6-1.png" target="_blank">2a5f8dd</a>
@@ -847,6 +946,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/ad9f50ef2e674d87438420ba1186620e985155d8/docs/figure/compares.Rmd/unnamed-chunk-7-1.png" target="_blank">ad9f50e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/2a5f8ddcf5d8f8bbc77438d733061cc1689735e0/docs/figure/compares.Rmd/unnamed-chunk-7-1.png" target="_blank">2a5f8dd</a>
