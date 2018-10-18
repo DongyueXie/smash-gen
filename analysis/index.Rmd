@@ -93,6 +93,12 @@ The primary role of CTCF is thought to be in regulating the 3D structure of chro
 
 1. [BS Cancer data](bsseq.html): DNA methylation data from normal and cancer.
 
+## Variance stabilizing transformation(vst)
+
+1. [vst smoothing](vst.html)
+2. [compare log and anscombe transform](compares.html)
+3. [vst for nugget effect?](ansgen.html)
+
 # Literatures on smoothing
 
 1. [A collection of literatures](literature.html)
