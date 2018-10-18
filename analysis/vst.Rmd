@@ -1,6 +1,7 @@
 ---
 title: "Variance stablizing transformation"
 author: "Dongyue Xie"
+date: "2018-10-13"
 output: 
   workflowr::wflow_html:
     code_folding: hide
@@ -75,7 +76,7 @@ vst_smooth=function(x,method,ep=1e-5){
 ```
 
 ```{r}
-simu_study=function(m,sig=0,nsimu=100,seed=12345){
+simu_study=function(m,sig=0,nsimu=50,seed=12345){
   set.seed(seed)
   sr=c()
   an=c()
@@ -116,8 +117,6 @@ result=simu_study(m)
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
 
-
-
 plot(m,type='l',main='nugget=0')
 lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
@@ -127,22 +126,22 @@ legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),c
 boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
 
 ########
-result=simu_study(m,sig=0.5)
+result=simu_study(m,sig=1)
 
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
+unlist(lapply(mses, mean))
 
 
-
-plot(m,type='l',main='nugget=0.5')
+plot(m,type='l',main='nugget=1')
 #lines(result$sr[1,],col=2)
 lines(result$an[1,],col=3)
 lines(result$ashp[1,],col=4)
 legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
 #legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
-boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0.5')
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=1')
 
 ###############
 ```
@@ -150,6 +149,7 @@ boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0.5')
 Increase range of mean function:
 
 ```{r}
+
 m=m*20+30
 range(m)
 
@@ -157,8 +157,7 @@ result=simu_study(m)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-
-
+unlist(lapply(mses, mean))
 
 plot(m,type='l',main='nugget=0')
 lines(result$sr[1,],col=2)
@@ -168,20 +167,6 @@ legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),c
 
 boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
 
-result=simu_study(m,sig=0.5)
-
-mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
-
-
-
-
-plot(m,type='l',main='nugget=0.5')
-lines(result$sr[1,],col=2)
-lines(result$an[1,],col=3)
-lines(result$ashp[1,],col=4)
-legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
-
-boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0.5')
 
 ```
 
