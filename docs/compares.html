@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-10-13" />
+
+<title>compares</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">compares</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2018-10-13</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-10-18</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/3b5e17fd462095e9bfa14809383a0aaed43a4a77" target="_blank">3b5e17f</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/ansgen.Rmd
+    Untracked:  analysis/chipexoeg.Rmd
+    Untracked:  analysis/talk1011.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
+    Untracked:  docs/figure/ansgen.Rmd/
+    Untracked:  talk.Rmd
+    Untracked:  talk.pdf
+
+Unstaged changes:
+    Modified:   analysis/literature.Rmd
+    Modified:   analysis/sigma.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/3b5e17fd462095e9bfa14809383a0aaed43a4a77/analysis/compares.Rmd" target="_blank">3b5e17f</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/compares.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Compare 1. smashgen-ash.identity 2. smashgen-ash.log 3. smashgen-ash.identity.zero 4. smashgen-ash.log.zero (known and unknown nugget effect) with smash-anscombe.</p>
+<p>Settings: spike mean function, mean function range (0.1,6) and (20,50)</p>
+<p>Note:</p>
+<ol style="list-style-type: decimal">
+<li>idk: expand around ash posterior mean using identity link in lik_pois; given nugget effect(use <code>sigma=sqrt(nugget^2+s^2)</code> in <code>smash.gaus</code>).</li>
+<li>idu: same as 1; unknown nugget effect(use <code>sigma=NULL</code> in <code>smash.gaus</code>).</li>
+<li>id0k: expand around ash posterior mean using identity link only for 0 <span class="math inline">\(x\)</span>s and around <span class="math inline">\(x\)</span> for nonzero <span class="math inline">\(x\)</span>s; given nugget effect.</li>
+<li>id0u: same as 3; unkown nugget effect</li>
+<li>logk: expand around ash posterior mean using log link in lik_pois; given nugget effect</li>
+<li>logu: same as 5; unkown nuggect effect</li>
+<li>log0k: expand around ash posterior mean using log link only for 0 <span class="math inline">\(x\)</span>s and around <span class="math inline">\(x\)</span> for nonzero <span class="math inline">\(x\)</span>s; given nugget effect.</li>
+<li>logu: same as 7; unkown nugget effect</li>
+<li>ans: use anscombe transormation on poisson data, variance around 1/4; use 0 variance for 0 <span class="math inline">\(x\)</span>s.</li>
+</ol>
+<pre class="r"><code>vst_smooth=function(x,method,ep=1e-5){
+  n=length(x)
+  if(method==&#39;sr&#39;){
+    x.t=sqrt(x)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2
+    
+  }
+  if(method==&#39;anscombe&#39;){
+    x.t=sqrt(x+3/8)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2-3/8
+  }
+  if(method==&#39;log&#39;){
+    x.t=x
+    x.t[x==0]=ep
+    x.var=1/x.t
+    x.t=log(x.t)
+    mu.hat=exp(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))
+  }
+  return(mu.hat)
+}
+
+smash_gen_all=function(x,sigma,method){
+  n=length(x)
+  if(method==&#39;identity&#39;){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link=&#39;identity&#39;))$result$PosteriorMean
+  }
+  if(method==&#39;log&#39;){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link=&#39;log&#39;))$result$PosteriorMean
+  }
+  if(method==&#39;identity.zero&#39;){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link=&#39;identity&#39;))$result$PosteriorMean
+    x.ash[x!=0]=x[x!=0]
+  }
+  if(method==&#39;log.zero&#39;){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link=&#39;log&#39;))$result$PosteriorMean
+    x.ash[x!=0]=x[x!=0]
+  }
+  y=log(x.ash)+(x-x.ash)/x.ash
+  s2=1/x.ash
+  mu.sigk=exp(smash.gaus(y,sigma=sqrt(sigma^2+s2)))
+  mu.sigu=exp(smash.gaus(y))
+  return(list(mu.sigk=mu.sigk,mu.sigu=mu.sigu))
+}
+
+simu_study=function(m,sigma=0,nsimu=100,seed=12345){
+  set.seed(12345)
+  idk=c()
+  idu=c()
+  id0k=c()
+  id0u=c()
+  logk=c()
+  logu=c()
+  log0k=c()
+  log0u=c()
+  ans=c()
+  for (i in 1:nsimu) {
+    lambda=exp(log(m)+rnorm(n,0,sigma))
+    x=rpois(n,lambda)
+    id=smash_gen_all(x,sigma,&#39;identity&#39;)
+    id0=smash_gen_all(x,sigma,&#39;identity.zero&#39;)
+    logg=smash_gen_all(x,sigma,&#39;log&#39;)
+    log0=smash_gen_all(x,sigma,&#39;log.zero&#39;)
+    
+    idk=rbind(idk,id$mu.sigk)
+    idu=rbind(idu,id$mu.sigu)
+    id0k=rbind(id0k,id0$mu.sigk)
+    id0u=rbind(id0u,id0$mu.sigu)
+    logk=rbind(logk,logg$mu.sigk)
+    logu=rbind(logu,logg$mu.sigu)
+    log0k=rbind(log0k,log0$mu.sigk)
+    log0u=rbind(log0u,log0$mu.sigu)
+    ans=rbind(ans,vst_smooth(x,&#39;anscombe&#39;))
+  }
+  return(list(idk=idk,idu=idu,id0k=id0k,id0u=id0u,logk=logk,logu=logu,log0k=log0k,log0u=log0u,ans=ans))
+}</code></pre>
+<p>First we compare all the methods mentioned above using spike mean function whose mean range is around (0.1,6) so there are a number of zero counts in the sequence. This would be a challenge for smashgen since we are using log transformation.</p>
+<pre class="r"><code>library(ashr)
+library(smashr)
+
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+range(m)</code></pre>
+<pre><code>[1] 0.100000 6.076316</code></pre>
+<pre class="r"><code>result=simu_study(m,sigma=0,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))</code></pre>
+<pre><code>         idk          idu         id0k         id0u         logk 
+6.805100e+05 7.167519e+04 3.837905e-01 2.060559e-01 4.102731e+51 
+        logu        log0k        log0u          ans 
+1.042183e+32 1.171031e+00 5.780713e-01 1.192800e-01 </code></pre>
+<pre class="r"><code>boxplot(mses[-c(1,2,5,6)],main=&#39;nugget=0&#39;,ylab=&#39;MSE&#39;)</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>When there is no nugget effect, id0k, id0u, log0u have relatively smaller mean square error(mse) while anscombe transformation outperforms all smashgen methods and achieves smaller mse.</p>
+<p>We plot the estimated mean function of id0u, log0u and ans for comparison. log0u seems to result in underestimations of mean function. id0u overestimates small means and underestimates large means. So when there are a number of zero observations, it’s very crucial to choose where to expand for 0 <span class="math inline">\(x\)</span>s.</p>
+<pre class="r"><code>par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type=&#39;l&#39;,main=&#39;nugget=0&#39;)
+  lines(result$id0u[j,],col=2)
+  lines(result$log0u[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;ash identity link&#39;,&#39;ash log link&#39;,&#39;anscombe&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))
+}</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Now we increase nugget effect to <span class="math inline">\(\sigma=1\)</span>. Obviously, using anscombe transformation, we are estimating <span class="math inline">\(exp(\log(\mu)+N(0,\sigma^2))\)</span> so its mse is large and gives spiky fit.</p>
+<pre class="r"><code>result=simu_study(m,sigma=1,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))</code></pre>
+<pre><code>         idk          idu         id0k         id0u         logk 
+2.345193e+36 2.710025e+35 6.004389e-01 3.633385e-01 2.281759e+48 
+        logu        log0k        log0u          ans 
+2.059211e+10 1.167105e+00 7.626772e-01 4.053297e+00 </code></pre>
+<pre class="r"><code>boxplot(mses[-c(1,2,5,6)],main=&#39;nugget=1&#39;,ylab=&#39;MSE&#39;)</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(mses[-c(1,2,5,6,9)],main=&#39;nugget=1&#39;,ylab=&#39;MSE&#39;)</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type=&#39;l&#39;,main=&#39;nugget=1&#39;)
+  lines(result$id0u[j,],col=2)
+  lines(result$log0u[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;ash identity link&#39;,&#39;ash log link&#39;,&#39;anscombe&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))
+}</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>How about a larger mean function? Increase the range to (20,50). Some observations from the plot: 1. Now, known nugget effect gives smaller mse than unkown ones(e.g idk<idu, id0k<id0u,...); 2. Using identity link in lik_pois is still better; 3. ans has smaller mse but from the plots below, idk, logk and ans give very similar estiamtions.
+
+
+```r
+m=m*5+20
+
+range(m)
+```
+
+```
+[1] 20.50000 50.38158
+```
+
+```r
+result=simu_study(m,sigma=0,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))
+```
+
+```
+     idk      idu     id0k     id0u     logk     logu    log0k    log0u 
+2.286589 2.359016 2.684149 3.041295 2.420107 2.486034 2.684149 3.041295 
+     ans 
+2.229038 
+```
+
+```r
+boxplot(mses,main='nugget=0',ylab='MSE')
+```
+
+<img src="figure/compares.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Plots compare idk, logk and ans:</p>
+<pre class="r"><code>par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type=&#39;l&#39;,main=&#39;nugget=0&#39;)
+  lines(result$idk[j,],col=2)
+  lines(result$logk[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;ash identity link&#39;,&#39;ash log link&#39;,&#39;anscombe&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))
+}</code></pre>
+<p><img src="figure/compares.Rmd/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Maybe can develop a version of anscombe to deal with nugget effect? Also is nugget effect necessarily defined as <span class="math inline">\(exp(\log(\mu)+\sigma^2)\)</span>?</p>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] smashr_1.2-0 ashr_2.2-7  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
+[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
+[13] stringr_1.3.1     caTools_1.17.1.1  tools_3.5.1      
+[16] parallel_3.5.1    grid_3.5.1        data.table_1.11.6
+[19] R.oo_1.22.0       git2r_0.23.0      htmltools_0.3.6  
+[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
+[25] rprojroot_1.3-2   digest_0.6.17     Matrix_1.2-14    
+[28] bitops_1.0-6      codetools_0.2-15  R.utils_2.7.0    
+[31] evaluate_0.11     rmarkdown_1.10    wavethresh_4.6.8 
+[34] stringi_1.2.4     compiler_3.5.1    Rmosek_8.0.69    
+[37] backports_1.1.2   R.methodsS3_1.7.1 truncnorm_1.0-8  </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
