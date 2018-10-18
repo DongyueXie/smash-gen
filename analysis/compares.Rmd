@@ -1,0 +1,219 @@
+---
+title: "compares"
+author: "Dongyue Xie"
+date: "2018-10-13"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+## Introduction
+
+Compare 1. smashgen-ash.identity 2. smashgen-ash.log 3. smashgen-ash.identity.zero 4. smashgen-ash.log.zero (known and unknown nugget effect) with smash-anscombe.
+
+Settings: spike mean function, mean function range (0.1,6) and (20,50)
+
+Note: 
+
+1. idk: expand around ash posterior mean using identity link in lik_pois; given nugget effect(use `sigma=sqrt(nugget^2+s^2)` in `smash.gaus`).
+2. idu: same as 1; unknown nugget effect(use `sigma=NULL` in `smash.gaus`).
+3. id0k: expand around ash posterior mean using identity link only for 0 $x$s and around $x$ for nonzero $x$s; given nugget effect.
+4. id0u: same as 3; unkown nugget effect
+5. logk: expand around ash posterior mean using log link in lik_pois; given nugget effect
+6. logu: same as 5; unkown nuggect effect
+7. log0k: expand around ash posterior mean using log link only for 0 $x$s and around $x$ for nonzero $x$s; given nugget effect.
+8. logu: same as 7; unkown nugget effect
+9. ans: use anscombe transormation on poisson data, variance around 1/4; use 0 variance for 0 $x$s.
+
+```{r}
+
+vst_smooth=function(x,method,ep=1e-5){
+  n=length(x)
+  if(method=='sr'){
+    x.t=sqrt(x)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2
+    
+  }
+  if(method=='anscombe'){
+    x.t=sqrt(x+3/8)
+    x.var=rep(1/4,n)
+    x.var[x==0]=0
+    mu.hat=(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))^2-3/8
+  }
+  if(method=='log'){
+    x.t=x
+    x.t[x==0]=ep
+    x.var=1/x.t
+    x.t=log(x.t)
+    mu.hat=exp(smashr::smash.gaus(x.t,sigma=sqrt(x.var)))
+  }
+  return(mu.hat)
+}
+
+smash_gen_all=function(x,sigma,method){
+  n=length(x)
+  if(method=='identity'){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link='identity'))$result$PosteriorMean
+  }
+  if(method=='log'){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link='log'))$result$PosteriorMean
+  }
+  if(method=='identity.zero'){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link='identity'))$result$PosteriorMean
+    x.ash[x!=0]=x[x!=0]
+  }
+  if(method=='log.zero'){
+    x.ash=ash(rep(0,n),1,lik=lik_pois(x,link='log'))$result$PosteriorMean
+    x.ash[x!=0]=x[x!=0]
+  }
+  y=log(x.ash)+(x-x.ash)/x.ash
+  s2=1/x.ash
+  mu.sigk=exp(smash.gaus(y,sigma=sqrt(sigma^2+s2)))
+  mu.sigu=exp(smash.gaus(y))
+  return(list(mu.sigk=mu.sigk,mu.sigu=mu.sigu))
+}
+
+simu_study=function(m,sigma=0,nsimu=100,seed=12345){
+  set.seed(12345)
+  idk=c()
+  idu=c()
+  id0k=c()
+  id0u=c()
+  logk=c()
+  logu=c()
+  log0k=c()
+  log0u=c()
+  ans=c()
+  for (i in 1:nsimu) {
+    lambda=exp(log(m)+rnorm(n,0,sigma))
+    x=rpois(n,lambda)
+    id=smash_gen_all(x,sigma,'identity')
+    id0=smash_gen_all(x,sigma,'identity.zero')
+    logg=smash_gen_all(x,sigma,'log')
+    log0=smash_gen_all(x,sigma,'log.zero')
+    
+    idk=rbind(idk,id$mu.sigk)
+    idu=rbind(idu,id$mu.sigu)
+    id0k=rbind(id0k,id0$mu.sigk)
+    id0u=rbind(id0u,id0$mu.sigu)
+    logk=rbind(logk,logg$mu.sigk)
+    logu=rbind(logu,logg$mu.sigu)
+    log0k=rbind(log0k,log0$mu.sigk)
+    log0u=rbind(log0u,log0$mu.sigu)
+    ans=rbind(ans,vst_smooth(x,'anscombe'))
+  }
+  return(list(idk=idk,idu=idu,id0k=id0k,id0u=id0u,logk=logk,logu=logu,log0k=log0k,log0u=log0u,ans=ans))
+}
+```
+
+First we compare all the methods mentioned above using spike mean function whose mean range is around (0.1,6) so there are a number of zero counts in the sequence. This would be a challenge for smashgen since we are using log transformation. 
+
+
+```{r}
+library(ashr)
+library(smashr)
+
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+range(m)
+
+result=simu_study(m,sigma=0,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))
+
+boxplot(mses[-c(1,2,5,6)],main='nugget=0',ylab='MSE')
+```
+
+
+When there is no nugget effect, id0k, id0u, log0u have relatively smaller mean square error(mse) while anscombe transformation outperforms all smashgen methods and achieves smaller mse. 
+
+We plot the estimated mean function of id0u, log0u and ans for comparison. log0u seems to result in underestimations of mean function. id0u overestimates small means and underestimates large means. So when there are a number of zero observations, it's very crucial to choose where to expand for 0 $x$s.
+
+```{r,fig.width=8,fig.height=6}
+par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type='l',main='nugget=0')
+  lines(result$id0u[j,],col=2)
+  lines(result$log0u[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend('topleft',c('mean','ash identity link','ash log link','anscombe'),lty=c(1,1,1,1),col=c(1,2,3,4))
+}
+
+```
+
+
+Now we increase nugget effect to $\sigma=1$. Obviously, using anscombe transformation, we are estimating $exp(\log(\mu)+N(0,\sigma^2))$ so its mse is large and gives spiky fit. 
+
+
+```{r}
+result=simu_study(m,sigma=1,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))
+
+boxplot(mses[-c(1,2,5,6)],main='nugget=1',ylab='MSE')
+
+boxplot(mses[-c(1,2,5,6,9)],main='nugget=1',ylab='MSE')
+```
+
+
+```{r,fig.width=8,fig.height=6}
+par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type='l',main='nugget=1')
+  lines(result$id0u[j,],col=2)
+  lines(result$log0u[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend('topleft',c('mean','ash identity link','ash log link','anscombe'),lty=c(1,1,1,1),col=c(1,2,3,4))
+}
+
+```
+
+
+How about a larger mean function? Increase the range to (20,50). Some observations from the plot: 1. Now, known nugget effect gives smaller mse than unkown ones(e.g idk<idu, id0k<id0u,...); 2. Using identity link in lik_pois is still better; 3. ans has smaller mse but from the plots below, idk, logk and ans give very similar estiamtions.
+
+```{r}
+m=m*5+20
+
+range(m)
+
+result=simu_study(m,sigma=0,nsimu = 30)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+unlist(lapply(mses, mean))
+
+boxplot(mses,main='nugget=0',ylab='MSE')
+
+```
+
+Plots compare idk, logk and ans:
+
+```{r,fig.width=8,fig.height=6}
+par(mfrow=c(2,2))
+
+for (j  in c(1,2,3,4)) {
+  plot(m,type='l',main='nugget=0')
+  lines(result$idk[j,],col=2)
+  lines(result$logk[j,],col=3)
+  lines(result$ans[j,],col=4)
+  legend('topleft',c('mean','ash identity link','ash log link','anscombe'),lty=c(1,1,1,1),col=c(1,2,3,4))
+}
+
+```
+
+# Summary
+
+Maybe can develop a version of anscombe to deal with nugget effect? Also is nugget effect necessarily defined as $exp(\log(\mu)+\sigma^2)$? 
