@@ -4,27 +4,42 @@ author: "Dongyue Xie"
 date: "2018-10-14"
 output: 
   workflowr::wflow_html:
-    colde_folding: hide
+    code_folding: hide
 ---
 
 ## Introduction
 
-If we do square-root type variance stablizing transformation of poisson $X\sim Poi(\mu)$, then $Y=\sqrt{X+c}$ and $E(Y)\approx \sqrt{\mu+c}$ and $Var(Y)\approx 1/4$. Assume $\mu+c=(m+\epsilon)^2$, then $E(Y)=m+\epsilon$. So we can have a version of vst to deal with nugget effect. For example, if we observe $X_t\sim Pois(\mu)$ then form $y_t=\sqrt{x_t+c}$. Apply any smoothing method with variance $(\sigma^2+1/4)$ to $y=(y_1,...,y_t)$ to get $\hat{m}$ then $\hat\mu_{smooth}=\hat{m}^2-c$. 
+**Data generation**
 
-Advancetage: no need to worry about 0; homoscedastic variance.
+Assume $m$ has smooth structure, $\mu_t=(m_t+\epsilon)^2$ where $\epsilon\sim N(0,\sigma^2)$, and $X_t\sim Pois(\mu_t)$. Then $Y_t=\sqrt{X_t}\approx \sqrt{\mu_t}+N(0,1/4)=m+\epsilon+N(0,1/4)$ and $\hat\mu_t=\hat m_t^2$.
+
+**Recover smooth structure**
+
+If we do square-root type variance stablizing transformation of poisson $X\sim Poi(\mu)$, then $Y=\sqrt{X}$ and $E(Y)\approx \sqrt{\mu}$ and $Var(Y)\approx 1/4$. Assume $\mu=(m+\epsilon)^2$, then $E(Y)=m+\epsilon$. So we can have a version of vst to deal with nugget effect. For example, if we observe $X_t\sim Pois(\mu)$ then form $y_t=\sqrt{x_t}$. Apply any smoothing method with variance $(\sigma^2+1/4)$ to $y=(y_1,...,y_t)$ to get $\hat{m}$ then $\hat\mu_{smooth}=\hat{m}^2$. 
+
+Advancetage: no need to worry about 0; homoscedastic variance which is easier to estimate.
+
+When the nugget effect is unknown, three neighboring points(Gasser et al, 1986) were used to estimate the variance ,$\sigma^2+1/4$. The formula is \[\frac{2}{3(n-2)}\Sigma_{i=1}^{n-2} (\frac{1}{2}y_i-y_{i+1}+\frac{1}{2}y_{i+2})^2,\] where $y=\sqrt{x}$. If the estimated variance is smaller than $1/4$, I make it to be $1/4$. Or, we can simply treat var as unkown and use `smash.gaus(y)`
 
 ## Experiments
 
 ```{r,warning=F,message=FALSE}
 library(smashrgen)
-vst_gen=function(x,sigma=NULL,c=3/8){
+vst_gen=function(x,sigma=NULL,c=3/8,nug_est=T){
   n=length(x)
   y=sqrt(x+c)
   x.var=rep(1/4,n)
   x.var[x==0]=0
-  if(is.null(sigma)){sigma=sqrt(homo_var(y,1/4)-1/4)}
-  m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
-  #if(is.null(sigma)){m=smashr::smash.gaus(y)}else{m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))}
+  if(is.null(sigma)){
+    if(nug_est){
+      sigma=sqrt(homo_var(sqrt(x),1/4)-1/4)
+      m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
+    }else{
+      m=smashr::smash.gaus(y)
+    }
+  }else{
+    m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
+  }
   return(m^2-c)
 }
 
@@ -54,34 +69,57 @@ sigma=0
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
 mu=vst_gen(x,sigma)
-plot(x,col='grey80')
+
+plot(x,col='grey80',main='no nugget')
 lines(m)
 lines(mu,col=2)
 
+
 set.seed(12345)
-sigma=0.5
+sigma=0.3
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
 mu=vst_gen(x,sigma)
-plot(x,col='grey80')
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col='grey80',main='with nugget 0.3')
 lines(m)
 lines(mu,col=2)
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
 m=m*5+20
 set.seed(12345)
+sigma=0.3
+x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
+
+mu=vst_gen(x,sigma)
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col='grey80',main='with nugget 0.3')
+lines(m)
+lines(mu,col=2)
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
 sigma=0.5
 x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 
 mu=vst_gen(x,sigma)
-plot(x,col='grey80')
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col='grey80',main='with nugget 0.5')
 lines(m)
 lines(mu,col=2)
-
-
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
 ```
 
 
-# Real data
+# Real data comparison
 
 ```{r}
 extract_counts_CTCF <- function(filename){
@@ -99,20 +137,90 @@ chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo
 
 smash.out=smash.poiss(chipexo1$counts)
 y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
-vst.out=vst_gen(y,0.1)
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
 
 plot(chipexo1$counts, col = "gray80", ylab = "rep1 forward", xlab = "", main = "EncodeOpenChromChipHelas - Rep 1")
-lines(smash.out, col = 2, lwd = 1)
-lines(smashgen.out[301:725],col=4,lwd=2)
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
 lines(vst.out[301:725],col=3)
 
 legend("topright", # places a legend at the appropriate place
-       c("truth","smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
-       pch=c(1,NA,NA),
-       lwd=c(1,1,2),
+       c("truth","smash-poiss",'smashgen','vst-gen'), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
        cex = 0.5,
-       col=c("gray80","red", "blue"))
+       col=c("gray80","red", "blue",3))
+
+################
+
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = "gray80", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smashgen','vst-gen'), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","red", "blue",3))
+
+########
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = "gray80", ylab = "rep1 forward", xlab = "", main = "EncodeOpenChromChipHelas - Rep 1")
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smashgen','vst-gen'), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","red", "blue",3))
+
+#########
+
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = "gray80", ylab = "rep2 forward", xlab = "", main = "EncodeOpenChromChipHelas - Rep 2
+")
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smashgen','vst-gen'), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","red", "blue",3))
 
 ```
+
+## Reference
+
+Gasser, T., Sroka, L. and Jennen-Steinmetz, C. (1986). Residual variance and residual pattern in nonlinear regression. Biometrika 73 625–633.
