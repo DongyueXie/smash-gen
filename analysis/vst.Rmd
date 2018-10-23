@@ -76,7 +76,7 @@ vst_smooth=function(x,method,ep=1e-5){
 ```
 
 ```{r}
-simu_study=function(m,sig=0,nsimu=50,seed=12345){
+simu_study=function(m,sig=0,nsimu=30,seed=12345){
   set.seed(seed)
   sr=c()
   an=c()
@@ -86,7 +86,7 @@ simu_study=function(m,sig=0,nsimu=50,seed=12345){
     x=rpois(n,lambda)
     mu.sr=vst_smooth(x,'sr')
     mu.an=vst_smooth(x,'anscombe')
-    mu.ash=smash_gen_lite(x)
+    mu.ash=smash_gen_lite(x,sigma = sig)
     sr=rbind(sr,mu.sr)
     an=rbind(an,mu.an)
     ashp=rbind(ashp,mu.ash)
@@ -96,9 +96,9 @@ simu_study=function(m,sig=0,nsimu=50,seed=12345){
 
 ```
 
-When there are a number of $0s$ in the observation:
+When there are a number of $0s$ in the observation: (mean function (0.1,6))
 
-```{r}
+```{r,fig.width=12,fig.height=8}
 library(ashr)
 library(smashrgen)
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
@@ -116,39 +116,53 @@ result=simu_study(m)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
+par(mfrow=c(2,2))
 
-plot(m,type='l',main='nugget=0')
-lines(result$sr[1,],col=2)
-lines(result$an[1,],col=3)
-lines(result$ashp[1,],col=4)
+for (j in 1:4) {
+  plot(m,type='l',main='nugget=0')
+lines(result$sr[j,],col=2)
+lines(result$an[j,],col=3)
+lines(result$ashp[j,],col=4)
 legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
-boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
+}
+```
 
+```{r}
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0',ylab='MSE')
+```
+
+```{r,fig.width=12,fig.height=8}
 ########
 result=simu_study(m,sig=1)
 
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-unlist(lapply(mses, mean))
+#unlist(lapply(mses, mean))
 
-
-plot(m,type='l',main='nugget=1')
+par(mfrow=c(2,2))
+for (j in 1:4) {
+  plot(m,type='l',main='nugget=1')
 #lines(result$sr[1,],col=2)
-lines(result$an[1,],col=3)
-lines(result$ashp[1,],col=4)
+lines(result$an[j,],col=3)
+lines(result$ashp[j,],col=4)
 legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
 #legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
-boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=1')
+}
+
+```
+
+```{r}
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=1',ylab='MSE')
 
 ###############
 ```
 
-Increase range of mean function:
+\text{Increase range of mean function to (30,150)}
 
-```{r}
+```{r,fig.width=12,fig.height=8}
 
 m=m*20+30
 range(m)
@@ -157,17 +171,85 @@ result=simu_study(m)
 
 mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
 
-unlist(lapply(mses, mean))
+#unlist(lapply(mses, mean))
 
-plot(m,type='l',main='nugget=0')
-lines(result$sr[1,],col=2)
-lines(result$an[1,],col=3)
-lines(result$ashp[1,],col=4)
+par(mfrow=c(2,2))
+
+for (j in 1:4) {
+  plot(m,type='l',main='nugget=0')
+lines(result$sr[j,],col=2)
+lines(result$an[j,],col=3)
+lines(result$ashp[j,],col=4)
 legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
-boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0')
-
+}
 
 ```
 
+```{r}
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0',ylab='MSE')
+```
 
+## Step function
+
+mean: (1,7)
+
+```{r,fig.width=12,fig.height=8}
+m=c(rep(1,n/4),rep(5,n/4),rep(7,n/4),rep(1,n/4))
+
+result=simu_study(m)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+#unlist(lapply(mses, mean))
+
+par(mfrow=c(2,2))
+
+for (j in 1:4) {
+  plot(m,type='l',main='nugget=1',ylim=c(-1,8))
+#lines(result$sr[1,],col=2)
+lines(result$an[j,],col=3)
+lines(result$ashp[j,],col=4)
+legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
+#legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+}
+```
+
+```{r}
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0',ylab='MSE')
+
+```
+
+## Heavi Sine function
+
+mean: (1,24)
+
+```{r,fig.width=12,fig.height=8}
+m=wavethresh::DJ.EX(n)
+m=m$heavi+15
+range(m)
+
+result=simu_study(m)
+
+mses=lapply(result, function(x){apply(x, 1, function(y){mean((y-m)^2)})})
+
+#unlist(lapply(mses, mean))
+
+par(mfrow=c(2,2))
+
+for (j in 1:4) {
+  plot(m,type='l',main='nugget=1')
+#lines(result$sr[1,],col=2)
+lines(result$an[j,],col=3)
+lines(result$ashp[j,],col=4)
+legend('topright',c('mean','anscombe','smashgen'),lty=c(1,1,1),col=c(1,3,4))
+#legend('topright',c('mean','square root','anscombe','smashgen'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+}
+```
+
+```{r}
+boxplot(mses,names = c('square root','anscombe','smashgen'),main='nugget=0',ylab='MSE')
+
+```
