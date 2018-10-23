@@ -25,6 +25,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -170,6 +171,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -314,6 +323,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Anscombe transformation for dealing with nugget effect</h1>
@@ -323,7 +340,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-18</p>
+<p><strong>Last updated:</strong> 2018-10-22</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -347,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/bfb1f7c7a934c312bede42a652e2035a624c5ebc" target="_blank">bfb1f7c</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/afdbad252c532ccf6c5265a20d81b58c959e01dc" target="_blank">afdbad2</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -400,6 +417,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/afdbad252c532ccf6c5265a20d81b58c959e01dc/analysis/ansgen.Rmd" target="_blank">afdbad2</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/ansgen.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/a31c75e9b80ff06d452b64971261327cc9221547/docs/ansgen.html" target="_blank">a31c75e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/bfb1f7c7a934c312bede42a652e2035a624c5ebc/analysis/ansgen.Rmd" target="_blank">bfb1f7c</a>
 </td>
 <td style="text-align:left;">
@@ -419,20 +470,31 @@ wflow_publish(“analysis/ansgen.Rmd”)
 <hr />
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>If we do square-root type variance stablizing transformation of poisson <span class="math inline">\(X\sim Poi(\mu)\)</span>, then <span class="math inline">\(Y=\sqrt{X+c}\)</span> and <span class="math inline">\(E(Y)\approx \sqrt{\mu+c}\)</span> and <span class="math inline">\(Var(Y)\approx 1/4\)</span>. Assume <span class="math inline">\(\mu+c=(m+\epsilon)^2\)</span>, then <span class="math inline">\(E(Y)=m+\epsilon\)</span>. So we can have a version of vst to deal with nugget effect. For example, if we observe <span class="math inline">\(X_t\sim Pois(\mu)\)</span> then form <span class="math inline">\(y_t=\sqrt{x_t+c}\)</span>. Apply any smoothing method with variance <span class="math inline">\((\sigma^2+1/4)\)</span> to <span class="math inline">\(y=(y_1,...,y_t)\)</span> to get <span class="math inline">\(\hat{m}\)</span> then <span class="math inline">\(\hat\mu_{smooth}=\hat{m}^2-c\)</span>.</p>
-<p>Advancetage: no need to worry about 0; homoscedastic variance.</p>
+<p><strong>Data generation</strong></p>
+<p>Assume <span class="math inline">\(m\)</span> has smooth structure, <span class="math inline">\(\mu_t=(m_t+\epsilon)^2\)</span> where <span class="math inline">\(\epsilon\sim N(0,\sigma^2)\)</span>, and <span class="math inline">\(X_t\sim Pois(\mu_t)\)</span>. Then <span class="math inline">\(Y_t=\sqrt{X_t}\approx \sqrt{\mu_t}+N(0,1/4)=m+\epsilon+N(0,1/4)\)</span> and <span class="math inline">\(\hat\mu_t=\hat m_t^2\)</span>.</p>
+<p><strong>Recover smooth structure</strong></p>
+<p>If we do square-root type variance stablizing transformation of poisson <span class="math inline">\(X\sim Poi(\mu)\)</span>, then <span class="math inline">\(Y=\sqrt{X}\)</span> and <span class="math inline">\(E(Y)\approx \sqrt{\mu}\)</span> and <span class="math inline">\(Var(Y)\approx 1/4\)</span>. Assume <span class="math inline">\(\mu=(m+\epsilon)^2\)</span>, then <span class="math inline">\(E(Y)=m+\epsilon\)</span>. So we can have a version of vst to deal with nugget effect. For example, if we observe <span class="math inline">\(X_t\sim Pois(\mu)\)</span> then form <span class="math inline">\(y_t=\sqrt{x_t}\)</span>. Apply any smoothing method with variance <span class="math inline">\((\sigma^2+1/4)\)</span> to <span class="math inline">\(y=(y_1,...,y_t)\)</span> to get <span class="math inline">\(\hat{m}\)</span> then <span class="math inline">\(\hat\mu_{smooth}=\hat{m}^2\)</span>.</p>
+<p>Advancetage: no need to worry about 0; homoscedastic variance which is easier to estimate.</p>
+<p>When the nugget effect is unknown, three neighboring points(Gasser et al, 1986) were used to estimate the variance ,<span class="math inline">\(\sigma^2+1/4\)</span>. The formula is <span class="math display">\[\frac{2}{3(n-2)}\Sigma_{i=1}^{n-2} (\frac{1}{2}y_i-y_{i+1}+\frac{1}{2}y_{i+2})^2,\]</span> where <span class="math inline">\(y=\sqrt{x}\)</span>. If the estimated variance is smaller than <span class="math inline">\(1/4\)</span>, I make it to be <span class="math inline">\(1/4\)</span>. Or, we can simply treat var as unkown and use <code>smash.gaus(y)</code></p>
 </div>
 <div id="experiments" class="section level2">
 <h2>Experiments</h2>
 <pre class="r"><code>library(smashrgen)
-vst_gen=function(x,sigma=NULL,c=3/8){
+vst_gen=function(x,sigma=NULL,c=3/8,nug_est=T){
   n=length(x)
   y=sqrt(x+c)
   x.var=rep(1/4,n)
   x.var[x==0]=0
-  if(is.null(sigma)){sigma=sqrt(homo_var(y,1/4)-1/4)}
-  m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
-  #if(is.null(sigma)){m=smashr::smash.gaus(y)}else{m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))}
+  if(is.null(sigma)){
+    if(nug_est){
+      sigma=sqrt(homo_var(sqrt(x),1/4)-1/4)
+      m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
+    }else{
+      m=smashr::smash.gaus(y)
+    }
+  }else{
+    m=smashr::smash.gaus(y,sqrt(x.var+sigma^2))
+  }
   return(m^2-c)
 }
 
@@ -458,32 +520,146 @@ sigma=0
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
 mu=vst_gen(x,sigma)
-plot(x,col=&#39;grey80&#39;)
+
+plot(x,col=&#39;grey80&#39;,main=&#39;no nugget&#39;)
 lines(m)
 lines(mu,col=2)</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a31c75e9b80ff06d452b64971261327cc9221547/docs/figure/ansgen.Rmd/unnamed-chunk-2-1.png" target="_blank">a31c75e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>set.seed(12345)
-sigma=0.5
+sigma=0.3
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
 mu=vst_gen(x,sigma)
-plot(x,col=&#39;grey80&#39;)
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.3&#39;)
 lines(m)
-lines(mu,col=2)</code></pre>
+lines(mu,col=2)
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend(&#39;topright&#39;,c(&#39;smooth mean&#39;,&#39;known var&#39;,&#39;unkown var-est nugget&#39;,&#39;unkown var&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a31c75e9b80ff06d452b64971261327cc9221547/docs/figure/ansgen.Rmd/unnamed-chunk-2-2.png" target="_blank">a31c75e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>m=m*5+20
 set.seed(12345)
-sigma=0.5
+sigma=0.3
 x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 
 mu=vst_gen(x,sigma)
-plot(x,col=&#39;grey80&#39;)
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.3&#39;)
 lines(m)
-lines(mu,col=2)</code></pre>
+lines(mu,col=2)
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend(&#39;topright&#39;,c(&#39;smooth mean&#39;,&#39;known var&#39;,&#39;unkown var-est nugget&#39;,&#39;unkown var&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-2-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a31c75e9b80ff06d452b64971261327cc9221547/docs/figure/ansgen.Rmd/unnamed-chunk-2-3.png" target="_blank">a31c75e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>sigma=0.5
+x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
+
+mu=vst_gen(x,sigma)
+mu.s=vst_gen(x,NULL)
+mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.5&#39;)
+lines(m)
+lines(mu,col=2)
+lines(mu.s,col=3)
+lines(mu.su,col=4)
+legend(&#39;topright&#39;,c(&#39;smooth mean&#39;,&#39;known var&#39;,&#39;unkown var-est nugget&#39;,&#39;unkown var&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
+<p><img src="figure/ansgen.Rmd/unnamed-chunk-2-4.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="real-data" class="section level1">
-<h1>Real data</h1>
+<div id="real-data-comparison" class="section level1">
+<h1>Real data comparison</h1>
 <pre class="r"><code>extract_counts_CTCF &lt;- function(filename){
   bed_counts &lt;- read.table(filename, header = F, stringsAsFactors = F)
   colnames(bed_counts) &lt;- c(&quot;chr&quot;, &quot;start&quot;, &quot;end&quot;, &quot;name&quot;, &quot;width&quot;, &quot;counts&quot;)
@@ -499,22 +675,122 @@ chipexo1 &lt;- extract_counts_CTCF(&quot;/Users/dongyue/Documents/smash-gen/data
 
 smash.out=smash.poiss(chipexo1$counts)
 y=reflect(chipexo1$counts,&#39;both&#39;,c(300,299))
-smashgen.out=smash_gen_lite(y,wave_family = &#39;DaubLeAsymm&#39;,filter.number = 8)
-vst.out=vst_gen(y,0.1)
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
 
 plot(chipexo1$counts, col = &quot;gray80&quot;, ylab = &quot;rep1 forward&quot;, xlab = &quot;&quot;, main = &quot;EncodeOpenChromChipHelas - Rep 1&quot;)
-lines(smash.out, col = 2, lwd = 1)
-lines(smashgen.out[301:725],col=4,lwd=2)
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
 lines(vst.out[301:725],col=3)
 
 legend(&quot;topright&quot;, # places a legend at the appropriate place
-       c(&quot;truth&quot;,&quot;smash-poiss&quot;,&#39;smash-gen&#39;), # puts text in the legend
-       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
-       pch=c(1,NA,NA),
-       lwd=c(1,1,2),
+       c(&quot;truth&quot;,&quot;smash-poiss&quot;,&#39;smashgen&#39;,&#39;vst-gen&#39;), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
        cex = 0.5,
-       col=c(&quot;gray80&quot;,&quot;red&quot;, &quot;blue&quot;))</code></pre>
+       col=c(&quot;gray80&quot;,&quot;red&quot;, &quot;blue&quot;,3))</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a31c75e9b80ff06d452b64971261327cc9221547/docs/figure/ansgen.Rmd/unnamed-chunk-3-1.png" target="_blank">a31c75e</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>################
+
+chipexo1 &lt;- extract_counts_CTCF(&quot;/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt&quot;)
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,&#39;both&#39;,c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = &quot;gray80&quot;, ylab = &quot;rep1 forward&quot;, xlab = &quot;&quot;, main = &quot;EncodeBroadHistoneHelas - Rep 1&quot;)
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend(&quot;topright&quot;, # places a legend at the appropriate place
+       c(&quot;truth&quot;,&quot;smash-poiss&quot;,&#39;smashgen&#39;,&#39;vst-gen&#39;), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c(&quot;gray80&quot;,&quot;red&quot;, &quot;blue&quot;,3))</code></pre>
+<p><img src="figure/ansgen.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>########
+chipexo1 &lt;- extract_counts_CTCF(&quot;/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt&quot;)
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,&#39;both&#39;,c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = &quot;gray80&quot;, ylab = &quot;rep1 forward&quot;, xlab = &quot;&quot;, main = &quot;EncodeOpenChromChipHelas - Rep 1&quot;)
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend(&quot;topright&quot;, # places a legend at the appropriate place
+       c(&quot;truth&quot;,&quot;smash-poiss&quot;,&#39;smashgen&#39;,&#39;vst-gen&#39;), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c(&quot;gray80&quot;,&quot;red&quot;, &quot;blue&quot;,3))</code></pre>
+<p><img src="figure/ansgen.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#########
+
+chipexo1 &lt;- extract_counts_CTCF(&quot;/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt&quot;)
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,&#39;both&#39;,c(300,299))
+smashgen.out=smash_gen_lite(y)
+vst.out=vst_gen(y,NULL,nug_est = F)
+
+plot(chipexo1$counts, col = &quot;gray80&quot;, ylab = &quot;rep2 forward&quot;, xlab = &quot;&quot;, main = &quot;EncodeOpenChromChipHelas - Rep 2
+&quot;)
+lines(smash.out, col = 2)
+lines(smashgen.out[301:725],col=4)
+lines(vst.out[301:725],col=3)
+
+legend(&quot;topright&quot;, # places a legend at the appropriate place
+       c(&quot;truth&quot;,&quot;smash-poiss&quot;,&#39;smashgen&#39;,&#39;vst-gen&#39;), # puts text in the legend
+       lty=c(0,1,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA,NA),
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c(&quot;gray80&quot;,&quot;red&quot;, &quot;blue&quot;,3))</code></pre>
+<p><img src="figure/ansgen.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="reference" class="section level2">
+<h2>Reference</h2>
+<p>Gasser, T., Sroka, L. and Jennen-Steinmetz, C. (1986). Residual variance and residual pattern in nonlinear regression. Biometrika 73 625–633.</p>
+</div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
