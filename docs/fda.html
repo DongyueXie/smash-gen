@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-11-01" />
+
+<title>funtional data analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">funtional data analysis</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2018-11-01</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-11-11</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4db233852057c19d1a38fbf918afa7217af7eab7" target="_blank">4db2338</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/chipexoeg.Rmd
+    Untracked:  analysis/talk1011.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
+    Untracked:  docs/figure/vstiter.Rmd/
+    Untracked:  talk.Rmd
+    Untracked:  talk.pdf
+
+Unstaged changes:
+    Modified:   analysis/literature.Rmd
+    Modified:   analysis/sigma.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/4db233852057c19d1a38fbf918afa7217af7eab7/analysis/fda.Rmd" target="_blank">4db2338</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-11
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/index.Rmd”, “analysis/vstiter.Rmd”, “analysis/fda.Rmd”))
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<p>Some reviews and readings on functional data analysis.</p>
+<p>One of my readings this quarter with Matthew is related to functional data analysis(FDA) and I also came across this in the data analysis project course by Peter M. I haven’t read any materials of functional data analysis so I decided to do so and summarise some key ideas/techniques here for reference.</p>
+<div id="what-is-fda" class="section level2">
+<h2>What is FDA?</h2>
+<p>A functional datum is not a single observation but rather a set of measurements along a continuum that, taken together, are to be regarded as a single entity, curve or image. Usually the continuum is time. But any continuous domain is possible, and the domain may be multidimensional. The key is that observations are from a (smooth) function.</p>
+<p>So traditional design matrix is n by p where n is the sample size and p is the number of covariates. Now functional data is n by p where n is the sample size and p is the discrete time point, not necessary the same time point nor the same lengh for each sample.</p>
+<p>what’s the difference among functional data analysis, longitudinal data analysis and time series data analysis?</p>
+<p>Are observations for each subject generated from the same smooth function? No!</p>
+</div>
+<div id="functional-regression-models" class="section level2">
+<h2>Functional regression models</h2>
+<p>Functional response and scalar <span class="math inline">\(y(t)=Z\beta(t)+\epsilon(t)\)</span>. Minimize <span class="math inline">\(LMSSE(\beta)=\int (y(t)-Z\beta(t))^T(y(t)-Z\beta(t))dt\)</span>.</p>
+<p>If no restrection on <span class="math inline">\(\beta(t)\)</span>, we can minimize for each t using ols. If want to have smooth in <span class="math inline">\(\beta(t)\)</span>, use basis expansion and impose roughness penalties.</p>
+</div>
+<div id="functional-mixed-models" class="section level2">
+<h2>Functional mixed models</h2>
+<p>Wensheng Guo(2002) proposed functional mixed models. <span class="math inline">\(y_{ij}\)</span> is the response of the <span class="math inline">\(i\)</span>th curve at <span class="math inline">\(t_{ij}\)</span> and <span class="math inline">\(y_{ij}=X_{ij}^T\beta(t_{ij})+Z_{ij}^T\alpha_i(t_{ij})+\epsilon_{ij}\)</span>. So we can see that covariates X and Z are also functional here. <span class="math inline">\(\alpha_i(t)\)</span> is a vector of random functions that are modeled as realizations of Gaussian processes <span class="math inline">\(A(t)\)</span> with 0 means. <span class="math inline">\(\beta(t)\)</span> is also modeled as Gaussian process but each fixed component in it is modeled as a single realization of a partially diffuse Gaussian process.</p>
+<p>Morris and Caroll(2006) proposed wavelet-based functional mixed models. For the functional models, the differences are that now the model allows correlation across the random effect functions and random error functions. The original model is <span class="math inline">\(Y=XB+ZU+E\)</span> The fitting of model is in Wavelet space, meaning that the working model is <span class="math inline">\(D=XB^*+ZU^*+E^*\)</span> where <span class="math inline">\(D=YW^T, B^*=BW^T\)</span>… and <span class="math inline">\(W\)</span> is DWT natrix. After fitting the wavelet space model, it can be esily transformed back to original space.</p>
+<p>More on Morris and Caroll:</p>
+<p>In a continiuous functional model, <span class="math inline">\(Y(t)=XB(t)+ZU(t)+E(t)\)</span>, where <span class="math inline">\(U(t)\)</span> is from multivariate Gaussian process <span class="math inline">\(MGP(P,Q)\)</span> where <span class="math inline">\(P\)</span> is the <span class="math inline">\(m\times m\)</span> covariance matrix between functions and <span class="math inline">\(Q\)</span> is the covariance matrix for Gaussian process; <span class="math inline">\(E(t)\)</span> is from <span class="math inline">\(MGP(R,S)\)</span> and is independent of <span class="math inline">\(U(t)\)</span>. In practice, the Design matrix for random effects Z, and between curve correlaltion matrix P and R are chosen based on experimental design.</p>
+<p>Data always come in discrete form so in the discrete model <span class="math inline">\(U\sim MN(P,Q)\)</span> where <span class="math inline">\(P\)</span> is <span class="math inline">\(m\times m\)</span> between row cov matrix and <span class="math inline">\(Q\)</span> is <span class="math inline">\(T\times T\)</span> bwt col cov matrix. (Note: A <span class="math inline">\(N\times p\)</span> matrix X follows MN(P,Q) and can be written as <span class="math inline">\(X=P^{1/2}GQ^{1/2}\)</span> where entries of <span class="math inline">\(G\)</span> are iid standard normal distribution). After transforming into wavelet space, we have <span class="math inline">\(D=XB^*+ZU^*+E^*\)</span> so now <span class="math inline">\(U^*\sim MN(P,Q^*)\)</span> where <span class="math inline">\(Q^*=WQW&#39;\)</span>; and <span class="math inline">\(E^*\sim MN(R,S*)\)</span>. Assumptions on covariance structure: <span class="math inline">\(Q^*\)</span> and <span class="math inline">\(S^*\)</span> are diagonal matrices.</p>
+<p>Model estimation:</p>
+<p>What to estimate? <span class="math inline">\(p\times T\)</span> coefficients <span class="math inline">\(B^*\)</span>, covariance matrix <span class="math inline">\(Q^*\)</span> and <span class="math inline">\(S^*\)</span>.</p>
+<p>How to estiamte? The paper uses a Bayes approach, assuming a spike and slab prior on <span class="math inline">\(B^*_{ijk}\)</span> where <span class="math inline">\(i\)</span> indexes fixed effect, <span class="math inline">\(j,k\)</span> are the scale and location of wavelet coefficients. The prior is <span class="math inline">\(B^*_{ijk}=\gamma^*_{ijk}N(0,\tau_{ijk}+(1-\gamma^*_{ijk})I_0)\)</span> and <span class="math inline">\(\gamma^*_{ijk}=Bernoulli(\pi_{ij})\)</span>.</p>
+<p>So first we need to estimate the hyperparameters <span class="math inline">\(\pi_{ij}\)</span> and <span class="math inline">\(\tau_{ijk}\)</span>. The paper uses empirical bayes method to estiamte hyperparameters then uses MCMC obtain posterior of the model. The posterior distribution we’ll have finally are <span class="math inline">\(B_{ijk}\)</span>, <span class="math inline">\(q_{jk}\)</span>, <span class="math inline">\(s_{jk}\)</span>, <span class="math inline">\(u_{jk}\)</span> and covriance matrix <span class="math inline">\(P,R\)</span>.</p>
+<p>An example in the paper:</p>
+<p>30 rats, two treatments: fish/corn oil, 5 time:0,3,6,9,12; each rat has 25 crypt curves and each curve has length 256. Two covariates: DNA adduct level, apoptotic index.</p>
+</div>
+<div id="shimstephens." class="section level2">
+<h2>Shim&amp;Stephens.</h2>
+<p>Data structure:</p>
+<p>70 individuals, each individual has length B DNase-seq data in a region(Funtional data), how many regions in total? each sequence count data is standardized.</p>
+<p>Model:</p>
+<p>Decompose each sequence d into wavelet coefficients <span class="math inline">\(y_{sl}\)</span> where s the scale and l is location. Assume a linear model: for <span class="math inline">\(i\)</span>th indivisual, <span class="math inline">\(y_{sl}^i=\mu_{sl}+\beta_{sl}g^i+\epsilon_{sl}^i\)</span>. The task is to test whether <span class="math inline">\(\beta_{sl}=0\)</span>. But in the paper they defined a new binary indicator for this, i.e. <span class="math inline">\(r_{sl}=0\)</span> means no association. why??(i guess it’s for building the hierarcical model). assume <span class="math inline">\(p(r_{sl}=1|\pi)=\pi_s\)</span>, then <span class="math inline">\(\pi_s=0\)</span> corresponds to <span class="math inline">\(r_{sl}=0\)</span> for all locations at scale <span class="math inline">\(s\)</span>. Likelihood ratio for <span class="math inline">\(\pi\)</span> is <span class="math inline">\(\Lambda(\pi;y,g)=\frac{p(y|g,\pi)}{p(y|g,\pi=0)}=\Pi_{sl}\frac{p(y_{sl}|g,\pi_s)}{p(y_{sl}|g,\pi_s=0)}=\Pi_{sl}[\pi_s BF_{sl}+(1-\pi_s)]\)</span>. where <span class="math inline">\(BF_{sl}\)</span> is the bayes factor defined as <span class="math inline">\(BF_{sl}(y,g)\frac{p(y_{sl}|g,r_{sl}=1)}{p(y_{sl}|g,r_{sl}=0)}\)</span>. The test is <span class="math inline">\(H_0:\pi=0\)</span> and test statstics is this likelihood ratio. But we don’t have <span class="math inline">\(\pi\)</span> and it can be estimated by MLE. How to calculate BF? Assume priors of parameters in the linear model and use limiting Bayes factor.</p>
+<p>Where are the individuals in this model?? In the BF factor calculation.</p>
+</div>
+<div id="how-the-nugget-effect-could-be-used-in-above-framework" class="section level2">
+<h2>How the nugget effect could be used in above framework?</h2>
+<ol style="list-style-type: decimal">
+<li><p>Transform data and get ‘pseudo’ data first. <span class="math inline">\(D^i\)</span> for each individual, Then the functional model is <span class="math inline">\(D=XB+E_1+E_2\)</span>, where <span class="math inline">\(D\)</span> is <span class="math inline">\(N\times T\)</span> counts, <span class="math inline">\(X\)</span> is <span class="math inline">\(N\times p\)</span> design matrix wit h 1s in first column, <span class="math inline">\(B\)</span> is <span class="math inline">\(p\times T\)</span> coefficients matrix(and we would like to test if <span class="math inline">\(B=0\)</span>), <span class="math inline">\(E_1\)</span> is <span class="math inline">\(N\times T\)</span> matrix where each row has independnet normal distributed errors with 0 mean and known variance, <span class="math inline">\(E_2\)</span> is <span class="math inline">\(N\times T\)</span> nugget effect matrix where each row has iid normal distribution errors with 0 mean and unkown varaince.</p></li>
+<li><p>DWT: <span class="math inline">\(DW=XBW+E_1W+E_2W\rightarrow Y=XB^*+E_1^*+E_2^*\)</span>. For <span class="math inline">\(i\)</span>th individual at scale s and location l we have <span class="math inline">\(y_{i,sl}=\beta_{sl}^Tx_i+N(0,\sigma^2_{i,sl})+N(0,\sigma_^2i)\)</span></p></li>
+</ol>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-18</p>
+<p><strong>Last updated:</strong> 2018-11-11</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/83d54066f6b85fcf37f1210d01a06dc3f4ba5bc3" target="_blank">83d5406</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4db233852057c19d1a38fbf918afa7217af7eab7" target="_blank">4db2338</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -240,20 +240,17 @@ Ignored files:
     Ignored:    data/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/ansgen.Rmd
     Untracked:  analysis/chipexoeg.Rmd
-    Untracked:  analysis/compares.Rmd
     Untracked:  analysis/talk1011.Rmd
     Untracked:  data/chipexo_examples/
     Untracked:  data/chipseq_examples/
-    Untracked:  docs/figure/ansgen.Rmd/
+    Untracked:  docs/figure/vstiter.Rmd/
     Untracked:  talk.Rmd
     Untracked:  talk.pdf
 
 Unstaged changes:
     Modified:   analysis/literature.Rmd
     Modified:   analysis/sigma.Rmd
-    Modified:   analysis/vst.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -282,6 +279,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/4db233852057c19d1a38fbf918afa7217af7eab7/analysis/index.Rmd" target="_blank">4db2338</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-11
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/index.Rmd”, “analysis/vstiter.Rmd”, “analysis/fda.Rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/e55f4a7ff6b2fd69c61ed8bfd1fb7e9bbbdc78b7/docs/index.html" target="_blank">e55f4a7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-10-18
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -1043,14 +1074,18 @@ Start workflowr project.
 <li><a href="vst.html">vst smoothing</a></li>
 <li><a href="compares.html">compare log and anscombe transform</a></li>
 <li><a href="ansgen.html">vst for nugget effect?</a></li>
+<li><a href="vstiter.html">iterative vst?</a></li>
 </ol>
 </div>
 </div>
 <div id="literatures-on-smoothing" class="section level1">
 <h1>Literatures on smoothing</h1>
+<p>I’m focusing on reading 1. additive models(gam, gamm, spam, gspam); 2. functional data analysis(wavelet based functional mixed models, etc); 3. More on exponential family Signal denoising(vst, tf)</p>
 <ol style="list-style-type: decimal">
 <li><a href="literature.html">A collection of literatures</a></li>
-<li><a href="gam.html">Generalized additive model</a></li>
+<li><a href="gam.html">additive models</a></li>
+<li><a href="fda.html">functional data analysis</a></li>
+<li><a href="efsd.html">Signal denoising exponential family</a></li>
 </ol>
 </div>
 <div id="credits" class="section level1">
