@@ -1,0 +1,74 @@
+---
+title: "funtional data analysis"
+author: "Dongyue Xie"
+date: "2018-11-01"
+output: workflowr::wflow_html
+---
+
+Some reviews and readings on functional data analysis.
+
+One of my readings this quarter with Matthew is related to functional data analysis(FDA) and I also came across this in the data analysis project course by Peter M. I haven't read any materials of functional data analysis so I decided to do so and summarise some key ideas/techniques here for reference.
+
+## What is FDA?
+
+
+A functional datum is not a single observation but rather a set of measurements along a continuum that, taken together, are to be regarded as a single entity, curve or image. Usually the continuum is time. But any continuous domain is possible, and the domain may be multidimensional. The key is that observations are from a (smooth) function.
+
+So traditional design matrix is n by p where n is the sample size and p is the number of covariates. Now functional data is n by p where n is the sample size and p is the discrete time point, not necessary the same time point nor the same lengh for each sample.
+
+what's the difference among functional data analysis, longitudinal data analysis and time series data analysis? 
+
+Are observations for each subject generated from the same smooth function? No!
+
+
+## Functional regression models
+
+Functional response and scalar $y(t)=Z\beta(t)+\epsilon(t)$. Minimize $LMSSE(\beta)=\int (y(t)-Z\beta(t))^T(y(t)-Z\beta(t))dt$.
+
+If no restrection on $\beta(t)$, we can minimize for each t using ols. If want to have smooth in $\beta(t)$, use basis expansion and impose roughness penalties.
+
+## Functional mixed models
+
+Wensheng Guo(2002) proposed functional mixed models. $y_{ij}$ is the response of the $i$th curve at $t_{ij}$ and $y_{ij}=X_{ij}^T\beta(t_{ij})+Z_{ij}^T\alpha_i(t_{ij})+\epsilon_{ij}$. So we can see that covariates X and Z are also functional here. $\alpha_i(t)$ is a vector of random functions that are modeled as realizations of Gaussian processes $A(t)$ with 0 means. $\beta(t)$ is also modeled as Gaussian process but each fixed component in it is modeled as a single
+realization of a partially diffuse Gaussian process.
+
+Morris and Caroll(2006) proposed wavelet-based functional mixed models. For the functional models, the differences are that now the model allows correlation across the random effect functions and random error functions. The original model is $Y=XB+ZU+E$ The fitting of model is in Wavelet space, meaning that the working model is $D=XB^*+ZU^*+E^*$ where $D=YW^T, B^*=BW^T$... and $W$ is DWT natrix. After fitting the wavelet space model, it can be esily transformed back to original space.
+
+More on Morris and Caroll:
+
+In a continiuous functional model, $Y(t)=XB(t)+ZU(t)+E(t)$, where $U(t)$ is from multivariate Gaussian process $MGP(P,Q)$ where $P$ is the $m\times m$ covariance matrix between functions and $Q$ is the covariance matrix for Gaussian process; $E(t)$ is from $MGP(R,S)$ and is independent of $U(t)$. In practice, the Design matrix for random effects Z, and between curve correlaltion matrix P and R are chosen based on experimental design. 
+
+Data always come in discrete form so in the discrete model $U\sim MN(P,Q)$ where $P$ is $m\times m$ between row cov matrix and $Q$ is $T\times T$ bwt col cov matrix. (Note: A $N\times p$ matrix X follows MN(P,Q) and can be written as $X=P^{1/2}GQ^{1/2}$ where entries of $G$ are iid standard normal distribution). After transforming into wavelet space, we have $D=XB^*+ZU^*+E^*$ so now $U^*\sim MN(P,Q^*)$ where $Q^*=WQW'$; and $E^*\sim MN(R,S*)$. Assumptions on covariance structure: $Q^*$ and $S^*$ are diagonal matrices.
+
+Model estimation:
+
+What to estimate? $p\times T$ coefficients $B^*$, covariance matrix $Q^*$ and $S^*$.
+
+How to estiamte? The paper uses a Bayes approach, assuming a spike and slab prior on $B^*_{ijk}$ where $i$ indexes fixed effect, $j,k$ are the scale and location of wavelet coefficients. The prior is $B^*_{ijk}=\gamma^*_{ijk}N(0,\tau_{ijk}+(1-\gamma^*_{ijk})I_0)$ and $\gamma^*_{ijk}=Bernoulli(\pi_{ij})$.  
+
+So first we need to estimate the hyperparameters $\pi_{ij}$ and $\tau_{ijk}$. The paper uses empirical bayes method to estiamte hyperparameters then uses MCMC obtain posterior of the model. The posterior distribution we'll have finally are $B_{ijk}$, $q_{jk}$, $s_{jk}$, $u_{jk}$ and covriance matrix $P,R$. 
+
+An example in the paper:
+ 
+30 rats, two treatments: fish/corn oil, 5 time:0,3,6,9,12; each rat has 25 crypt curves and each curve has length 256. Two covariates: DNA adduct level, apoptotic index.
+
+## Shim&Stephens.
+
+Data structure:
+
+70 individuals, each individual has length B DNase-seq data in a region(Funtional data), how many regions in total? each sequence count data is standardized. 
+
+Model:
+
+Decompose each sequence d into wavelet coefficients $y_{sl}$ where s the scale and l is location. Assume a linear model: for $i$th indivisual, $y_{sl}^i=\mu_{sl}+\beta_{sl}g^i+\epsilon_{sl}^i$. The task is to test whether $\beta_{sl}=0$. But in the paper they defined a new binary indicator for this, i.e. $r_{sl}=0$ means no association. why??(i guess it's for building the hierarcical model). assume $p(r_{sl}=1|\pi)=\pi_s$, then $\pi_s=0$ corresponds to $r_{sl}=0$ for all locations at scale $s$. Likelihood ratio for $\pi$ is $\Lambda(\pi;y,g)=\frac{p(y|g,\pi)}{p(y|g,\pi=0)}=\Pi_{sl}\frac{p(y_{sl}|g,\pi_s)}{p(y_{sl}|g,\pi_s=0)}=\Pi_{sl}[\pi_s BF_{sl}+(1-\pi_s)]$. where $BF_{sl}$ is the bayes factor defined as $BF_{sl}(y,g)\frac{p(y_{sl}|g,r_{sl}=1)}{p(y_{sl}|g,r_{sl}=0)}$. The test is $H_0:\pi=0$ and test statstics is this likelihood ratio. But we don't have $\pi$ and it can be estimated by MLE. How to calculate BF? Assume priors of parameters in the linear model and use limiting Bayes factor.
+
+Where are the individuals in this model?? In the BF factor calculation.
+
+## How the nugget effect could be used in above framework?
+
+1. Transform data and get 'pseudo' data first. $D^i$ for each individual, Then the functional model is $D=XB+E_1+E_2$, where $D$ is $N\times T$ counts, $X$ is $N\times p$ design matrix wit
+h 1s in first column, $B$ is $p\times T$ coefficients matrix(and we would like to test if $B=0$), $E_1$ is $N\times T$ matrix where each row has independnet normal distributed errors with 0 mean and known variance, $E_2$ is $N\times T$ nugget effect matrix where each row has iid normal distribution errors with 0 mean and unkown varaince. 
+
+2. DWT: $DW=XBW+E_1W+E_2W\rightarrow Y=XB^*+E_1^*+E_2^*$. For $i$th individual at scale s and location l we have $y_{i,sl}=\beta_{sl}^Tx_i+N(0,\sigma^2_{i,sl})+N(0,\sigma_^2i)$
+
+

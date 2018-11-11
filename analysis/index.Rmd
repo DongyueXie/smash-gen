@@ -98,11 +98,16 @@ The primary role of CTCF is thought to be in regulating the 3D structure of chro
 1. [vst smoothing](vst.html)
 2. [compare log and anscombe transform](compares.html)
 3. [vst for nugget effect?](ansgen.html)
+4. [iterative vst?](vstiter.html)
 
 # Literatures on smoothing
 
+I'm focusing on reading 1. additive models(gam, gamm, spam, gspam); 2. functional data analysis(wavelet based functional mixed models, etc); 3. More on exponential family Signal denoising(vst, tf)
+
 1. [A collection of literatures](literature.html)
-2. [Generalized additive model](gam.html)
+2. [additive models](gam.html)
+3. [functional data analysis](fda.html)
+4. [Signal denoising exponential family](efsd.html)
 
 # Credits
 
