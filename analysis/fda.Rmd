@@ -69,6 +69,16 @@ Where are the individuals in this model?? In the BF factor calculation.
 1. Transform data and get 'pseudo' data first. $D^i$ for each individual, Then the functional model is $D=XB+E_1+E_2$, where $D$ is $N\times T$ counts, $X$ is $N\times p$ design matrix wit
 h 1s in first column, $B$ is $p\times T$ coefficients matrix(and we would like to test if $B=0$), $E_1$ is $N\times T$ matrix where each row has independnet normal distributed errors with 0 mean and known variance, $E_2$ is $N\times T$ nugget effect matrix where each row has iid normal distribution errors with 0 mean and unkown varaince. 
 
-2. DWT: $DW=XBW+E_1W+E_2W\rightarrow Y=XB^*+E_1^*+E_2^*$. For $i$th individual at scale s and location l we have $y_{i,sl}=\beta_{sl}^Tx_i+N(0,\sigma^2_{i,sl})+N(0,\sigma_^2i)$
+2. DWT: $DW=XBW+E_1W+E_2W\rightarrow Y=XB^*+E_1^*+E_2^*$. For $i$th individual at scale s and location l we have $y_{i,sl}=\beta_{sl}^Tx_i+N(0,\sigma^2_{i,sl})+N(0,\sigma^2_i)$
+
+## Where is the smooth from in above models? What are smooth?
+
+The response y is a noisy version of smooth function. The coefficients B consist of $p$ smooth curves. Random effects $U$ also smooth.
+
+To do: 1. remind myself about stephens paper details
+
+2. read more nonparametric regression on non-Gaussian data: a. exponential families; b. Generalized additive model; c. Generalized functional analysis.
+
+3. Think how to incorperate non-Gaussian data into Stephens paper framework.
 
 
