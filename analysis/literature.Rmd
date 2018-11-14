@@ -11,19 +11,19 @@ This is a broad list of literature on smoothing Gaussian/non-Gaussian data.
 
 ## Nonparametric methods
 
-KNN
+1. KNN
 
-Kernel smootihng methods: Chapter 6 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/).
+2. Kernel smootihng methods: Chapter 6 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/).
 
-Local regression(linear & higher order): [Loader, C. (2006). Local regression and likelihood. Springer Science & Business Media.](http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/LocalRegressionBook_1999.pdf)
+3. Local regression(linear & higher order): [Loader, C. (2006). Local regression and likelihood. Springer Science & Business Media.](http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/LocalRegressionBook_1999.pdf)
 
 Note: Local regression makes no global assumptions about the function but assume that locally it can be well approximated with a member of a simple class of parametric function. Only observations in certain window are used.
 
-Splines: regression splines, smoothing splines; More generally, reproducing kernel Hilbert space: Chapter 5 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)
+4. Splines: regression splines, smoothing splines; More generally, reproducing kernel Hilbert space: Chapter 5 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
-Locally adaptive estimators: wavelet( [Mallat, S. (1999). A wavelet tour of signal processing. Elsevier](https://www.di.ens.fr/~mallat/papiers/WaveletTourChap1-2-3.pdf) ), Locally adaptive regression splines(A varaiant of smooting splines achieves better local adaptivity. [Mammen, E., & van de Geer, S. (1997). Locally adaptive regression splines. The Annals of Statistics, 25(1), 387-413.](https://projecteuclid.org/euclid.aos/1034276635)), Trend filtering( [Kim, S. J., Koh, K., Boyd, S., & Gorinevsky, D. (2009). l_1 Trend Filtering. SIAM review, 51(2), 339-360.](http://web.stanford.edu/~boyd/papers/l1_trend_filter.html) ).
+5. Locally adaptive estimators: wavelet( [Mallat, S. (1999). A wavelet tour of signal processing. Elsevier](https://www.di.ens.fr/~mallat/papiers/WaveletTourChap1-2-3.pdf) ), Locally adaptive regression splines(A varaiant of smooting splines achieves better local adaptivity. [Mammen, E., & van de Geer, S. (1997). Locally adaptive regression splines. The Annals of Statistics, 25(1), 387-413.](https://projecteuclid.org/euclid.aos/1034276635)), Trend filtering( [Kim, S. J., Koh, K., Boyd, S., & Gorinevsky, D. (2009). l_1 Trend Filtering. SIAM review, 51(2), 339-360.](http://web.stanford.edu/~boyd/papers/l1_trend_filter.html) ).
 
-Additive models: Sparse additive models, Generalized additive mixed models.
+6. Additive models: Sparse additive models, Generalized additive mixed models.
 
 More on trend filtering and additive models:
 
@@ -48,6 +48,25 @@ Additive models:
 [Chouldechova, A., & Hastie, T. (2015). Generalized additive model selection. arXiv preprint arXiv:1506.03850.](https://web.stanford.edu/~hastie/Papers/gamsel.pdf)
 
 
+## Exponential family
+
+Nonparametric regression for exponential family:
+
+[Brown, Lawrence D., T. Tony Cai, and Harrison H. Zhou. "Nonparametric regression in exponential families." The annals of statistics 38.4 (2010): 2005-2046.](https://arxiv.org/pdf/1010.3836.pdf)
+
+[Cleveland, W. S., Mallows, C. L., & McRae, J. E. (1993). ATS methods: Nonparametric regression for non-Gaussian data. Journal of the American Statistical Association, 88(423), 821-835.](https://www.jstor.org/stable/pdf/2290771.pdf?refreqid=excelsior%3A9899f3e009de18206db09c6eec5a069c)
+
+[Zhang, H. H., & Lin, Y. (2006). Component selection and smoothing for nonparametric regression in exponential families. Statistica Sinica, 1021-1041.](http://www3.stat.sinica.edu.tw/statistica/oldpdf/A16n317.pdf)
+
+[Bianco, A. M., Boente, G., & Sombielle, S. (2011). Robust estimation for nonparametric generalized regression. Statistics & Probability Letters, 81(12), 1986-1994.](https://www.sciencedirect.com/science/article/pii/S0167715211002719)
+
+[Fryzlewicz, P. (2017). Likelihood ratio Haar variance stabilization and normalization for Poisson and other non-Gaussian noise removal. arXiv preprint arXiv:1701.07263.](https://arxiv.org/pdf/1701.07263.pdf)
+
+[Local Likelihood Estimation](https://www.jstor.org/stable/pdf/2289465.pdf)
+
+Generalized addtive model
+
+[O'sullivan, F., Yandell, B. S., & Raynor Jr, W. J. (1986). Automatic smoothing of regression functions in generalized linear models. Journal of the American Statistical Association, 81(393), 96-103.](http://www.stat.wisc.edu/~yandell/doc/1986/7.JASA.pdf)
 
 
 ## Poisson
