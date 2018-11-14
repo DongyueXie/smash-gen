@@ -85,3 +85,10 @@ Generalized addtive model
 
 Note: It actually uses local likelihood moother and assumes $logit(\pi)$ is approximated by a second degree polynomial. They assume that data follow a binomial distribution and the parameters defining the polynomial are estimated by fitting a weighted generalized linear model to the data inside the genomic window.
 
+## Generalized Functional data analysis
+
+[Müller, H. G., & Stadtmüller, U. (2005). Generalized functional linear models. the Annals of Statistics, 33(2), 774-805.](https://arxiv.org/pdf/math/0505638.pdf)
+
+[Scheipl, F., Gertheiss, J., & Greven, S. (2016). Generalized functional additive mixed models. Electronic Journal of Statistics, 10(1), 1455-1492.](https://arxiv.org/pdf/1506.05384.pdf)
+
+
