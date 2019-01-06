@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2019-12-30" />
+
+<title>Binomial sequence smoothing</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Binomial sequence smoothing</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2019-12-30</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-01-06</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/9b7cd1fa115fd51bee550c3ea949a7fabfebfc8a" target="_blank">9b7cd1f</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/chipexoeg.Rmd
+    Untracked:  analysis/efsd.Rmd
+    Untracked:  analysis/talk1011.Rmd
+    Untracked:  data/chipexo_examples/
+    Untracked:  data/chipseq_examples/
+    Untracked:  talk.Rmd
+    Untracked:  talk.pdf
+
+Unstaged changes:
+    Modified:   analysis/binomial.Rmd
+    Modified:   analysis/fda.Rmd
+    Modified:   analysis/sigma.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9b7cd1fa115fd51bee550c3ea949a7fabfebfc8a/analysis/binomial2.Rmd" target="_blank">9b7cd1f</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-06
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/index.Rmd”, “analysis/binomial2.Rmd”))
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Three methods to smooth binomial sequence: 1. likelihood expansion 2. vst 3. Poisson approx</p>
+<pre class="r"><code># a function to estimate nugget effect: sigma^2
+
+normaleqn=function(nug,y,mu,st){
+  return(sum((y-mu)^2/(nug+st^2)^2)-sum(1/(nug+st^2)))
+}
+
+#a func output either nugget (sigma) or est mean 
+NuggetEst=function(y,st,mean.out=F){
+  #initialize nugget effect sigma^2
+  n=length(y)
+  x.m=c(y[n],y,y[1])
+  st.m=c(st[n],st,st[1])
+  nug.init=mean(((x.m[2:n]-x.m[3:(n+1)])^2+(x.m[2:n]-x.m[1:(n-1)])^2-2*st.m[2:n]^2-st.m[1:(n-1)]^2-st.m[3:(n+1)]^2)/4)
+  nug.init=max(c(0,nug.init))
+  #given st and nug to estimate mean
+  mean.est=smashr::smash.gaus(y,sigma=sqrt(st^2+nug.init))
+  #given mean estimate nugget effect
+  nug.est=uniroot(normaleqn,c(-1e6,1e6),y=y,mu=mean.est,st=st)$root
+  
+  #if wanna mean estimation output, then estiamte mean again
+  if(mean.out){return(smash.gaus(y,sigma=sqrt(st^2+nug.est)))}else{return(sqrt(nug.est))}
+}</code></pre>
+</div>
+<div id="likelihood-expansion" class="section level2">
+<h2>likelihood expansion</h2>
+<p>define <span class="math inline">\(\hat p_t=x_t/n_t\)</span> if <span class="math inline">\(x_t\neq 0\)</span> and <span class="math inline">\(x_t\neq n_t\)</span>; otherwise, <span class="math inline">\(\hat p_t\)</span>=ash posterior mean using binomial likelihood(identity link)</p>
+<p>pseudo-data: <span class="math inline">\(y_t=logit(\hat p_t)\)</span>; pseudo-data known variance <span class="math inline">\(s_t^2=\frac{1}{n_t\hat p_t(1-\hat p_t)}\)</span>; pseudo-data nugget effect: <span class="math inline">\(\sigma\)</span>, known/unknown.</p>
+<pre class="r"><code>library(ashr)
+library(smashr)
+logit=function(x){log(x/(1-x))}
+sigmoid=function(x){exp(x)/(1+exp(x))}
+
+binomial.smoothing.lik=function(x,nt,nugget,fil.num=1,family=&#39;DaubExPhase&#39;){
+  n=length(x)
+  p.ash=ash(rep(0,n),1,lik=lik_binom(x,nt))$result$PosteriorMean
+  p.hat=x/nt
+  #subsititute 0/full obs by ash posterior mean
+  p.hat[x==0]=p.ash[x==0]
+  p.hat[x==nt]=p.ash[x==nt]
+  y=logit(p.hat)
+  #known sd
+  st=sqrt(1/(nt*p.hat*(1-p.hat)))
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  
+  return(sigmoid(mu))
+}</code></pre>
+</div>
+<div id="poisson-approxiamtion" class="section level2">
+<h2>Poisson approxiamtion</h2>
+<p>pseudo-data: <span class="math inline">\(\log(x_t)-\log(n_t)\)</span>. If <span class="math inline">\(x_t=0\)</span>, <span class="math inline">\(x_t\)</span>=ash posterior mean. pseudo-data known var: <span class="math inline">\(s_t^2=1/x_t\)</span></p>
+<pre class="r"><code>binomial.smoothing.poi=function(x,nt,nugget,fil.num=1,family=&#39;DaubExPhase&#39;){
+  n=length(x)
+  x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+  x[x==0]=x.ash[x==0]
+  p.hat=x/nt
+  y=log(p.hat)
+  #known sd
+  st=sqrt(1/x)
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  return(exp(mu))
+}
+
+# n=512
+# p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+# set.seed(1234)
+# nt=rpois(512,30)
+# nugget=0.5
+# ng=rnorm(n,0,nugget)
+# q=sigmoid(logit(p)+ng)
+# x=rbinom(n,nt,q)
+# plot(x/nt,col=&#39;grey80&#39;)
+# lines(p,col=&#39;grey80&#39;)
+# lines(binomial.smoothing.poi(x,nt,nugget))</code></pre>
+</div>
+<div id="variance-stablizing-transformation" class="section level2">
+<h2>Variance stablizing transformation</h2>
+<p>VST on binomial data:</p>
+<p><span class="math inline">\(x\sim Binomial(n,p)\)</span>, let <span class="math inline">\(y=2\sqrt{n}\arcsin(\sqrt{\frac{x}{n}})\)</span> then <span class="math inline">\(var(y)\approx1\)</span>.</p>
+<p>pseudo-data: <span class="math inline">\(y_t=2\sqrt{n_t}\arcsin(\sqrt{\frac{x_t}{n_t}})\)</span>, pseudo data known variance: 1, pseudo data nugget: <span class="math inline">\(\sigma^2\)</span>, known/unkown.</p>
+<pre class="r"><code>binomial.smoothing.vst=function(x,nt,nugget,fil.num=1,family=&#39;DaubExPhase&#39;){
+  n=length(x)
+  y=asin(sqrt((x)/(nt)))
+  #known sd
+  st=sqrt(1/(4*(nt)))
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  #inverse anscombe
+  mu.inv=sin(mu)^2
+  return(mu.inv)
+}
+
+# n=512
+# p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+# set.seed(1234)
+# nt=rpois(512,30)
+# nugget=0.5
+# ng=rnorm(n,0,nugget)
+# mu=2*sqrt(nt)*asin(sqrt((nt*p+p/2-1/4)/(nt)))
+# q=(sin((mu+ng)/sqrt(4*(nt)))^2*(nt)-1/4)/(nt)
+# x=rbinom(n,nt,q)
+# plot(x/nt,col=&#39;grey80&#39;)
+# lines(p,col=&#39;grey80&#39;)
+# lines(binomial.smoothing.vst(x,nt,nugget))</code></pre>
+</div>
+<div id="experiment" class="section level2">
+<h2>Experiment</h2>
+<p>nugget is chosen to be 0.5. It’s estiamted using mle.</p>
+<div id="ntri-small-3" class="section level3">
+<h3>ntri small = 3</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(3,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ntri-small-5" class="section level3">
+<h3>ntri small = 5</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(5,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ntri-small-10" class="section level3">
+<h3>ntri small = 10</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(10,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ntri-small-15" class="section level3">
+<h3>ntri small = 15</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(15,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ntri-30" class="section level3">
+<h3>ntri = 30</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(30,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ntri-100" class="section level3">
+<h3>ntri = 100</h3>
+<pre class="r"><code>set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(100,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col=&#39;grey80&#39;,ylab = &#39;p&#39;)
+lines(p,col=&#39;grey80&#39;)
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend(&#39;topleft&#39;,c(&#39;mean&#39;,&#39;lik_binom&#39;,&#39;poi_approx&#39;,&#39;vst&#39;),col=c(&#39;grey80&#39;,1,2,3),lty=c(1,1,1,1))</code></pre>
+<p><img src="figure/binomial2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] smashr_1.2-0 ashr_2.2-7  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
+[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
+[13] stringr_1.3.1     caTools_1.17.1.1  tools_3.5.1      
+[16] parallel_3.5.1    grid_3.5.1        data.table_1.11.6
+[19] R.oo_1.22.0       git2r_0.23.0      htmltools_0.3.6  
+[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
+[25] rprojroot_1.3-2   digest_0.6.17     Matrix_1.2-14    
+[28] bitops_1.0-6      codetools_0.2-15  R.utils_2.7.0    
+[31] evaluate_0.11     rmarkdown_1.10    wavethresh_4.6.8 
+[34] stringi_1.2.4     compiler_3.5.1    Rmosek_8.0.69    
+[37] backports_1.1.2   R.methodsS3_1.7.1 truncnorm_1.0-8  </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
