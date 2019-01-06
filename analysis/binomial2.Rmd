@@ -1,0 +1,289 @@
+---
+title: "Binomial sequence smoothing"
+author: "Dongyue Xie"
+date: "2019-12-30"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+## Introduction
+
+Three methods to smooth binomial sequence:
+1. likelihood expansion
+2. vst
+3. Poisson approx
+
+```{r}
+# a function to estimate nugget effect: sigma^2
+
+normaleqn=function(nug,y,mu,st){
+  return(sum((y-mu)^2/(nug+st^2)^2)-sum(1/(nug+st^2)))
+}
+
+#a func output either nugget (sigma) or est mean 
+NuggetEst=function(y,st,mean.out=F){
+  #initialize nugget effect sigma^2
+  n=length(y)
+  x.m=c(y[n],y,y[1])
+  st.m=c(st[n],st,st[1])
+  nug.init=mean(((x.m[2:n]-x.m[3:(n+1)])^2+(x.m[2:n]-x.m[1:(n-1)])^2-2*st.m[2:n]^2-st.m[1:(n-1)]^2-st.m[3:(n+1)]^2)/4)
+  nug.init=max(c(0,nug.init))
+  #given st and nug to estimate mean
+  mean.est=smashr::smash.gaus(y,sigma=sqrt(st^2+nug.init))
+  #given mean estimate nugget effect
+  nug.est=uniroot(normaleqn,c(-1e6,1e6),y=y,mu=mean.est,st=st)$root
+  
+  #if wanna mean estimation output, then estiamte mean again
+  if(mean.out){return(smash.gaus(y,sigma=sqrt(st^2+nug.est)))}else{return(sqrt(nug.est))}
+}
+
+
+```
+
+
+## likelihood expansion
+
+define $\hat p_t=x_t/n_t$ if $x_t\neq 0$ and $x_t\neq n_t$; otherwise, $\hat p_t$=ash posterior mean using binomial likelihood(identity link)
+
+pseudo-data: $y_t=logit(\hat p_t)$; pseudo-data known variance $s_t^2=\frac{1}{n_t\hat p_t(1-\hat p_t)}$; pseudo-data nugget effect: $\sigma$, known/unknown.
+
+```{r}
+library(ashr)
+library(smashr)
+logit=function(x){log(x/(1-x))}
+sigmoid=function(x){exp(x)/(1+exp(x))}
+
+binomial.smoothing.lik=function(x,nt,nugget,fil.num=1,family='DaubExPhase'){
+  n=length(x)
+  p.ash=ash(rep(0,n),1,lik=lik_binom(x,nt))$result$PosteriorMean
+  p.hat=x/nt
+  #subsititute 0/full obs by ash posterior mean
+  p.hat[x==0]=p.ash[x==0]
+  p.hat[x==nt]=p.ash[x==nt]
+  y=logit(p.hat)
+  #known sd
+  st=sqrt(1/(nt*p.hat*(1-p.hat)))
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  
+  return(sigmoid(mu))
+}
+
+```
+
+```{r,eval=F,echo=F,include=F}
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+set.seed(1234)
+nt=rpois(512,30)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt,nugget))
+```
+
+## Poisson approxiamtion
+
+pseudo-data: $\log(x_t)-\log(n_t)$. If $x_t=0$, $x_t$=ash posterior mean. pseudo-data known var: $s_t^2=1/x_t$
+
+```{r}
+binomial.smoothing.poi=function(x,nt,nugget,fil.num=1,family='DaubExPhase'){
+  n=length(x)
+  x.ash=ash(rep(0,n),1,lik=lik_pois(x))$result$PosteriorMean
+  x[x==0]=x.ash[x==0]
+  p.hat=x/nt
+  y=log(p.hat)
+  #known sd
+  st=sqrt(1/x)
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  return(exp(mu))
+}
+
+# n=512
+# p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+# set.seed(1234)
+# nt=rpois(512,30)
+# nugget=0.5
+# ng=rnorm(n,0,nugget)
+# q=sigmoid(logit(p)+ng)
+# x=rbinom(n,nt,q)
+# plot(x/nt,col='grey80')
+# lines(p,col='grey80')
+# lines(binomial.smoothing.poi(x,nt,nugget))
+```
+
+## Variance stablizing transformation
+
+VST on binomial data:
+
+$x\sim Binomial(n,p)$, let $y=2\sqrt{n}\arcsin(\sqrt{\frac{x}{n}})$ then $var(y)\approx1$.
+
+pseudo-data: $y_t=2\sqrt{n_t}\arcsin(\sqrt{\frac{x_t}{n_t}})$, pseudo data known variance: 1, pseudo data nugget: $\sigma^2$, known/unkown.
+
+```{r}
+binomial.smoothing.vst=function(x,nt,nugget,fil.num=1,family='DaubExPhase'){
+  n=length(x)
+  y=asin(sqrt((x)/(nt)))
+  #known sd
+  st=sqrt(1/(4*(nt)))
+  if(missing(nugget)){
+    mu=NuggetEst(y,st,T)
+  }else{
+    mu=smash.gaus(y,sigma=sqrt(st^2+nugget^2),filter.number = fil.num,family = family)
+  }
+  #inverse anscombe
+  mu.inv=sin(mu)^2
+  return(mu.inv)
+}
+
+# n=512
+# p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+# set.seed(1234)
+# nt=rpois(512,30)
+# nugget=0.5
+# ng=rnorm(n,0,nugget)
+# mu=2*sqrt(nt)*asin(sqrt((nt*p+p/2-1/4)/(nt)))
+# q=(sin((mu+ng)/sqrt(4*(nt)))^2*(nt)-1/4)/(nt)
+# x=rbinom(n,nt,q)
+# plot(x/nt,col='grey80')
+# lines(p,col='grey80')
+# lines(binomial.smoothing.vst(x,nt,nugget))
+```
+
+
+
+
+## Experiment
+
+nugget is chosen to be 0.5. It's estiamted using mle.
+
+### ntri small = 3
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(3,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```
+
+
+
+### ntri small = 5
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(5,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```
+
+### ntri small = 10
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(10,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```
+
+
+### ntri small = 15
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(15,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```
+
+### ntri = 30
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(30,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```
+
+### ntri = 100
+
+```{r}
+set.seed(12345)
+n=512
+p=sigmoid(c(rep(-2,128), rep(0, 128), rep(2, 128), rep(-2, 128)))
+nt=rep(100,512)
+nugget=0.5
+ng=rnorm(n,0,nugget)
+q=sigmoid(logit(p)+ng)
+x=rbinom(n,nt,q)
+plot(x/nt,col='grey80',ylab = 'p')
+lines(p,col='grey80')
+lines(binomial.smoothing.lik(x,nt),col=1)
+lines(binomial.smoothing.poi(x,nt),col=2)
+lines(binomial.smoothing.vst(x,nt),col=3)
+legend('topleft',c('mean','lik_binom','poi_approx','vst'),col=c('grey80',1,2,3),lty=c(1,1,1,1))
+```

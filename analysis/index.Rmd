@@ -64,6 +64,7 @@ We extend smashgen to allow it smoothing probabilities. Simulations in 1 show th
 
 1. [Binomial nugget effect](binomial.html)
 2. [Poisson as approximate of Binomial?](poibinom.html)
+3. [A summary of binomial sequence smoothing](binomial2.html)
 
 ## Smoothing with covariates
 
