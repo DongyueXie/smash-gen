@@ -35,24 +35,23 @@ Now we have a ratio of sample variances, which fits into `fash` frame work: $\ti
 
 Example:
 
-1. $y=\mu+X\beta+\epsilon$ where all $\betas$ are 0 and $\epsilon\sim N(0,I_n)$.
 
-Fix $n=100$ and change $p$ from 1 to 90. Here $p$ is the dimension excluding intercept.
+1. n=100, p=5. Here $p$
+ is the dimension excluding intercept. $\beta$ ranges from 0 to 1, for example $\beta=(0,0,0,0,0)$,...,$\beta=(0.1,0.1,0.1,0.1,0.1$,..., $\beta=(1,1,1,1,1)$ etc.  $y=\mu+X\beta+\epsilon$ where $\epsilon\sim N(0,I_n)$.
 
 ```{r}
 library(ashr)
-set.seed(12345)
-p.list=1:90
+set.seed(1234)
 n=100
-
+p=5
 R2=c()
 R2a=c()
+mset=c()
 R2s=c()
-for (i in 1:length(p.list)) {
-  p=p.list[i]
-  X=matrix(rnorm(n*(p)),n,p)
-  #X.data=cbind(rep(1,n),X)
-  beta=rep(0,p)
+beta.list=seq(0,1,length.out = 100)
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
   mod=lm(y~X,datax)
@@ -61,31 +60,43 @@ for (i in 1:length(p.list)) {
   R2a[i]=mod.sy$adj.r.squared
   
   mst=sum((y-mean(y))^2)/(n-1)
-  mse=sum((y-fitted(mod))^2)/(n-p)
-  aa=ash(log(mse/mst),1,lik=lik_logF(df1=n-p,df2=n-1))
-  R2s[i]=1-exp(aa$result$PosteriorMean)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
 }
-plot(p.list,R2,ylim=c(-0.8,1),main='beta=0',xlab='p',ylab='')
-lines(p.list,R2a,type='p',pch=2)
-lines(p.list,R2s,type='p',pch=8)
-legend('topleft',c('R^2','Adjusted R^2','Shrinked R^2'),pch=c(1,2,8))
+
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+
+
+  
+plot(beta.list,R2,ylim=c(-0.1,1),main='',xlab='beta',ylab='')
+lines(beta.list,R2a,type='p',pch=2)
+lines(beta.list,R2s,type='p',pch=18)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),pch=c(1,2,18))
+
+plot(beta.list,R2,ylim=c(-0.1,1),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2s,col=4)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),lty=c(1,1,1),col=c(1,2,4))
 ```
 
-2. $y=\mu+X\beta+\epsilon$ where all $\betas$ are 1 and $\epsilon\sim N(0,I_n)$.
-
-Fix $n=100$ and change $p$ from 1 to 90. 
-
+2. First 50 $\beta$s are 0, last 50 $\beta$s range from 0 to 1. The other settings are the same as those in 1.
 
 ```{r}
-set.seed(12345)
+set.seed(1234)
+n=100
+p=5
 R2=c()
 R2a=c()
+mset=c()
 R2s=c()
-for (i in 1:length(p.list)) {
-  p=p.list[i]
-  X=matrix(rnorm(n*(p)),n,p)
-  #X.data=cbind(rep(1,n),X)
-  beta=rep(1,p)
+beta.list=c(rep(0,50),seq(0,1,length.out = 50))
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
   mod=lm(y~X,datax)
@@ -94,15 +105,68 @@ for (i in 1:length(p.list)) {
   R2a[i]=mod.sy$adj.r.squared
   
   mst=sum((y-mean(y))^2)/(n-1)
-  mse=sum((y-fitted(mod))^2)/(n-p)
-  aa=ash(log(mse/mst),1,lik=lik_logF(df1=n-p,df2=n-1))
-  R2s[i]=1-exp(aa$result$PosteriorMean)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
 }
-plot(p.list,R2,ylim=c(0.7,1),main='beta=1',xlab='p',ylab='')
-lines(p.list,R2a,type='p',pch=4)
-lines(p.list,R2s,type='p',pch=8)
-legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),pch=c(1,2,8))
 
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+  
+plot(R2,ylim=c(-0.1,1),main='',ylab='R^2')
+lines(R2a,type='p',pch=2)
+lines(R2s,type='p',pch=18)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),pch=c(1,2,18))
+
+plot(R2,ylim=c(-0.1,1),main='',ylab='R^2',type='l')
+lines(R2a,col=2)
+lines(R2s,col=4)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),lty=c(1,1,1),col=c(1,2,4))
+```
+
+3. Increase p to 20. The others are the same as those in 2.
+
+```{r}
+set.seed(1234)
+n=100
+p=20
+R2=c()
+R2a=c()
+mset=c()
+R2s=c()
+beta.list=c(rep(0,50),seq(0,1,length.out = 50))
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  
+  mst=sum((y-mean(y))^2)/(n-1)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
+}
+
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+  
+plot(R2,ylim=c(-0.1,1),main='',ylab='R^2')
+lines(R2a,type='p',pch=2)
+lines(R2s,type='p',pch=18)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),pch=c(1,2,18))
+
+plot(R2,ylim=c(-0.1,1),main='',ylab='R^2',type='l')
+lines(R2a,col=2)
+lines(R2s,col=4)
+abline(h=0,lty=2)
+legend('bottomright',c('R^2','Adjusted R^2','Shrinked R^2'),lty=c(1,1,1),col=c(1,2,4))
 ```
 
 
