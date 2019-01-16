@@ -347,7 +347,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/63ff335e781bad2ff9f6386b53ab35f57ae2ab46" target="_blank">63ff335</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/5045f0f8088b06ca265db5dd0ba7d8d41141896a" target="_blank">5045f0f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -398,6 +398,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/5045f0f8088b06ca265db5dd0ba7d8d41141896a/analysis/r2.Rmd" target="_blank">5045f0f</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-16
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/r2.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/a17b89469bcf02abcaeaf019dcb2c784350f2d04/docs/r2.html" target="_blank">a17b894</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-16
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -508,52 +542,94 @@ wflow_publish(“analysis/r2.Rmd”)
 <p>Now we have a ratio of sample variances, which fits into <code>fash</code> frame work: <span class="math inline">\(\tilde F=\log\frac{\hat\sigma_\epsilon^2}{\hat\sigma^2_y}\sim \log\frac{\sigma_\epsilon^2}{\sigma^2_y}\times F_{df_1=n-p,df_2=n-1}\)</span>. <code>fash</code> shrinks <span class="math inline">\(\log\frac{\sigma_\epsilon^2}{\sigma^2_y}\)</span> towards zero hence <span class="math inline">\(\frac{\sigma_\epsilon^2}{\sigma^2_y}\)</span> towards 1 and so shrinks <span class="math inline">\(R^2\)</span> towards 0.</p>
 <p>Example:</p>
 <ol style="list-style-type: decimal">
-<li><span class="math inline">\(y=\mu+X\beta+\epsilon\)</span> where all <span class="math inline">\(\betas\)</span> are 0 and <span class="math inline">\(\epsilon\sim N(0,I_n)\)</span>.</li>
+<li>n=100, p=5. Here <span class="math inline">\(p\)</span> is the dimension excluding intercept. <span class="math inline">\(\beta\)</span> ranges from 0 to 1, for example <span class="math inline">\(\beta=(0,0,0,0,0)\)</span>,…,<span class="math inline">\(\beta=(0.1,0.1,0.1,0.1,0.1\)</span>,…, <span class="math inline">\(\beta=(1,1,1,1,1)\)</span> etc. <span class="math inline">\(y=\mu+X\beta+\epsilon\)</span> where <span class="math inline">\(\epsilon\sim N(0,I_n)\)</span>.</li>
 </ol>
-<p>Fix <span class="math inline">\(n=100\)</span> and change <span class="math inline">\(p\)</span> from 1 to 90. Here <span class="math inline">\(p\)</span> is the dimension excluding intercept.</p>
 <pre class="r"><code>library(ashr)
-set.seed(12345)
-p.list=1:90
+set.seed(1234)
 n=100
+p=5
+R2=c()
+R2a=c()
+mset=c()
+R2s=c()
+beta.list=seq(0,1,length.out = 100)
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  
+  mst=sum((y-mean(y))^2)/(n-1)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
+}
 
-R2=c()
-R2a=c()
-R2s=c()
-for (i in 1:length(p.list)) {
-  p=p.list[i]
-  X=matrix(rnorm(n*(p)),n,p)
-  #X.data=cbind(rep(1,n),X)
-  beta=rep(0,p)
-  y=X%*%beta+rnorm(n)
-  datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
-  mod.sy=summary(mod)
-  R2[i]=mod.sy$r.squared
-  R2a[i]=mod.sy$adj.r.squared
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+
+
   
-  mst=sum((y-mean(y))^2)/(n-1)
-  mse=sum((y-fitted(mod))^2)/(n-p)
-  aa=ash(log(mse/mst),1,lik=lik_logF(df1=n-p,df2=n-1))
-  R2s[i]=1-exp(aa$result$PosteriorMean)
-}
-plot(p.list,R2,ylim=c(-0.8,1),main=&#39;beta=0&#39;,xlab=&#39;p&#39;,ylab=&#39;&#39;)
-lines(p.list,R2a,type=&#39;p&#39;,pch=2)
-lines(p.list,R2s,type=&#39;p&#39;,pch=8)
-legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),pch=c(1,2,8))</code></pre>
+plot(beta.list,R2,ylim=c(-0.1,1),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;)
+lines(beta.list,R2a,type=&#39;p&#39;,pch=2)
+lines(beta.list,R2s,type=&#39;p&#39;,pch=18)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),pch=c(1,2,18))</code></pre>
 <p><img src="figure/r2.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a17b89469bcf02abcaeaf019dcb2c784350f2d04/docs/figure/r2.Rmd/unnamed-chunk-1-1.png" target="_blank">a17b894</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>plot(beta.list,R2,ylim=c(-0.1,1),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2s,col=4)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),lty=c(1,1,1),col=c(1,2,4))</code></pre>
+<p><img src="figure/r2.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
 <ol start="2" style="list-style-type: decimal">
-<li><span class="math inline">\(y=\mu+X\beta+\epsilon\)</span> where all <span class="math inline">\(\betas\)</span> are 1 and <span class="math inline">\(\epsilon\sim N(0,I_n)\)</span>.</li>
+<li>First 50 <span class="math inline">\(\beta\)</span>s are 0, last 50 <span class="math inline">\(\beta\)</span>s range from 0 to 1. The other settings are the same as those in 1.</li>
 </ol>
-<p>Fix <span class="math inline">\(n=100\)</span> and change <span class="math inline">\(p\)</span> from 1 to 90.</p>
-<pre class="r"><code>set.seed(12345)
+<pre class="r"><code>set.seed(1234)
+n=100
+p=5
 R2=c()
 R2a=c()
+mset=c()
 R2s=c()
-for (i in 1:length(p.list)) {
-  p=p.list[i]
-  X=matrix(rnorm(n*(p)),n,p)
-  #X.data=cbind(rep(1,n),X)
-  beta=rep(1,p)
+beta.list=c(rep(0,50),seq(0,1,length.out = 50))
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
   mod=lm(y~X,datax)
@@ -562,15 +638,98 @@ for (i in 1:length(p.list)) {
   R2a[i]=mod.sy$adj.r.squared
   
   mst=sum((y-mean(y))^2)/(n-1)
-  mse=sum((y-fitted(mod))^2)/(n-p)
-  aa=ash(log(mse/mst),1,lik=lik_logF(df1=n-p,df2=n-1))
-  R2s[i]=1-exp(aa$result$PosteriorMean)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
 }
-plot(p.list,R2,ylim=c(0.7,1),main=&#39;beta=1&#39;,xlab=&#39;p&#39;,ylab=&#39;&#39;)
-lines(p.list,R2a,type=&#39;p&#39;,pch=4)
-lines(p.list,R2s,type=&#39;p&#39;,pch=8)
-legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),pch=c(1,2,8))</code></pre>
+
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+  
+plot(R2,ylim=c(-0.1,1),main=&#39;&#39;,ylab=&#39;R^2&#39;)
+lines(R2a,type=&#39;p&#39;,pch=2)
+lines(R2s,type=&#39;p&#39;,pch=18)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),pch=c(1,2,18))</code></pre>
 <p><img src="figure/r2.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a17b89469bcf02abcaeaf019dcb2c784350f2d04/docs/figure/r2.Rmd/unnamed-chunk-2-1.png" target="_blank">a17b894</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-16
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>plot(R2,ylim=c(-0.1,1),main=&#39;&#39;,ylab=&#39;R^2&#39;,type=&#39;l&#39;)
+lines(R2a,col=2)
+lines(R2s,col=4)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),lty=c(1,1,1),col=c(1,2,4))</code></pre>
+<p><img src="figure/r2.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Increase p to 20. The others are the same as those in 2.</li>
+</ol>
+<pre class="r"><code>set.seed(1234)
+n=100
+p=20
+R2=c()
+R2a=c()
+mset=c()
+R2s=c()
+beta.list=c(rep(0,50),seq(0,1,length.out = 50))
+X=matrix(rnorm(n*(p)),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  
+  mst=sum((y-mean(y))^2)/(n-1)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset[i]=mse/mst
+  
+}
+
+aa=ash(log(mset),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2s=1-exp(aa$result$PosteriorMean)
+  
+plot(R2,ylim=c(-0.1,1),main=&#39;&#39;,ylab=&#39;R^2&#39;)
+lines(R2a,type=&#39;p&#39;,pch=2)
+lines(R2s,type=&#39;p&#39;,pch=18)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),pch=c(1,2,18))</code></pre>
+<p><img src="figure/r2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(R2,ylim=c(-0.1,1),main=&#39;&#39;,ylab=&#39;R^2&#39;,type=&#39;l&#39;)
+lines(R2a,col=2)
+lines(R2s,col=4)
+abline(h=0,lty=2)
+legend(&#39;bottomright&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Shrinked R^2&#39;),lty=c(1,1,1),col=c(1,2,4))</code></pre>
+<p><img src="figure/r2.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="facts-might-be-useful" class="section level2">
 <h2>Facts might be useful</h2>
