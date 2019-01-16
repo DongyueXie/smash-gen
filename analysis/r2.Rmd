@@ -2,7 +2,9 @@
 title: "Shrink Coefficient of Multiple correlation"
 author: "Dongyue Xie"
 date: "2019-01-15"
-output: workflowr::wflow_html
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
 ---
 
 ## Background
@@ -37,7 +39,7 @@ Example:
 
 
 1. n=100, p=5. Here $p$
- is the dimension excluding intercept. $\beta$ ranges from 0 to 1, for example $\beta=(0,0,0,0,0)$,...,$\beta=(0.1,0.1,0.1,0.1,0.1$,..., $\beta=(1,1,1,1,1)$ etc.  $y=\mu+X\beta+\epsilon$ where $\epsilon\sim N(0,I_n)$.
+ is the dimension excluding intercept. $\beta$ ranges from 0 to 1, for example $\beta=(0,0,0,0,0)$,...,$\beta=(0.1,0.1,0.1,0.1,0.1)$,..., $\beta=(1,1,1,1,1)$ etc.  $y=\mu+X\beta+\epsilon$ where $\epsilon\sim N(0,I_n)$.
 
 ```{r}
 library(ashr)
