@@ -8,6 +8,37 @@ output: workflowr::wflow_html
 ## Introduction
 
 ```{r}
+library(ashr)
+set.seed(12345)
+n=100
+p=3
+X=matrix(rnorm(n*p),n,p)
+beta=rep(1,p)
+#y=X%*%beta+rnorm(n)
+y=rnorm(n)
+datax=data.frame(X=X,y=y)
+mod=lm(y~X,datax)
+mod.sy=summary(mod)
+######################
+
+# NormalNcF=function(x,d1,d2,ncp){
+#   nml=((d1*x/(d1+ncp))^(1/3)*(1-2/(9*d2))-(1-2*(d1+2*ncp)/(9*(d1+ncp)^2)))/(2*(d1+2*ncp)/(9*(d1+ncp)^2)+2/(9*d2)*(d1*x/(d1+ncp)))^(1/2)
+#   return(nml)
+# }
+# 
+# x=rf(10000,10,10,10)
+# x.n=NormalNcF(x,10,10,10)
+
+######################
+mse=function(mod,n,p,y){
+  return(sum((y-fitted(mod))^2)/(n-p-1))
+}
+mst=sum((y-mean(y))^2)/(n-1)
+msee=mse(mod,n,p,y)
+aa=ash(log(msee/mst),1,lik=lik_logF(df1=n-p-1,df2=n-1))
+R2=1-exp(aa$result$PosteriorMean)
+mod.sy$adj.r.squared
+R2
 
 ```
 
