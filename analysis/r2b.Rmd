@@ -1,0 +1,131 @@
+---
+title: "Shrink R squared - example"
+author: "Dongyue Xie"
+date: "2019-01-21"
+output: workflowr::wflow_html
+---
+
+For the method used in these examples, see [here](r2.html)
+
+## R Function
+
+R function for shrinking adjusted R squared:
+
+```{r}
+#'@param y,X: response and design matrix.
+#'@output shrinked ajusted R squared
+
+library(ashr)
+R2Shrink=function(y,X,output='SR2'){
+  if(is.null(dim(X))){p=1}else{p=ncol(X)}
+  n=length(y)
+  mod=lm(y~X,data=data.frame(y=y,X=X))
+  mst=sum((y-mean(y))^2)/(n-1)
+  mse=sum((y-fitted(mod))^2)/(n-p-1)
+  mset=mse/mst
+  fash=ashr::ash(log(mset),1,lik=ashr::lik_logF(df1=n-p-1,df2=n-1))
+  R2s=1-exp(fash$result$PosteriorMean)
+  if(output=='SR2'){
+    return(R2s)
+  }
+  if(output=='all'){
+    mod.sy=summary(mod)
+    R2=mod.sy$r.squared
+    R2a=mod.sy$adj.r.squared
+    return(list(R2s=R2s,R2a=R2a,R2=R2))
+  }
+}
+
+```
+
+## Examples: 
+
+Let $y=\mu+x_1\beta_1+x_2\beta_2+x_3\beta_3+N(0,I_n)$. Sample size $n=100$.
+
+For each of settings below, fit three models: 
+
+a. use $x_1$ only; 
+b. use $x_1,x_2$; 
+c. use $x_1,x_2,x_3$
+
+Compare shrinked, adjusted and original $R^2$.
+
+1. $\beta_1=\beta_2=\beta_3=2$
+
+
+```{r}
+set.seed(12345)
+n=100
+p=3
+X=matrix(rnorm(n*(p)),n,p)
+beta=2*c(1,1,1)
+y=X%*%beta+rnorm(n)
+ra=R2Shrink(y,X[,1],output = 'all')
+rb=R2Shrink(y,X[,1:2],output = 'all')
+rc=R2Shrink(y,X,output = 'all')
+rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
+colnames(rlt)=c('Shrinked R2','Adjusted R2','R2')
+rownames(rlt)=c('a','b','c')
+round(rlt,3)
+```
+
+
+2. $\beta_1=\beta_2=2,\beta_3=0$
+
+
+```{r}
+set.seed(12345)
+n=100
+p=3
+X=matrix(rnorm(n*(p)),n,p)
+beta=2*c(1,1,0)
+y=X%*%beta+rnorm(n)
+ra=R2Shrink(y,X[,1],output = 'all')
+rb=R2Shrink(y,X[,1:2],output = 'all')
+rc=R2Shrink(y,X,output = 'all')
+rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
+colnames(rlt)=c('Shrinked R2','Adjusted R2','R2')
+rownames(rlt)=c('a','b','c')
+round(rlt,3)
+```
+
+
+3. $\beta_1=2,\beta_2=\beta_3=0$
+
+
+```{r}
+set.seed(12345)
+n=100
+p=3
+X=matrix(rnorm(n*(p)),n,p)
+beta=2*c(1,0,0)
+y=X%*%beta+rnorm(n)
+ra=R2Shrink(y,X[,1],output = 'all')
+rb=R2Shrink(y,X[,1:2],output = 'all')
+rc=R2Shrink(y,X,output = 'all')
+rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
+colnames(rlt)=c('Shrinked R2','Adjusted R2','R2')
+rownames(rlt)=c('a','b','c')
+round(rlt,3)
+```
+
+
+3. $\beta_1=\beta_2=\beta_3=0$
+
+
+```{r}
+set.seed(12345)
+n=100
+p=3
+X=matrix(rnorm(n*(p)),n,p)
+beta=c(0,0,0)
+y=X%*%beta+rnorm(n)
+ra=R2Shrink(y,X[,1],output = 'all')
+rb=R2Shrink(y,X[,1:2],output = 'all')
+rc=R2Shrink(y,X,output = 'all')
+rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
+colnames(rlt)=c('Shrinked R2','Adjusted R2','R2')
+rownames(rlt)=c('a','b','c')
+round(rlt,3)
+```
+
