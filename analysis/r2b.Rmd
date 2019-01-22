@@ -110,7 +110,7 @@ round(rlt,3)
 ```
 
 
-3. $\beta_1=\beta_2=\beta_3=0$
+4. $\beta_1=\beta_2=\beta_3=0$
 
 
 ```{r}
