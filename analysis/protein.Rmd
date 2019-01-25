@@ -7,7 +7,6 @@ output:
     code_folding: hide
 ---
 
-## Introduction
 
 ```{r}
 library(ashr)
@@ -28,6 +27,6 @@ r1=ash_r2(final_df$r2,final_df$n,final_df$p)
 
 plot(final_df$r2,col='grey80',pch=1,xlab='',ylab='')
 lines(r1$shrinked.r2,col=2,type='p')
-legend('topright',c('R2','Shrinked R2'),pch=c(1,1),col=c('grey80',2))
+legend('topright',c('R2','R2 shrinkage'),pch=c(1,1),col=c('grey80',2))
 ```
 
