@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d1fe2129d49d522ae5ebb209bec4b19bb20b783a" target="_blank">d1fe212</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/99eedc11e06d12ec29d748a77dd768df4def5aff" target="_blank">99eedc1</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -420,6 +420,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/99eedc11e06d12ec29d748a77dd768df4def5aff/analysis/protein.Rmd" target="_blank">99eedc1</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/protein.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/17d042dec3551cd7bfbdc73105bd6db5219e81fc/docs/protein.html" target="_blank">17d042d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/smash-gen/blob/d1fe2129d49d522ae5ebb209bec4b19bb20b783a/analysis/protein.Rmd" target="_blank">d1fe212</a>
 </td>
 <td style="text-align:left;">
@@ -437,8 +471,6 @@ wflow_publish(“analysis/protein.Rmd”)
 </ul>
 <p></details></p>
 <hr />
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
 <pre class="r"><code>library(ashr)
 load(&quot;/Users/dongyue/Downloads/protAndAPAlmRes.Rda&quot;)
 final_df$r2=as.numeric(as.character(final_df$r2))
@@ -457,9 +489,38 @@ r1=ash_r2(final_df$r2,final_df$n,final_df$p)
 
 plot(final_df$r2,col=&#39;grey80&#39;,pch=1,xlab=&#39;&#39;,ylab=&#39;&#39;)
 lines(r1$shrinked.r2,col=2,type=&#39;p&#39;)
-legend(&#39;topright&#39;,c(&#39;R2&#39;,&#39;Shrinked R2&#39;),pch=c(1,1),col=c(&#39;grey80&#39;,2))</code></pre>
+legend(&#39;topright&#39;,c(&#39;R2&#39;,&#39;R2 shrinkage&#39;),pch=c(1,1),col=c(&#39;grey80&#39;,2))</code></pre>
 <p><img src="figure/protein.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/17d042dec3551cd7bfbdc73105bd6db5219e81fc/docs/figure/protein.Rmd/unnamed-chunk-1-1.png" target="_blank">17d042d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
