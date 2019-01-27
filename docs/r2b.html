@@ -323,7 +323,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-01-22</p>
+<p><strong>Last updated:</strong> 2019-01-27</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -347,7 +347,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/b5029e2bafd13ed601d12b9a58a1babad5a19d27" target="_blank">b5029e2</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d6bcb1ac509628298292955aed0a2bc61d273804" target="_blank">d6bcb1a</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -369,6 +369,7 @@ Unstaged changes:
     Modified:   analysis/binomial.Rmd
     Modified:   analysis/fda.Rmd
     Modified:   analysis/index.Rmd
+    Modified:   analysis/r2.Rmd
     Modified:   analysis/sigma.Rmd
 
 </code></pre>
@@ -398,6 +399,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/d6bcb1ac509628298292955aed0a2bc61d273804/analysis/r2b.Rmd" target="_blank">d6bcb1a</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/r2b.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/97b73fcaf728c9a9f389ecda1f1ecbcb0563bfe6/docs/r2b.html" target="_blank">97b73fc</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-22
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -455,123 +490,222 @@ wflow_publish(“analysis/r2b.Rmd”)
 <p></details></p>
 <hr />
 <p>For the method used in these examples, see <a href="r2.html">here</a></p>
+<p>True <span class="math inline">\(R^2\)</span> is defined as <span class="math inline">\(R^2=\frac{var(X\beta)}{var(y)}=\frac{var(y)-\sigma^2}{var(y)}=1-\frac{\sigma^2}{var(y)}=1-\frac{\sigma^2}{\sigma^2+var(X\beta)}\)</span></p>
+<p>Ajusted R^2: <span class="math inline">\(1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}\)</span></p>
+<p>Shrink adjusted R^2: use fash shrinking <span class="math inline">\(fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)})\)</span> then shrunk adjusted R^2 is <span class="math inline">\(1-\exp(fash.output)\)</span></p>
+<p>Shrink R^2 = <span class="math inline">\(1 - \exp(fash.output)*\frac{n-p-1}{n-1}\)</span>, because <span class="math inline">\(R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}\)</span></p>
 <div id="r-function" class="section level2">
 <h2>R Function</h2>
-<p>R function for shrinking adjusted R squared:</p>
-<pre class="r"><code>#&#39;@param y,X: response and design matrix.
-#&#39;@output shrinked ajusted R squared
-
-library(ashr)
-R2Shrink=function(y,X,output=&#39;SR2&#39;){
-  if(is.null(dim(X))){p=1}else{p=ncol(X)}
-  n=length(y)
-  mod=lm(y~X,data=data.frame(y=y,X=X))
-  mst=sum((y-mean(y))^2)/(n-1)
-  mse=sum((y-fitted(mod))^2)/(n-p-1)
-  mset=mse/mst
-  fash=ashr::ash(log(mset),1,lik=ashr::lik_logF(df1=n-p-1,df2=n-1))
-  R2s=1-exp(fash$result$PosteriorMean)
-  if(output==&#39;SR2&#39;){
-    return(R2s)
-  }
-  if(output==&#39;all&#39;){
-    mod.sy=summary(mod)
-    R2=mod.sy$r.squared
-    R2a=mod.sy$adj.r.squared
-    return(list(R2s=R2s,R2a=R2a,R2=R2))
-  }
+<p>R function for shrinking adjusted R/ R squared:</p>
+<pre class="r"><code>library(ashr)
+#&#39;@param R2: R squared from linear regression model fit
+#&#39;@param n: sample size
+#&#39;@param p: number od covariates
+#&#39;@output shrinked R squared.
+ash_r2=function(R2,n,p){
+  df1=n-p-1
+  df2=n-1
+  log.ratio=log((1-R2)/(df1)*(df2))
+  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
+  shrinked.ar2=1-exp(shrink.log.ratio)
+  shrinked.r2=1-exp(shrink.log.ratio)*df1/df2
+  return(list(shrinked.r2=shrinked.r2,shrinked.ar2=shrinked.ar2))
 }</code></pre>
 </div>
-<div id="examples" class="section level2">
-<h2>Examples:</h2>
-<p>Let <span class="math inline">\(y=\mu+x_1\beta_1+x_2\beta_2+x_3\beta_3+N(0,I_n)\)</span>. Sample size <span class="math inline">\(n=100\)</span>.</p>
-<p>For each of settings below, fit three models:</p>
-<ol style="list-style-type: lower-alpha">
-<li>use <span class="math inline">\(x_1\)</span> only;</li>
-<li>use <span class="math inline">\(x_1,x_2\)</span>;</li>
-<li>use <span class="math inline">\(x_1,x_2,x_3\)</span></li>
-</ol>
-<p>Compare shrinked, adjusted and original <span class="math inline">\(R^2\)</span>.</p>
+<div id="compare-shrinked-r2-with-true-r2." class="section level2">
+<h2>Compare Shrinked <span class="math inline">\(R^2\)</span> with True <span class="math inline">\(R2\)</span>.</h2>
+<p>Assume linear model <span class="math inline">\(y=X\beta+\epsilon\)</span> where <span class="math inline">\(\epsilon\sim N(0,\sigma^2I)\)</span></p>
 <ol style="list-style-type: decimal">
-<li><span class="math inline">\(\beta_1=\beta_2=\beta_3=2\)</span></li>
+<li>n=100, p=5. <span class="math inline">\(\beta\)</span> ranges from 0 to 1, for example <span class="math inline">\(\beta=(0,0,0,0,0)\)</span>,…,<span class="math inline">\(\beta=(0.1,0.1,0.1,0.1,0.1)\)</span>,…, <span class="math inline">\(\beta=(1,1,1,1,1)\)</span> etc. <span class="math inline">\(y=X\beta+\epsilon\)</span> where <span class="math inline">\(\epsilon\sim N(0,I_n)\)</span>.</li>
 </ol>
-<pre class="r"><code>set.seed(12345)
+<pre class="r"><code>set.seed(1234)
+
 n=100
-p=3
-X=matrix(rnorm(n*(p)),n,p)
-beta=2*c(1,1,1)
-y=X%*%beta+rnorm(n)
-ra=R2Shrink(y,X[,1],output = &#39;all&#39;)
-rb=R2Shrink(y,X[,1:2],output = &#39;all&#39;)
-rc=R2Shrink(y,X,output = &#39;all&#39;)
-rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
-colnames(rlt)=c(&#39;Shrinked R2&#39;,&#39;Adjusted R2&#39;,&#39;R2&#39;)
-rownames(rlt)=c(&#39;a&#39;,&#39;b&#39;,&#39;c&#39;)
-round(rlt,3)</code></pre>
-<pre><code>  Shrinked R2 Adjusted R2    R2
-a       0.314       0.465 0.470
-b       0.740       0.742 0.747
-c       0.935       0.935 0.937</code></pre>
+p=5
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)$shrinked.r2
+R2as=ash_r2(R2,n,p)$shrinked.ar2
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
 <ol start="2" style="list-style-type: decimal">
-<li><span class="math inline">\(\beta_1=\beta_2=2,\beta_3=0\)</span></li>
+<li>n=20, p=3.</li>
 </ol>
-<pre class="r"><code>set.seed(12345)
-n=100
+<pre class="r"><code>set.seed(1234)
+
+n=20
 p=3
-X=matrix(rnorm(n*(p)),n,p)
-beta=2*c(1,1,0)
-y=X%*%beta+rnorm(n)
-ra=R2Shrink(y,X[,1],output = &#39;all&#39;)
-rb=R2Shrink(y,X[,1:2],output = &#39;all&#39;)
-rc=R2Shrink(y,X,output = &#39;all&#39;)
-rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
-colnames(rlt)=c(&#39;Shrinked R2&#39;,&#39;Adjusted R2&#39;,&#39;R2&#39;)
-rownames(rlt)=c(&#39;a&#39;,&#39;b&#39;,&#39;c&#39;)
-round(rlt,3)</code></pre>
-<pre><code>  Shrinked R2 Adjusted R2    R2
-a       0.456       0.542 0.547
-b       0.924       0.924 0.925
-c       0.929       0.929 0.931</code></pre>
-<ol start="3" style="list-style-type: decimal">
-<li><span class="math inline">\(\beta_1=2,\beta_2=\beta_3=0\)</span></li>
-</ol>
-<pre class="r"><code>set.seed(12345)
-n=100
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)$shrinked.r2
+R2as=ash_r2(R2,n,p)$shrinked.ar2
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>When n is small, all <span class="math inline">\(R^2\)</span> are shrunk to zero. Try to increase beta: from 0-1 to 0-2</strong></p>
+<pre class="r"><code>set.seed(1234)
+
+n=20
 p=3
-X=matrix(rnorm(n*(p)),n,p)
-beta=2*c(1,0,0)
-y=X%*%beta+rnorm(n)
-ra=R2Shrink(y,X[,1],output = &#39;all&#39;)
-rb=R2Shrink(y,X[,1:2],output = &#39;all&#39;)
-rc=R2Shrink(y,X,output = &#39;all&#39;)
-rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
-colnames(rlt)=c(&#39;Shrinked R2&#39;,&#39;Adjusted R2&#39;,&#39;R2&#39;)
-rownames(rlt)=c(&#39;a&#39;,&#39;b&#39;,&#39;c&#39;)
-round(rlt,3)</code></pre>
-<pre><code>  Shrinked R2 Adjusted R2    R2
-a       0.855       0.857 0.858
-b       0.857       0.858 0.861
-c       0.867       0.868 0.872</code></pre>
-<ol start="4" style="list-style-type: decimal">
-<li><span class="math inline">\(\beta_1=\beta_2=\beta_3=0\)</span></li>
-</ol>
-<pre class="r"><code>set.seed(12345)
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,2,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)$shrinked.r2
+R2as=ash_r2(R2,n,p)$shrinked.ar2
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare-fash-and-corshrink" class="section level2">
+<h2>Compare fash and corshrink</h2>
+<p>n=100, p=5</p>
+<pre class="r"><code>library(CorShrink)
+set.seed(1234)
+
 n=100
+p=5
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=CorShrinkVector(R2,n)
+plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;bottomright&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>n=20, p=3</p>
+<pre class="r"><code>set.seed(1234)
+
+n=20
 p=3
-X=matrix(rnorm(n*(p)),n,p)
-beta=c(0,0,0)
-y=X%*%beta+rnorm(n)
-ra=R2Shrink(y,X[,1],output = &#39;all&#39;)
-rb=R2Shrink(y,X[,1:2],output = &#39;all&#39;)
-rc=R2Shrink(y,X,output = &#39;all&#39;)
-rlt=rbind(unlist(ra),unlist(rb),unlist(rc))
-colnames(rlt)=c(&#39;Shrinked R2&#39;,&#39;Adjusted R2&#39;,&#39;R2&#39;)
-rownames(rlt)=c(&#39;a&#39;,&#39;b&#39;,&#39;c&#39;)
-round(rlt,3)</code></pre>
-<pre><code>  Shrinked R2 Adjusted R2    R2
-a           0       0.010 0.020
-b           0       0.019 0.039
-c           0       0.084 0.112</code></pre>
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=CorShrinkVector(R2,n)
+plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;bottomright&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -591,21 +725,23 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ashr_2.2-7
+[1] CorShrink_0.1-6 ashr_2.2-7     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
- [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
- [7] MASS_7.3-51.1     pscl_1.5.2        doParallel_1.0.14
-[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
-[13] stringr_1.3.1     tools_3.5.1       parallel_3.5.1   
-[16] grid_3.5.1        R.oo_1.22.0       git2r_0.23.0     
-[19] htmltools_0.3.6   iterators_1.0.10  assertthat_0.2.0 
-[22] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.17    
-[25] Matrix_1.2-14     codetools_0.2-15  R.utils_2.7.0    
-[28] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
-[31] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
-[34] R.methodsS3_1.7.1 truncnorm_1.0-8  </code></pre>
+ [1] Rcpp_1.0.0        plyr_1.8.4        compiler_3.5.1   
+ [4] git2r_0.23.0      workflowr_1.1.1   R.methodsS3_1.7.1
+ [7] R.utils_2.7.0     iterators_1.0.10  tools_3.5.1      
+[10] digest_0.6.17     corrplot_0.84     evaluate_0.11    
+[13] gtable_0.2.0      lattice_0.20-35   Matrix_1.2-14    
+[16] foreach_1.4.4     yaml_2.2.0        parallel_3.5.1   
+[19] gridExtra_2.3     stringr_1.3.1     knitr_1.20       
+[22] REBayes_1.3       rprojroot_1.3-2   grid_3.5.1       
+[25] glmnet_2.0-16     rmarkdown_1.10    reshape2_1.4.3   
+[28] corpcor_1.6.9     magrittr_1.5      whisker_0.3-2    
+[31] backports_1.1.2   codetools_0.2-15  htmltools_0.3.6  
+[34] MASS_7.3-51.1     assertthat_0.2.0  stringi_1.2.4    
+[37] Rmosek_8.0.69     doParallel_1.0.14 pscl_1.5.2       
+[40] truncnorm_1.0-8   SQUAREM_2017.10-1 R.oo_1.22.0      </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
