@@ -2,7 +2,9 @@
 title: "Shrink R squared - example"
 author: "Dongyue Xie"
 date: "2019-01-21"
-output: workflowr::wflow_html
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
 ---
 
 For the method used in these examples, see [here](r2.html)
@@ -169,6 +171,87 @@ legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,
 
 ## Compare fash and corshrink
 
+### 1-d case
+
+n=100,p=1
+
+```{r}
+library(CorShrink)
+set.seed(1234)
+
+n=100
+p=1
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+plot(beta.list,R2,ylim=range(c(R2.fash,R2.cor,R2,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,R2.fash,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1),col=c(1,4,2,'grey80'))
+
+plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
+```
+
+n=20,p=1
+
+```{r}
+set.seed(1234)
+
+n=20
+p=1
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+
+plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
+```
+
+
+### Multiple 
+
 n=100, p=5
 
 ```{r}
@@ -194,7 +277,7 @@ for (i in 1:length(beta.list)) {
   trueR2[i]=1-(1)/(1+var(X%*%beta))
 }
 R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=CorShrinkVector(R2,n)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
 plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
 lines(beta.list,R2.cor,col=2)
 lines(beta.list,trueR2,col='grey80')
@@ -233,7 +316,7 @@ for (i in 1:length(beta.list)) {
   trueR2[i]=1-(1)/(1+var(X%*%beta))
 }
 R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=CorShrinkVector(R2,n)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
 plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
 lines(beta.list,R2.cor,col=2)
 lines(beta.list,trueR2,col='grey80')
@@ -246,3 +329,7 @@ lines(trueR2,trueR2,col='grey80')
 legend('bottomright',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
 
 ```
+
+
+
+
