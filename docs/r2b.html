@@ -25,6 +25,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -170,6 +171,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -314,6 +323,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Shrink R squared - example</h1>
@@ -347,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d6bcb1ac509628298292955aed0a2bc61d273804" target="_blank">d6bcb1a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/a1a64c5ff17e3b6f8b82de0633a7cd5461ca6468" target="_blank">a1a64c5</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -399,6 +416,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/a1a64c5ff17e3b6f8b82de0633a7cd5461ca6468/analysis/r2b.Rmd" target="_blank">a1a64c5</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/r2b.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/r2b.html" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -549,6 +600,36 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-2-1.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -556,6 +637,36 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-2-2.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <ol start="2" style="list-style-type: decimal">
 <li>n=20, p=3.</li>
 </ol>
@@ -589,6 +700,36 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-3-1.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -596,6 +737,36 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-3-2.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><strong>When n is small, all <span class="math inline">\(R^2\)</span> are shrunk to zero. Try to increase beta: from 0-1 to 0-2</strong></p>
 <pre class="r"><code>set.seed(1234)
 
@@ -627,6 +798,36 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-4-1.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -634,9 +835,234 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-4-2.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="compare-fash-and-corshrink" class="section level2">
 <h2>Compare fash and corshrink</h2>
+<div id="d-case" class="section level3">
+<h3>1-d case</h3>
+<p>n=100,p=1</p>
+<pre class="r"><code>library(CorShrink)
+set.seed(1234)
+
+n=100
+p=1
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+plot(beta.list,R2,ylim=range(c(R2.fash,R2.cor,R2,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,R2.fash,col=4)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1),col=c(1,4,2,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-5-1.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-5-2.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>n=20,p=1</p>
+<pre class="r"><code>set.seed(1234)
+
+n=20
+p=1
+R2=c()
+#R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,2),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~X,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,trueR2,col=&#39;grey80&#39;)
+abline(h=0,lty=2)
+legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-6-1.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col=&#39;grey80&#39;)
+legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-6-2.png" target="_blank">9ce257c</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-27
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
+<div id="multiple" class="section level3">
+<h3>Multiple</h3>
 <p>n=100, p=5</p>
 <pre class="r"><code>library(CorShrink)
 set.seed(1234)
@@ -660,18 +1086,18 @@ for (i in 1:length(beta.list)) {
   trueR2[i]=1-(1)/(1+var(X%*%beta))
 }
 R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=CorShrinkVector(R2,n)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
 plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
 lines(beta.list,R2.cor,col=2)
 lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
-<p><img src="figure/r2b.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
 lines(trueR2,R2.cor,col=2)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;bottomright&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
-<p><img src="figure/r2b.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>n=20, p=3</p>
 <pre class="r"><code>set.seed(1234)
 
@@ -694,18 +1120,19 @@ for (i in 1:length(beta.list)) {
   trueR2[i]=1-(1)/(1+var(X%*%beta))
 }
 R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=CorShrinkVector(R2,n)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
 plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main=&#39;&#39;,xlab=&#39;beta&#39;,ylab=&#39;&#39;,type=&#39;l&#39;)
 lines(beta.list,R2.cor,col=2)
 lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
-<p><img src="figure/r2b.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(trueR2,R2.fash,type=&#39;l&#39;,ylim=range(c(R2.fash,R2.cor,trueR2)),ylab=&#39;&#39;)
 lines(trueR2,R2.cor,col=2)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;bottomright&#39;,c(&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1),col=c(1,2))</code></pre>
-<p><img src="figure/r2b.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/r2b.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
