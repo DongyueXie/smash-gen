@@ -1,5 +1,5 @@
 ---
-title: "Shrink R squared - example"
+title: "Shrink R squared - examples"
 author: "Dongyue Xie"
 date: "2019-01-21"
 output: 
@@ -13,9 +13,13 @@ True $R^2$ is defined as $R^2=\frac{var(X\beta)}{var(y)}=\frac{var(y)-\sigma^2}{
 
 Ajusted R^2: $1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}$
 
-Shrink adjusted R^2: use fash shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
+Shrunk adjusted R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
 
-Shrink R^2 = $1 - \exp(fash.output)*\frac{n-p-1}{n-1}$, because $R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}$
+Shrunk R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
+
+Another Shrunk R^2: shrink all $\betas$ using `ash`, obtain posterior means then calculate $\hat\sigma^2$ then obtain $\frac{var(X\hat\beta)}{var(\hat\beta)+\hat\sigma^2}$.
+
+(Shrunk R^2 = $1 - \exp(fash.output)*\frac{n-p-1}{n-1}$, because $R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}$)(note: this is the old idea which introduces bias to R^2 when multiplying $\frac{n-p-1}{n-1}$ so I discard this method.)
 
 ## R Function
 
@@ -25,25 +29,41 @@ R function for shrinking adjusted R/ R squared:
 library(ashr)
 #'@param R2: R squared from linear regression model fit
 #'@param n: sample size
-#'@param p: number od covariates
-#'@output shrinked R squared.
-ash_r2=function(R2,n,p){
+#'@param p: the number of covariates
+#'@output shrunk R squared.
+
+ash_ar2=function(R2,n,p){
   df1=n-p-1
   df2=n-1
   log.ratio=log((1-R2)/(df1)*(df2))
   shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
-  shrinked.ar2=1-exp(shrink.log.ratio)
-  shrinked.r2=1-exp(shrink.log.ratio)*df1/df2
-  return(list(shrinked.r2=shrinked.r2,shrinked.ar2=shrinked.ar2))
+  ar2=1-exp(shrink.log.ratio)
+  return(ar2)
 }
+
+
+ash_r2=function(R2,n,p){
+  df1=n-1
+  df2=n-1
+  log.ratio=log(1-R2)
+  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
+  r2=1-exp(shrink.log.ratio)
+  return(r2)
+}
+
 
 ```
 
-## Compare Shrinked $R^2$ with True $R2$.
+## Compare Shrunk $R^2$ with True $R2$.
 
 Assume linear model $y=X\beta+\epsilon$ where $\epsilon\sim N(0,\sigma^2I)$
 
-1. n=100, p=5. $\beta$ ranges from 0 to 1, for example $\beta=(0,0,0,0,0)$,...,$\beta=(0.1,0.1,0.1,0.1,0.1)$,..., $\beta=(1,1,1,1,1)$ etc.  $y=X\beta+\epsilon$ where $\epsilon\sim N(0,I_n)$.
+1. n=100, p=5. Each cordinate of $\beta$ ranges from 0 to 1, for example $\beta=(0,0,0,0,0)$,...,$\beta=(0.1,0.1,0.1,0.1,0.1)$,..., $\beta=(1,1,1,1,1)$ etc.  
+
+
+**If I generate X from Uniform(0,1), then fash shirnks all $R^2$ to 0. If generate X from Uniform(0,2), then it does not**
+
+Uniform(0,1):
 
 ```{r}
 set.seed(1234)
@@ -55,20 +75,20 @@ R2a=c()
 trueR2=c()
 
 beta.list=seq(0,1,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
+X=matrix(runif(n*(p),0,1),n,p)
 for (i in 1:length(beta.list)) {
   
   beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
+  mod=lm(y~.,datax)
   mod.sy=summary(mod)
   R2[i]=mod.sy$r.squared
   R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
+  trueR2[i]=var(X%*%beta)/(1+var(X%*%beta))
 }
-R2s=ash_r2(R2,n,p)$shrinked.r2
-R2as=ash_r2(R2,n,p)$shrinked.ar2
+R2s=ash_r2(R2,n,p)
+R2as=ash_ar2(R2,n,p)
 plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
 lines(beta.list,R2a,col=2)
 lines(beta.list,R2as,col=3)
@@ -87,220 +107,305 @@ legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,
 ```
 
 
-2. n=20, p=3. 
+Uniform(0,3):
 
 ```{r}
-set.seed(1234)
-
-n=20
-p=3
-R2=c()
-R2a=c()
-trueR2=c()
-
-beta.list=seq(0,1,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
-for (i in 1:length(beta.list)) {
-  beta=rep(beta.list[i],p)
-  y=X%*%beta+rnorm(n)
-  datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
-  mod.sy=summary(mod)
-  R2[i]=mod.sy$r.squared
-  R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
-}
-R2s=ash_r2(R2,n,p)$shrinked.r2
-R2as=ash_r2(R2,n,p)$shrinked.ar2
-plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2a,col=2)
-lines(beta.list,R2as,col=3)
-lines(beta.list,R2s,col=4)
-lines(beta.list,trueR2,col='grey80')
-abline(h=0,lty=2)
-legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
-
-plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
-lines(trueR2,R2a,col=2)
-lines(trueR2,R2as,col=3)
-lines(trueR2,R2s,col=4)
-lines(trueR2,trueR2,col='grey80')
-legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
-```
-
-**When n is small, all $R^2$ are shrunk to zero. Try to increase beta: from 0-1 to 0-2** 
-
-```{r}
-set.seed(1234)
-
-n=20
-p=3
-R2=c()
-R2a=c()
-trueR2=c()
-
-beta.list=seq(0,2,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
-for (i in 1:length(beta.list)) {
-  beta=rep(beta.list[i],p)
-  y=X%*%beta+rnorm(n)
-  datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
-  mod.sy=summary(mod)
-  R2[i]=mod.sy$r.squared
-  R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
-}
-R2s=ash_r2(R2,n,p)$shrinked.r2
-R2as=ash_r2(R2,n,p)$shrinked.ar2
-plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2a,col=2)
-lines(beta.list,R2as,col=3)
-lines(beta.list,R2s,col=4)
-lines(beta.list,trueR2,col='grey80')
-abline(h=0,lty=2)
-legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
-
-plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
-lines(trueR2,R2a,col=2)
-lines(trueR2,R2as,col=3)
-lines(trueR2,R2s,col=4)
-lines(trueR2,trueR2,col='grey80')
-legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
-```
-
-## Compare fash and corshrink
-
-### 1-d case
-
-n=100,p=1
-
-```{r}
-library(CorShrink)
-set.seed(1234)
-
-n=100
-p=1
-R2=c()
-#R2a=c()
-trueR2=c()
-
-beta.list=seq(0,1,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
-for (i in 1:length(beta.list)) {
-  beta=rep(beta.list[i],p)
-  y=X*beta+rnorm(n)
-  datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
-  mod.sy=summary(mod)
-  R2[i]=mod.sy$r.squared
-  R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
-}
-R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=(CorShrinkVector(sqrt(R2),n))^2
-plot(beta.list,R2,ylim=range(c(R2.fash,R2.cor,R2,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2.cor,col=2)
-lines(beta.list,R2.fash,col=4)
-lines(beta.list,trueR2,col='grey80')
-abline(h=0,lty=2)
-legend('topleft',c('R2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1),col=c(1,4,2,'grey80'))
-
-plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
-lines(trueR2,R2.cor,col=2)
-lines(trueR2,trueR2,col='grey80')
-legend('topleft',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
-```
-
-n=20,p=1
-
-```{r}
-set.seed(1234)
-
-n=20
-p=1
-R2=c()
-#R2a=c()
-trueR2=c()
-
-beta.list=seq(0,1,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
-for (i in 1:length(beta.list)) {
-  beta=rep(beta.list[i],p)
-  y=X*beta+rnorm(n)
-  datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
-  mod.sy=summary(mod)
-  R2[i]=mod.sy$r.squared
-  R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
-}
-R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=(CorShrinkVector(sqrt(R2),n))^2
-plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2.cor,col=2)
-lines(beta.list,trueR2,col='grey80')
-abline(h=0,lty=2)
-legend('topleft',c('R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1),col=c(1,2,'grey80'))
-
-plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
-lines(trueR2,R2.cor,col=2)
-lines(trueR2,trueR2,col='grey80')
-legend('topleft',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
-```
-
-
-### Multiple 
-
-n=100, p=5
-
-```{r}
-library(CorShrink)
 set.seed(1234)
 
 n=100
 p=5
 R2=c()
-#R2a=c()
+R2a=c()
 trueR2=c()
 
 beta.list=seq(0,1,length.out = 100)
-X=matrix(runif(n*(p),0,2),n,p)
+X=matrix(runif(n*(p),0,3),n,p)
 for (i in 1:length(beta.list)) {
+  
   beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
+  mod=lm(y~.,datax)
   mod.sy=summary(mod)
   R2[i]=mod.sy$r.squared
   R2a[i]=mod.sy$adj.r.squared
-  trueR2[i]=1-(1)/(1+var(X%*%beta))
+  trueR2[i]=var(X%*%beta)/(1+var(X%*%beta))
 }
-R2.fash=ash_r2(R2,n,p)$shrinked.r2
-R2.cor=(CorShrinkVector(sqrt(R2),n))^2
-plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2.cor,col=2)
+R2s=ash_r2(R2,n,p)
+R2as=ash_ar2(R2,n,p)
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
 lines(beta.list,trueR2,col='grey80')
 abline(h=0,lty=2)
-legend('topleft',c('R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
 
-plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
-lines(trueR2,R2.cor,col=2)
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col='grey80')
-legend('bottomright',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
 ```
 
-n=20, p=3
+Uniform(0,5):
 
 ```{r}
-
 set.seed(1234)
 
-n=20
+n=100
+p=5
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=var(X%*%beta)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)
+R2as=ash_ar2(R2,n,p)
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+2. Increase $p$ to 20.
+
+**This time, if I generate X from Uniform(0,1), then fash does not shirnk all $R^2$ to 0.**
+
+Uniform(0,1):
+
+```{r}
+set.seed(1234)
+
+n=100
+p=20
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,1),n,p)
+for (i in 1:length(beta.list)) {
+  
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=var(X%*%beta)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)
+R2as=ash_ar2(R2,n,p)
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+2. $n=30, p=3$. 
+
+**This time, I have to generate X from at least Uniform(0,3) to avoid over-shrinkage of fash. Here, I tried Uniform(0,5)**
+
+Uniform(0,5):
+
+```{r}
+set.seed(1234)
+
+n=30
 p=3
 R2=c()
-#R2a=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=var(X%*%beta)/(1+var(X%*%beta))
+}
+R2s=ash_r2(R2,n,p)
+R2as=ash_ar2(R2,n,p)
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+lines(beta.list,R2as,col=3)
+lines(beta.list,R2s,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2as,col=3)
+lines(trueR2,R2s,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','Adjusted R^2 fash','R^2 fash'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+
+## Compare fash and corshrink
+
+### 1-d case
+
+1. $n=100,p=1$
+
+Uniform(0,5):
+
+```{r}
+library(CorShrink)
+set.seed(1234)
+
+n=100
+p=1
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+
+
+
+```
+
+2. $n=30,p=1$
+
+Uniform(0,5):
+
+```{r}
+set.seed(1234)
+
+n=30
+p=1
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+
+### Multiple regression
+
+1. $n=100, p=5$
+
+Uniform(0,2):
+
+```{r}
+set.seed(1234)
+
+n=100
+p=5
+R2=c()
+R2a=c()
 trueR2=c()
 
 beta.list=seq(0,1,length.out = 100)
@@ -309,27 +414,477 @@ for (i in 1:length(beta.list)) {
   beta=rep(beta.list[i],p)
   y=X%*%beta+rnorm(n)
   datax=data.frame(X=X,y=y)
-  mod=lm(y~X,datax)
+  mod=lm(y~.,datax)
   mod.sy=summary(mod)
   R2[i]=mod.sy$r.squared
   R2a[i]=mod.sy$adj.r.squared
   trueR2[i]=1-(1)/(1+var(X%*%beta))
 }
-R2.fash=ash_r2(R2,n,p)$shrinked.r2
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
 R2.cor=(CorShrinkVector(sqrt(R2),n))^2
-plot(beta.list,R2.fash,ylim=range(c(R2.fash,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
-lines(beta.list,R2.cor,col=2)
+
+
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
 lines(beta.list,trueR2,col='grey80')
 abline(h=0,lty=2)
-legend('topleft',c('R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
 
-plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
-lines(trueR2,R2.cor,col=2)
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col='grey80')
-legend('bottomright',c('R^2 fash','R^2 CorShrink'),lty=c(1,1),col=c(1,2))
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+2. $n=100,p=20$
+
+Uniform(0,1):
+
+```{r}
+set.seed(1234)
+
+n=100
+p=20
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,1),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
 
 ```
 
 
+$n=100,p=50$
+
+Uniform(0,1):
+
+```{r}
+set.seed(1234)
+
+n=100
+p=50
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,1),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
 
 
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+3. $n=30, p=3$
+
+Uniform(0,5):
+
+```{r}
+set.seed(1234)
+
+n=30
+p=3
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,5,length.out = 100)
+X=matrix(runif(n*(p),0,1),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+R2.fash=ash_r2(R2,n,p)
+R2a.fash=ash_ar2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+
+plot(beta.list,R2,ylim=range(c(R2,R2a,R2s,R2as,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2a,col=2)
+#lines(beta.list,R2a.fash,col=3)
+lines(beta.list,R2.fash,col=3)
+lines(beta.list,R2.cor,col=4)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink','True R^2'),lty=c(1,1,1,1,1),col=c(1,2,3,4,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
+lines(trueR2,R2a,col=2)
+lines(trueR2,R2.fash,col=3)
+lines(trueR2,R2.cor,col=4)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','Adjusted R^2','R^2 fash','R^2 CorShrink'),lty=c(1,1,1,1),col=c(1,2,3,4))
+
+```
+
+
+# Summary1
+
+1. When generating X from Uniform(0,1), $var(X\beta)$ is small and `fash` can shrink all $R^2$ to 0. This happens when $n,p$ are small. If $p=20$, then this does not happen.
+
+2. CorShrink does not shrink $R^2$. I can not really tell the difference from plots between Corshrink $R^2$ and $R&2$.
+
+3. Adjusted $R^2$ is a good shrinkage estimator of $R^2$.
+
+## Sign of correlations
+
+Randomize signs of $R$ and see if corshrink gives the same results.
+
+Random sample n/2 $R^2$s and set the sign of $R$ to negative.
+
+$n=100,p=1$
+
+Uniform(0,1):
+
+```{r}
+library(CorShrink)
+set.seed(1234)
+
+n=100
+p=1
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X*beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+idx=sample(1:100,50)
+R=sqrt(R2)
+R[idx]=-R[idx]
+R2.cor.sign=(CorShrinkVector(R,n))^2
+
+plot(beta.list,R2,ylim=range(c(R2,R2.cor.sign,R2.cor,trueR2)),main='',xlab='beta',ylab='',type='l')
+lines(beta.list,R2.cor,col=2)
+lines(beta.list,R2.cor.sign,col=3)
+lines(beta.list,trueR2,col='grey80')
+abline(h=0,lty=2)
+legend('topleft',c('R^2','R^2 CorShrink','R^2 CorShrink Random Sign','True R^2'),lty=c(1,1,1,1),col=c(1,2,3,'grey80'))
+
+plot(trueR2,R2,type='l',ylim=range(c(R2,R2.cor.sign,R2.cor,trueR2)))
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,R2.cor.sign,col=3)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('R^2','R^2 CorShrink','R^2 CorShrink Random Sign'),lty=c(1,1,1),col=c(1,2,3))
+
+
+
+
+```
+
+
+So signs do not matter.
+
+
+## Estimates of g
+
+### Example 0
+
+X from Uniform(0,5) and $n=100,p=1$
+
+```{r}
+set.seed(1234)
+n=100
+p=1
+R2=c()
+R2a=c()
+trueR2=c()
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+
+R2.fash=ash_r2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab = '')
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('fash','Corshrink','True R2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+
+```
+
+fash:
+
+```{r}
+log.ratio=log(1-R2)
+ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
+ash.fit$fitted_g
+```
+
+Fitted g concentrates at $0.4*\delta_0+0.6*Uniform(-1.07,1.07)$
+
+Corshrink:
+
+```{r}
+R=sqrt(R2)
+corvec=R
+corvec_trans = 0.5 * log((1 + corvec)/(1 - corvec))
+corvec_trans_sd = rep(sqrt(1/(n - 1) + 2/(n - 
+            1)^2), length(corvec_trans))
+
+ash.control=list()
+ash.control.default = list(pointmass = TRUE, mixcompdist = "normal", 
+        nullweight = 10, fixg = FALSE, mode = 0, optmethod = "mixEM", 
+        prior = "nullbiased", gridmult = sqrt(2), outputlevel = 2, 
+        alpha = 0, df = NULL, control = list(K = 1, method = 3, 
+            square = TRUE, step.min0 = 1, step.max0 = 1, mstep = 4, 
+            kr = 1, objfn.inc = 1, tol = 1e-05, 
+            trace = FALSE))
+ash.control <- utils::modifyList(ash.control.default, ash.control)
+    
+
+fit = do.call(ashr::ash, append(list(betahat = corvec_trans, 
+        sebetahat = corvec_trans_sd), ash.control))
+fit$fitted_g
+```
+
+Fitted g concentrates at $0.12*\delta_0+0.5*N(0,0.62^2)+0.37*N(0,0.87^2)$
+
+
+### Example 1
+
+X from Uniform(0,1) and $n=100,p=5$
+
+```{r}
+set.seed(1234)
+n=100
+p=5
+R2=c()
+R2a=c()
+trueR2=c()
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,1),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+
+R2.fash=ash_r2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab = '')
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('fash','Corshrink','True R2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+
+```
+
+fash:
+
+```{r}
+log.ratio=log(1-R2)
+ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
+ash.fit$fitted_g
+```
+
+Fitted g is at point mass at 0.
+
+Corshrink:
+
+```{r}
+R=sqrt(R2)
+corvec=R
+corvec_trans = 0.5 * log((1 + corvec)/(1 - corvec))
+corvec_trans_sd = rep(sqrt(1/(n - 1) + 2/(n - 
+            1)^2), length(corvec_trans))
+
+ash.control=list()
+ash.control.default = list(pointmass = TRUE, mixcompdist = "normal", 
+        nullweight = 10, fixg = FALSE, mode = 0, optmethod = "mixEM", 
+        prior = "nullbiased", gridmult = sqrt(2), outputlevel = 2, 
+        alpha = 0, df = NULL, control = list(K = 1, method = 3, 
+            square = TRUE, step.min0 = 1, step.max0 = 1, mstep = 4, 
+            kr = 1, objfn.inc = 1, tol = 1e-05, 
+            trace = FALSE))
+ash.control <- utils::modifyList(ash.control.default, ash.control)
+    
+
+fit = do.call(ashr::ash, append(list(betahat = corvec_trans, 
+        sebetahat = corvec_trans_sd), ash.control))
+fit$fitted_g
+```
+
+Fitted g concentrates at $0.9*N(0,0.41^2)$
+
+### Example 2
+
+X from Uniform(0,5) and $n=100,p=5$
+
+```{r}
+set.seed(1234)
+n=100
+p=5
+R2=c()
+R2a=c()
+trueR2=c()
+
+beta.list=seq(0,1,length.out = 100)
+X=matrix(runif(n*(p),0,5),n,p)
+for (i in 1:length(beta.list)) {
+  beta=rep(beta.list[i],p)
+  y=X%*%beta+rnorm(n)
+  datax=data.frame(X=X,y=y)
+  mod=lm(y~.,datax)
+  mod.sy=summary(mod)
+  R2[i]=mod.sy$r.squared
+  R2a[i]=mod.sy$adj.r.squared
+  trueR2[i]=1-(1)/(1+var(X%*%beta))
+}
+
+R2.fash=ash_r2(R2,n,p)
+R2.cor=(CorShrinkVector(sqrt(R2),n))^2
+
+plot(trueR2,R2.fash,type='l',ylim=range(c(R2.fash,R2.cor,trueR2)),ylab='')
+lines(trueR2,R2.cor,col=2)
+lines(trueR2,trueR2,col='grey80')
+legend('topleft',c('fash','Corshrink','True R2'),lty=c(1,1,1),col=c(1,2,'grey80'))
+
+```
+
+fash:
+
+```{r}
+log.ratio=log(1-R2)
+ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
+ash.fit$fitted_g
+```
+
+Fitted g concentrates at $0.19*\delta_0+0.81*Uniform(-2.38,2.38)$.
+
+Corshrink:
+
+```{r}
+R=sqrt(R2)
+corvec=R
+corvec_trans = 0.5 * log((1 + corvec)/(1 - corvec))
+corvec_trans_sd = rep(sqrt(1/(n - 1) + 2/(n - 
+            1)^2), length(corvec_trans))
+
+ash.control=list()
+ash.control.default = list(pointmass = TRUE, mixcompdist = "normal", 
+        nullweight = 10, fixg = FALSE, mode = 0, optmethod = "mixEM", 
+        prior = "nullbiased", gridmult = sqrt(2), outputlevel = 2, 
+        alpha = 0, df = NULL, control = list(K = 1, method = 3, 
+            square = TRUE, step.min0 = 1, step.max0 = 1, mstep = 4, 
+            kr = 1, objfn.inc = 1, tol = 1e-05, 
+            trace = FALSE))
+ash.control <- utils::modifyList(ash.control.default, ash.control)
+    
+
+fit = do.call(ashr::ash, append(list(betahat = corvec_trans, 
+        sebetahat = corvec_trans_sd), ash.control))
+fit$fitted_g
+```
+
+Fitted g concentrates at $0.91*N(0,1.39^2)$
+
+
+# Summary2
+
+Fash uses a mixture of point mass and uniform distributions as prior while CorShrink uses a mixture of point mass and normal distirbutions. Fash in these examples put more weights on point mass in fitted g than CorShrink.
+
+
+# Thoughts
+
+1. Applying `fash` to shrink $R^2$ replies on F distribution, which is from the ratio of two variances. F distribution replies on normal assumption and independence of two normal populations. However, $var(\sigma^2)$ and $var(y)=var(X\beta)+var(\sigma^2)$ are not independent. So rigourously speaking, using `fash` is not appropriate here. 
+
+2. `Corshirnk` depends on Fisher transformation which has bivariate normal assumption. Since $R^2=r^2_{y,\hat y}$, we can apply `Corshirnk` if $y,\hat y$ is bivariate normal distributed. By saying $y,\hat y$ is bivariate normal distributed, I mean $y,\hat y$ are $n$ i.i.d samples from a bivariate normal distribution. However, this can hardly be true because $\hat y=Hy$ where $H=X(X^TX)^{-1}X^T$, so the $n$ samples $y,\hat y$ are not independently generated.
+
+3. From the examples above, adjusted $R^2$ is a good estimate of true $R^2$. It gives estimate close to ture $R^2$ which can be seen from the True $R^2$ - estimated $R^2$ plot. It's pitfall it that it's no longer necessatily positive - it can be negative.
