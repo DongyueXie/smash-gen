@@ -9,17 +9,17 @@ output:
 
 For the method used in these examples, see [here](r2.html)
 
-True $R^2$ is defined as $R^2=\frac{var(X\beta)}{var(y)}=\frac{var(y)-\sigma^2}{var(y)}=1-\frac{\sigma^2}{var(y)}=1-\frac{\sigma^2}{\sigma^2+var(X\beta)}$
+1. True $R^2$ is defined as $R^2=\frac{var(X\beta)}{var(y)}=\frac{var(y)-\sigma^2}{var(y)}=1-\frac{\sigma^2}{var(y)}=1-\frac{\sigma^2}{\sigma^2+var(X\beta)}$
 
-Ajusted R^2: $1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}$
+2. Ajusted R^2: $1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}$
 
-Shrunk adjusted R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
+3. Shrunk adjusted R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
 
-Shrunk R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
+4. Shrunk R^2: use `fash` shrinking $fash.output=\log(\frac{\sum(y_i-\hat y_i)^2/(n-1)}{\sum(y_i-\bar y)^2/(n-1)})$ then shrunk adjusted R^2 is $1-\exp(fash.output)$
 
-Another Shrunk R^2: shrink all $\betas$ using `ash`, obtain posterior means then calculate $\hat\sigma^2$ then obtain $\frac{var(X\hat\beta)}{var(\hat\beta)+\hat\sigma^2}$.
+5. Another Shrunk R^2: shrink all $\betas$ using `ash`, obtain posterior means then calculate $\hat\sigma^2$ then obtain $\frac{var(X\hat\beta)}{var(\hat\beta)+\hat\sigma^2}$.
 
-(Shrunk R^2 = $1 - \exp(fash.output)*\frac{n-p-1}{n-1}$, because $R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}$)(note: this is the old idea which introduces bias to R^2 when multiplying $\frac{n-p-1}{n-1}$ so I discard this method.)
+(note: this is the old idea which introduces bias to R^2 when multiplying $\frac{n-p-1}{n-1}$ so I discard this method.)(Shrunk R^2 = $1 - \exp(fash.output)*\frac{n-p-1}{n-1}$, because $R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}$)
 
 ## R Function
 
