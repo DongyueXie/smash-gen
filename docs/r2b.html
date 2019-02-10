@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d255e062db754f87bd7035d22f7adb39d0f252f3" target="_blank">d255e06</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/63863c79e078b30b81296471431b2af2ab75da70" target="_blank">63863c7</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -416,6 +416,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/63863c79e078b30b81296471431b2af2ab75da70/analysis/r2b.Rmd" target="_blank">63863c7</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-02-10
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/r2b.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/e49cf2f436a7975c6df01044119b3c25097d85ad/docs/r2b.html" target="_blank">e49cf2f</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-02-10
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -617,8 +651,8 @@ wflow_publish(“analysis/r2b.Rmd”)
 <li><p>Another Shrunk R^2: shrink all <span class="math inline">\(\betas\)</span> using <code>ash</code>, obtain posterior means then calculate <span class="math inline">\(\hat\sigma^2\)</span> then obtain <span class="math inline">\(\frac{var(X\hat\beta)}{var(\hat\beta)+\hat\sigma^2}\)</span>.</p></li>
 </ol>
 <p>(note: this is the old idea which introduces bias to R^2 when multiplying <span class="math inline">\(\frac{n-p-1}{n-1}\)</span> so I discard this method.)(Shrunk R^2 = <span class="math inline">\(1 - \exp(fash.output)*\frac{n-p-1}{n-1}\)</span>, because <span class="math inline">\(R^2=1-\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i-\bar y)^2}=1-\frac{\sum(y_i-\hat y_i)^2/(n-p-1)}{\sum(y_i-\bar y)^2/(n-1)}*\frac{n-p-1}{n-1}=1-(1-adjR^2)*\frac{n-p-1}{n-1}\)</span>)</p>
-<div id="r-function" class="section level2">
-<h2>R Function</h2>
+<div id="r-function" class="section level1">
+<h1>R Function</h1>
 <p>R function for shrinking adjusted R/ R squared:</p>
 <pre class="r"><code>library(ashr)
 #&#39;@param R2: R squared from linear regression model fit
@@ -645,14 +679,14 @@ ash_r2=function(R2,n,p){
   return(r2)
 }</code></pre>
 </div>
-<div id="compare-shrunk-r2-with-true-r2." class="section level2">
-<h2>Compare Shrunk <span class="math inline">\(R^2\)</span> with True <span class="math inline">\(R2\)</span>.</h2>
+<div id="compare-shrunk-r2-with-true-r2." class="section level1">
+<h1>Compare Shrunk <span class="math inline">\(R^2\)</span> with True <span class="math inline">\(R2\)</span>.</h1>
 <p>Assume linear model <span class="math inline">\(y=X\beta+\epsilon\)</span> where <span class="math inline">\(\epsilon\sim N(0,\sigma^2I)\)</span></p>
 <ol style="list-style-type: decimal">
 <li>n=100, p=5. Each cordinate of <span class="math inline">\(\beta\)</span> ranges from 0 to 1, for example <span class="math inline">\(\beta=(0,0,0,0,0)\)</span>,…,<span class="math inline">\(\beta=(0.1,0.1,0.1,0.1,0.1)\)</span>,…, <span class="math inline">\(\beta=(1,1,1,1,1)\)</span> etc.</li>
 </ol>
 <p><strong>If I generate X from Uniform(0,1), then fash shirnks all <span class="math inline">\(R^2\)</span> to 0. If generate X from Uniform(0,2), then it does not</strong></p>
-<p>Uniform(0,1):</p>
+<p>X from <strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -773,7 +807,7 @@ Dongyue Xie
 </tbody>
 </table>
 <p></details></p>
-<p>Uniform(0,3):</p>
+<p><strong>Uniform(0,3)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -894,7 +928,7 @@ Dongyue Xie
 </tbody>
 </table>
 <p></details></p>
-<p>Uniform(0,5):</p>
+<p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -1019,7 +1053,7 @@ Dongyue Xie
 <li>Increase <span class="math inline">\(p\)</span> to 20.</li>
 </ol>
 <p><strong>This time, if I generate X from Uniform(0,1), then fash does not shirnk all <span class="math inline">\(R^2\)</span> to 0.</strong></p>
-<p>Uniform(0,1):</p>
+<p><strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -1166,7 +1200,7 @@ Dongyue Xie
 <li><span class="math inline">\(n=30, p=3\)</span>.</li>
 </ol>
 <p><strong>This time, I have to generate X from at least Uniform(0,3) to avoid over-shrinkage of fash. Here, I tried Uniform(0,5)</strong></p>
-<p>Uniform(0,5):</p>
+<p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=30
@@ -1310,14 +1344,14 @@ Dongyue Xie
 </table>
 <p></details></p>
 </div>
-<div id="compare-fash-and-corshrink" class="section level2">
-<h2>Compare fash and corshrink</h2>
-<div id="d-case" class="section level3">
-<h3>1-d case</h3>
+<div id="compare-fash-and-corshrink" class="section level1">
+<h1>Compare fash and corshrink</h1>
+<div id="d-case" class="section level2">
+<h2>1-d case</h2>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(n=100,p=1\)</span></li>
 </ol>
-<p>Uniform(0,5):</p>
+<p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>library(CorShrink)
 set.seed(1234)
 
@@ -1445,7 +1479,7 @@ Dongyue Xie
 <ol start="2" style="list-style-type: decimal">
 <li><span class="math inline">\(n=30,p=1\)</span></li>
 </ol>
-<p>Uniform(0,5):</p>
+<p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=30
@@ -1570,12 +1604,12 @@ Dongyue Xie
 </table>
 <p></details></p>
 </div>
-<div id="multiple-regression" class="section level3">
-<h3>Multiple regression</h3>
+<div id="multiple-regression" class="section level2">
+<h2>Multiple regression</h2>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(n=100, p=5\)</span></li>
 </ol>
-<p>Uniform(0,2):</p>
+<p><strong>Uniform(0,2)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -1680,7 +1714,7 @@ Dongyue Xie
 <ol start="2" style="list-style-type: decimal">
 <li><span class="math inline">\(n=100,p=20\)</span></li>
 </ol>
-<p>Uniform(0,1):</p>
+<p><strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -1783,7 +1817,7 @@ Dongyue Xie
 </table>
 <p></details></p>
 <p><span class="math inline">\(n=100,p=50\)</span></p>
-<p>Uniform(0,1):</p>
+<p><strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=100
@@ -1888,7 +1922,7 @@ Dongyue Xie
 <ol start="3" style="list-style-type: decimal">
 <li><span class="math inline">\(n=30, p=3\)</span></li>
 </ol>
-<p>Uniform(0,5):</p>
+<p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
 n=30
@@ -1999,12 +2033,13 @@ Dongyue Xie
 <li><p>CorShrink does not shrink <span class="math inline">\(R^2\)</span>. I can not really tell the difference from plots between Corshrink <span class="math inline">\(R^2\)</span> and <span class="math inline">\(R&amp;2\)</span>.</p></li>
 <li><p>Adjusted <span class="math inline">\(R^2\)</span> is a good shrinkage estimator of <span class="math inline">\(R^2\)</span>.</p></li>
 </ol>
-<div id="sign-of-correlations" class="section level2">
-<h2>Sign of correlations</h2>
+</div>
+<div id="sign-of-correlations" class="section level1">
+<h1>Sign of correlations</h1>
 <p>Randomize signs of <span class="math inline">\(R\)</span> and see if corshrink gives the same results.</p>
 <p>Random sample n/2 <span class="math inline">\(R^2\)</span>s and set the sign of <span class="math inline">\(R\)</span> to negative.</p>
 <p><span class="math inline">\(n=100,p=1\)</span></p>
-<p>Uniform(0,1):</p>
+<p><strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>library(CorShrink)
 set.seed(1234)
 
@@ -2108,10 +2143,10 @@ Dongyue Xie
 <p></details></p>
 <p>So signs do not matter.</p>
 </div>
-<div id="estimates-of-g" class="section level2">
-<h2>Estimates of g</h2>
-<div id="example-0" class="section level3">
-<h3>Example 0</h3>
+<div id="estimates-of-g" class="section level1">
+<h1>Estimates of g</h1>
+<div id="example-0" class="section level2">
+<h2>Example 0</h2>
 <p>X from Uniform(0,5) and <span class="math inline">\(n=100,p=1\)</span></p>
 <pre class="r"><code>set.seed(1234)
 n=100
@@ -2233,8 +2268,8 @@ attr(,&quot;row.names&quot;)
  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18</code></pre>
 <p>Fitted g concentrates at <span class="math inline">\(0.12*\delta_0+0.5*N(0,0.62^2)+0.37*N(0,0.87^2)\)</span></p>
 </div>
-<div id="example-1" class="section level3">
-<h3>Example 1</h3>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
 <p>X from Uniform(0,1) and <span class="math inline">\(n=100,p=5\)</span></p>
 <pre class="r"><code>set.seed(1234)
 n=100
@@ -2355,8 +2390,8 @@ attr(,&quot;row.names&quot;)
  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17</code></pre>
 <p>Fitted g concentrates at <span class="math inline">\(0.9*N(0,0.41^2)\)</span></p>
 </div>
-<div id="example-2" class="section level3">
-<h3>Example 2</h3>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
 <p>X from Uniform(0,5) and <span class="math inline">\(n=100,p=5\)</span></p>
 <pre class="r"><code>set.seed(1234)
 n=100
@@ -2481,7 +2516,6 @@ attr(,&quot;class&quot;)
 attr(,&quot;row.names&quot;)
  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</code></pre>
 <p>Fitted g concentrates at <span class="math inline">\(0.91*N(0,1.39^2)\)</span></p>
-</div>
 </div>
 </div>
 <div id="summary2" class="section level1">
