@@ -8,15 +8,15 @@ output:
 
 # Project Overview
 
-We generalize `smash`(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, typically Poisson and Binomial sequence data.
+We generalize `smash`(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, and account for additional unknown variances.
 
-This [R package](https://github.com/DongyueXie/smashrgen) contains functions used in this project.
+This [R package](https://github.com/DongyueXie/smashrgen) contains functions for this project.
 
 # Analysis
 
 ## A general introduction and method
 
-This is a new review and summary I wrote in Sept 2018.
+This is a review and summary I wrote in Sept 2018.
 
 [Introduction and method](smoothing.html)
 
@@ -37,6 +37,8 @@ Another way is try to get rid of iterations and use only one iteration. But obvi
 ## Estimate nugget effect
 
 Nugget effect is unknown in practice. To apply our smashgen method, we need to know $\sigma^2+s_t^2$. My initial idea is that we can either estimate $\sigma^2$ or $\sigma^2+s_t^2$ together. The method proposed for estimating nugget effect works well as shown in 1 below. Estimating $\sigma^2$ first then plus $s_t^2$ gives better estimation than estimating $\sigma^2+s_t^2$ together($*$). The phenomena I observed is that though the fact $(*)$, `smash.gaus` gives very similar estimate of $\mu_t$ in terms of MSE. This is because `smash.gaus` is sensitive to the scale of variance instead of the shape of variance. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satisfactory shape, then smash.gaus can still give similar mean estimation(see 2 below).
+
+The most straightforward way is to use MLE. I do not include this here. But MLE is the default method.
 
 1. [Estimate nugget effect($\sigma$)](sigma2.html)
 2. [Smash robust to variance?](smashrobust.html)
@@ -73,6 +75,7 @@ Now suppose at each $t$, $Y_t=X_t\beta+\mu_t+\epsilon_t$, where $\mu$ has smooth
 1. [Smoothing with covariates: Gaussian](covariate.html)
 2. [Smoothing with covariates: Gaussian, iterative version](covariateiter.html)
 3. [Smoothing with covariates: glm](glmcovariate.html)
+4. [Smoothing with covariates: VST version](covariatevst.html)
 
 ## Unevenly spaced data
 
@@ -96,10 +99,16 @@ The primary role of CTCF is thought to be in regulating the 3D structure of chro
 
 ## Variance stabilizing transformation(vst)
 
-1. [vst smoothing](vst.html)
-2. [compare log and anscombe transform](compares.html)
-3. [vst for nugget effect?](ansgen.html)
-4. [iterative vst?](vstiter.html)
+In addiiton to likelihood expansion, VST is another way to make data normal dsitributed.
+
+1. [Vst smoothing](vst.html)
+2. [Compare log and anscombe transform](compares.html)
+3. [Vst for nugget effect](ansgen.html)
+4. [More in anscombe transformation](vstiter.html)
+
+## Wavelet-based Functional data analysis.
+
+1. [Apply smash-gen to functional data analysis](smashgenfda.html)
 
 # Literatures on smoothing
 
@@ -110,6 +119,11 @@ I'm focusing on reading 1. additive models(gam, gamm, spam, gspam); 2. functiona
 3. [functional data analysis](fda.html)
 4. [Signal denoising exponential family](efsd.html)
 
-# Credits
+# Miscellaneous
 
-This project is based on the ideas from Professor [Matthew Stephens](http://stephenslab.uchicago.edu/). Thanks to Matthew Stephens and [Kushal K Dey](https://kkdey.github.io/) for their great help.
+Not relevant to this project. Just for convenience.
+
+1. [Shrink R squared using `fash`](r2.html)
+2. [More examples on shrinking $R^2$ and compare with CorShrink](r2b.html)
+
+
