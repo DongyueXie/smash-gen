@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-01-06</p>
+<p><strong>Last updated:</strong> 2019-02-14</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/9b7cd1fa115fd51bee550c3ea949a7fabfebfc8a" target="_blank">9b7cd1f</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/3a91d124e637c5ae32bfeb8ee9fcafeade91cfff" target="_blank">3a91d12</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -245,13 +245,13 @@ Untracked files:
     Untracked:  analysis/talk1011.Rmd
     Untracked:  data/chipexo_examples/
     Untracked:  data/chipseq_examples/
-    Untracked:  docs/figure/binomial2.Rmd/
     Untracked:  talk.Rmd
     Untracked:  talk.pdf
 
 Unstaged changes:
     Modified:   analysis/binomial.Rmd
     Modified:   analysis/fda.Rmd
+    Modified:   analysis/r2.Rmd
     Modified:   analysis/sigma.Rmd
 
 </code></pre>
@@ -281,6 +281,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/smash-gen/blob/3a91d124e637c5ae32bfeb8ee9fcafeade91cfff/analysis/index.Rmd" target="_blank">3a91d12</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-02-14
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/index.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/29125f983fd52fbefbdd2bdb338eeba18821dfed/docs/index.html" target="_blank">29125f9</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2019-01-06
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -1019,14 +1053,14 @@ Start workflowr project.
 <hr />
 <div id="project-overview" class="section level1">
 <h1>Project Overview</h1>
-<p>We generalize <code>smash</code>(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, typically Poisson and Binomial sequence data.</p>
-<p>This <a href="https://github.com/DongyueXie/smashrgen">R package</a> contains functions used in this project.</p>
+<p>We generalize <code>smash</code>(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, and account for additional unknown variances.</p>
+<p>This <a href="https://github.com/DongyueXie/smashrgen">R package</a> contains functions for this project.</p>
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
 <div id="a-general-introduction-and-method" class="section level2">
 <h2>A general introduction and method</h2>
-<p>This is a new review and summary I wrote in Sept 2018.</p>
+<p>This is a review and summary I wrote in Sept 2018.</p>
 <p><a href="smoothing.html">Introduction and method</a></p>
 </div>
 <div id="intial-investigation" class="section level2">
@@ -1045,6 +1079,7 @@ Start workflowr project.
 <div id="estimate-nugget-effect" class="section level2">
 <h2>Estimate nugget effect</h2>
 <p>Nugget effect is unknown in practice. To apply our smashgen method, we need to know <span class="math inline">\(\sigma^2+s_t^2\)</span>. My initial idea is that we can either estimate <span class="math inline">\(\sigma^2\)</span> or <span class="math inline">\(\sigma^2+s_t^2\)</span> together. The method proposed for estimating nugget effect works well as shown in 1 below. Estimating <span class="math inline">\(\sigma^2\)</span> first then plus <span class="math inline">\(s_t^2\)</span> gives better estimation than estimating <span class="math inline">\(\sigma^2+s_t^2\)</span> together(<span class="math inline">\(*\)</span>). The phenomena I observed is that though the fact <span class="math inline">\((*)\)</span>, <code>smash.gaus</code> gives very similar estimate of <span class="math inline">\(\mu_t\)</span> in terms of MSE. This is because <code>smash.gaus</code> is sensitive to the scale of variance instead of the shape of variance. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satisfactory shape, then smash.gaus can still give similar mean estimation(see 2 below).</p>
+<p>The most straightforward way is to use MLE. I do not include this here. But MLE is the default method.</p>
 <ol style="list-style-type: decimal">
 <li><a href="sigma2.html">Estimate nugget effect(<span class="math inline">\(\sigma\)</span>)</a></li>
 <li><a href="smashrobust.html">Smash robust to variance?</a></li>
@@ -1080,6 +1115,7 @@ Start workflowr project.
 <li><a href="covariate.html">Smoothing with covariates: Gaussian</a></li>
 <li><a href="covariateiter.html">Smoothing with covariates: Gaussian, iterative version</a></li>
 <li><a href="glmcovariate.html">Smoothing with covariates: glm</a></li>
+<li><a href="covariatevst.html">Smoothing with covariates: VST version</a></li>
 </ol>
 </div>
 <div id="unevenly-spaced-data" class="section level2">
@@ -1107,11 +1143,18 @@ Start workflowr project.
 </div>
 <div id="variance-stabilizing-transformationvst" class="section level2">
 <h2>Variance stabilizing transformation(vst)</h2>
+<p>In addiiton to likelihood expansion, VST is another way to make data normal dsitributed.</p>
 <ol style="list-style-type: decimal">
-<li><a href="vst.html">vst smoothing</a></li>
-<li><a href="compares.html">compare log and anscombe transform</a></li>
-<li><a href="ansgen.html">vst for nugget effect?</a></li>
-<li><a href="vstiter.html">iterative vst?</a></li>
+<li><a href="vst.html">Vst smoothing</a></li>
+<li><a href="compares.html">Compare log and anscombe transform</a></li>
+<li><a href="ansgen.html">Vst for nugget effect</a></li>
+<li><a href="vstiter.html">More in anscombe transformation</a></li>
+</ol>
+</div>
+<div id="wavelet-based-functional-data-analysis." class="section level2">
+<h2>Wavelet-based Functional data analysis.</h2>
+<ol style="list-style-type: decimal">
+<li><a href="smashgenfda.html">Apply smash-gen to functional data analysis</a></li>
 </ol>
 </div>
 </div>
@@ -1125,9 +1168,13 @@ Start workflowr project.
 <li><a href="efsd.html">Signal denoising exponential family</a></li>
 </ol>
 </div>
-<div id="credits" class="section level1">
-<h1>Credits</h1>
-<p>This project is based on the ideas from Professor <a href="http://stephenslab.uchicago.edu/">Matthew Stephens</a>. Thanks to Matthew Stephens and <a href="https://kkdey.github.io/">Kushal K Dey</a> for their great help.</p>
+<div id="miscellaneous" class="section level1">
+<h1>Miscellaneous</h1>
+<p>Not relevant to this project. Just for convenience.</p>
+<ol style="list-style-type: decimal">
+<li><a href="r2.html">Shrink R squared using <code>fash</code></a></li>
+<li><a href="r2b.html">More examples on shrinking <span class="math inline">\(R^2\)</span> and compare with CorShrink</a></li>
+</ol>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
