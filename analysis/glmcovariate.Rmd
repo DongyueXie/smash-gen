@@ -2,7 +2,9 @@
 title: "Smoothing with covariate, GLM version"
 author: "Dongyue Xie"
 date: "May 25, 2018"
-output: html_document
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = F, message = F)
@@ -17,7 +19,7 @@ For Bionomial sequence: $$Y_t\sim Binomial(n_t,p_t).$$ Assume that $$logit(p_t)=
 
 # Method
 
-Apply `ash` to $Y_t$ and let the posterior mean be $\tilde\lambda_t$. Define $\tilde Y_t=\log(\tilde\lambda_t)+\frac{Y_t-\tilde\lambda_t}{\tilde\lambda_t}$ and apply [smash.gaus allowing covariates](covariate.html) method to $\tilde Y_t$, which gives $\hat\mu_t$ and $\hat\beta$. The recovered smooth mean structure is given by $\exp(\hat\mu_t)$.
+Let $\tilde\lambda_t=Y_t$. Define $\tilde Y_t=\log(\tilde\lambda_t)+\frac{Y_t-\tilde\lambda_t}{\tilde\lambda_t}$ and apply [smash.gaus allowing covariates](covariate.html) method to $\tilde Y_t$, which gives $\hat\mu_t$ and $\hat\beta$. The recovered smooth mean structure is given by $\exp(\hat\mu_t)$.
 
 Similarly to Binomial data, $\tilde Y_t=logit(\tilde p_t)+\frac{Y_t/n_t-\tilde p_t}{\tilde p_t(1-\tilde p_t)}$.
 
@@ -36,7 +38,7 @@ For each case, we run 3 times of simulation and plot the fitted curve.
 The length of sequence $T$ is set to be 256, covariates $X_t$ are generate from $N(0,I_{p\times p})$, and $\beta$ is chosen to be $(1,2,-3,-4,5)$ then normalized to have unit norm.
 
 ```{r}
-simu_study_poix=function(mu,beta,sigma=1,snr=2,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
+simu_study_poix=function(mu,beta,snr=3,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
   set.seed(1234)
   n=length(mu)
   p=length(beta)
@@ -45,10 +47,7 @@ simu_study_poix=function(mu,beta,sigma=1,snr=2,nsimu=3,filter.number=1,family='D
   mu.est=c()
   beta.est=c()
   y.data=c()
-  #lambda.null=exp(mu+Xbeta)
-  #var.st=1/mean(lambda.null)
-  #var.mu=var(mu)
-  #sigma=sqrt(max(var.mu/(snr^2)-var.st,0))
+  sigma=sqrt(var(Xbeta)/snr)
   for(s in 1:nsimu){
     lambda=exp(mu+Xbeta+rnorm(n,0,sigma))
     yt=rpois(n,lambda)
@@ -66,7 +65,7 @@ beta=beta/norm(beta,'2')
 ### Step
 
 ```{r}
-mu=c(rep(2,128), rep(5, 128), rep(6, 128), rep(2, 128))
+mu=c(rep(2,64), rep(5, 64), rep(6, 64), rep(2, 64))
 result=simu_study_poix(mu,beta)
 plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(mu), 3 runs')
 lines(result$mu.est[2,],col=3)
@@ -118,9 +117,9 @@ abline(0,1,lty=2)
 
 ```{r}
 r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
-f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
-500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
-7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+f=function(x){return(0.8 - 30*r(x,0.1) + 60*r(x, 0.2) - 30*r(x, 0.3) +
+                       500*r(x, 0.35) -1000*r(x, 0.37) + 1000*r(x, 0.41) - 500*r(x, 0.43) +
+                       7.5*r(x, 0.5) - 15*r(x, 0.7) + 7.5*r(x, 0.9))}
 mu=f(1:256/256)
 mu=mu*7
 
@@ -174,7 +173,7 @@ The length of sequence $T$ is set to be 256, covariates $X_t$ are generate from 
 logit=function(x) log(x/(1-x))
 logistic=function(x) exp(x)/(1+exp(x))
 
-simu_study_binomx=function(mu,beta,ntri,sigma=1,snr=2,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
+simu_study_binomx=function(mu,beta,ntri,snr=3,nsimu=3,filter.number=1,family='DaubExPhase',seed=1234){
   set.seed(1234)
   n=length(mu)
   p=length(beta)
@@ -183,10 +182,7 @@ simu_study_binomx=function(mu,beta,ntri,sigma=1,snr=2,nsimu=3,filter.number=1,fa
   mu.est=c()
   beta.est=c()
   y.data=c()
-  #lambda.null=logistic(mu+Xbeta)
-  #var.st=1/mean(ntri*mean(lambda.null)*(1-mean(lambda.null)))
-  #var.mu=var(mu)
-  #sigma=sqrt(max(var.mu/(snr^2)-var.st,0))
+  sigma=sqrt(var(Xbeta)/snr)
   for(s in 1:nsimu){
     p=logistic(mu+Xbeta+rnorm(n,0,sigma))
     yt=rbinom(n,ntri,p)
@@ -206,7 +202,7 @@ set.seed(111);ntri=rpois(256,50)
 ### Step
 
 ```{r}
-mu=c(rep(-3,128), rep(0, 128), rep(3, 128), rep(-3, 128))
+mu=c(rep(-3,64), rep(0, 64), rep(3, 64), rep(-3, 64))
 result=simu_study_binomx(mu,beta,ntri)
 plot(result$mu.est[1,],type='l',col=2,ylab = '',main='Estimated mean function(p), 3 runs')
 lines(result$mu.est[2,],col=3)
@@ -258,9 +254,9 @@ abline(0,1,lty=2)
 
 ```{r}
 r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
-f=function(x){return(0.8 − 30*r(x,0.1) + 60*r(x, 0.2) − 30*r(x, 0.3) +
-500*r(x, 0.35) − 1000*r(x, 0.37) + 1000*r(x, 0.41) − 500*r(x, 0.43) +
-7.5*r(x, 0.5) − 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+f=function(x){return(0.8 - 30*r(x,0.1) + 60*r(x, 0.2) - 30*r(x, 0.3) +
+                       500*r(x, 0.35) -1000*r(x, 0.37) + 1000*r(x, 0.41) - 500*r(x, 0.43) +
+                       7.5*r(x, 0.5) - 15*r(x, 0.7) + 7.5*r(x, 0.9))}
 mu=f(1:256/256)
 mu=(mu-min(mu))*10-3
 
