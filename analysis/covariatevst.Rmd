@@ -1,0 +1,188 @@
+---
+title: "Smoothing with covariate, VST version"
+author: "Dongyue Xie"
+date: "2019-02-27"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+# Introduction
+
+Consider estimating spatially-structured $\mu_t$ from Poisson sequence: $$Y_t\sim Poisson(\lambda_t).$$ We assume that $\lambda_t$ satisfies $$\lambda_t+c=(X_t'\beta+\mu_t)^2$$, where $X_t$ are $p-$dimensional covaraites and $\beta$ is unknown coefficients.
+
+# Method
+
+Apply variance stablizing transformation(VST) to $Y_t$. Let the transformed data be $\tilde Y_t=\sqrt{Y_t+c}$ and apply [smash.gaus allowing covariates](covariate.html) method to $\tilde Y_t$, which gives $\hat\mu_t$ and $\hat\beta$. The recovered smooth mean structure is given by $(\hat\mu_t)^2-c$.
+
+#Simulations
+
+Poisson sequence: Given $\mu_t, t=1,2,\dots,T$, $\lambda_t=(\mu_t+X_t'\beta+N(0,\sigma^2))^2-c$, generate $Y_t\sim Poisson(\lambda_t)$.  
+
+
+The length of sequence $T$ is set to be 256, covariates $X_t$ are generate from $N(0,I_{p\times p})$, and $\beta$ is chosen to be $(1,2,-3,-4,5)$ then normalized to have unit norm. Signal-to-noise ratio($var(X\beta)/\sigma^2$) is 3.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+```{r}
+library(smashr)
+
+smashgen_vst_x=function(y,X,sigma,c=3/8){
+  
+  yy=sqrt(y+c)
+  Eyy=mean(yy)
+  yys=yy-Eyy
+  xx=apply(X, 2, function(x){scale(x,scale = F)})
+  X=xx
+  H=solve(t(X)%*%X)%*%t(X)
+  beta.hat=H%*%yys
+  res=yys-X%*%beta.hat
+  if(missing(sigma)){
+    mu.hat=smash.gaus(res+Eyy)
+  }else{
+    mu.hat=smash.gaus(res+Eyy,sigma=sqrt(1/4+sigma^2))
+  }
+  yy2=yy-mu.hat
+  beta.hat=H%*%yy2
+  
+  res=yy-X%*%beta.hat
+
+  if(missing(sigma)){
+    mu.hat=smash.gaus(res)
+  }else{
+    mu.hat=smash.gaus(res,sigma=sqrt(1+sigma^2))
+  }
+  yy3=yy-mu.hat
+  beta.hat=H%*%yy3
+  return(list(beta.hat=beta.hat,mu.hat=mu.hat))
+}
+```
+
+
+## Step function
+
+```{r}
+
+mu=c(rep(2,64), rep(5, 64), rep(6, 64), rep(2, 64))
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+n=length(mu)
+p=length(beta)
+SNR=3
+seed=12345
+set.seed(seed)
+X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+Xbeta=X%*%beta
+sigma=sqrt(var(Xbeta)/SNR)
+lambda=(mu+Xbeta+rnorm(n,0,sigma))^2
+yt=rpois(n,lambda)
+fit=smashgen_vst_x(yt,X,,0)
+plot(beta,fit$beta.hat,ylab = 'beta.hat',xlab = 'True Beta')
+abline(a=0,b=1)
+
+plot(fit$mu.hat,type='l',ylim = range(c(mu,fit$mu.hat)))
+lines(mu,col='grey80')
+
+```
+
+## Bumps
+
+```{r}
+
+m=seq(0,1,length.out = 256)
+h = c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+w = c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005,0.008,0.005)
+t=c(.1,.13,.15,.23,.25,.4,.44,.65,.76,.78,.81)
+f = c()
+for(i in 1:length(m)){
+  f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
+}
+mu=f*5
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+
+n=length(mu)
+p=length(beta)
+SNR=3
+seed=12345
+set.seed(seed)
+X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+Xbeta=X%*%beta
+sigma=sqrt(var(Xbeta)/SNR)
+lambda=(mu+Xbeta+rnorm(n,0,sigma))^2
+yt=rpois(n,lambda)
+fit=smashgen_vst_x(yt,X,,0)
+plot(beta,fit$beta.hat,ylab = 'beta.hat',xlab = 'True Beta')
+abline(a=0,b=1)
+
+plot(fit$mu.hat,type='l',ylim = range(c(mu,fit$mu.hat)))
+lines(mu,col='grey80')
+
+```
+
+
+## Wave
+
+```{r}
+
+f=function(x){return(0.5 + 2*cos(4*pi*x) + 2*cos(24*pi*x))}
+mu=f(1:256/256)
+mu=mu-min(mu)
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+
+n=length(mu)
+p=length(beta)
+SNR=3
+seed=12345
+set.seed(seed)
+X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+Xbeta=X%*%beta
+sigma=sqrt(var(Xbeta)/SNR)
+lambda=(mu+Xbeta+rnorm(n,0,sigma))^2
+yt=rpois(n,lambda)
+fit=smashgen_vst_x(yt,X,,0)
+plot(beta,fit$beta.hat,ylab = 'beta.hat',xlab = 'True Beta')
+abline(a=0,b=1)
+
+plot(fit$mu.hat,type='l',ylim = range(c(mu,fit$mu.hat)))
+lines(mu,col='grey80')
+```
+
+
+## Parabola
+
+```{r}
+
+
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 - 30*r(x,0.1) + 60*r(x, 0.2) - 30*r(x, 0.3) +
+                       500*r(x, 0.35) -1000*r(x, 0.37) + 1000*r(x, 0.41) - 500*r(x, 0.43) +
+                       7.5*r(x, 0.5) - 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:256/256)
+mu=mu*7
+beta=c(1,2,-3,-4,5)
+beta=beta/norm(beta,'2')
+
+n=length(mu)
+p=length(beta)
+SNR=3
+seed=12345
+set.seed(seed)
+X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
+Xbeta=X%*%beta
+sigma=sqrt(var(Xbeta)/SNR)
+lambda=(mu+Xbeta+rnorm(n,0,sigma))^2
+yt=rpois(n,lambda)
+fit=smashgen_vst_x(yt,X,,0)
+plot(beta,fit$beta.hat,ylab = 'beta.hat',xlab = 'True Beta')
+abline(a=0,b=1)
+
+plot(fit$mu.hat,type='l',ylim = range(c(mu,fit$mu.hat)))
+lines(mu,col='grey80')
+
+
+```
+
