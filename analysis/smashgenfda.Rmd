@@ -1,0 +1,147 @@
+---
+title: "Functional Data analysis with smashgen"
+author: "Dongyue Xie"
+date: "2019-02-27"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
+# Introduction
+
+Assume we obseve $Y\in R^{N*T}$: N curves(count) and each has length T from N individuals. We also obseve a $X\in R^{N*p}$ data matrix whose columns are covariates. We can model $g(Y)=XB+E$, where $B\in R^{p*T}$ is coefficient matrix, whose rows are smooth curves, and $E\in R^{N*T}$ is a random error matrix.
+
+Model framework:
+
+1. Apply log or vst transformation to $Y$ and obtain $\tilde Y=XB+E_1+E_2$, where $E_1$ is nugget effect matrix and $E_2$ is variance matrix resulted from transformation.
+2. Apply DWT: $\tilde Y W=XBW+E_1W+E_2W$. Write it as $Y^*=XB^*+E_1*+E_2^*$
+3. Fit weighted linear regression for each $t$, $t=1,2,3,...,T$ and obtain $\hat B^*$. 
+4. Apply `ash` to each row of $\hat B^*$ and obtain new $\hat B^*$
+5. Apply inverse DWT and obtain $\hat B$.
+
+
+```{r}
+wavelet_fda=function(Y,X,sigma=1,ca=0,trans='log',filter.number=1,family='DaubExPhase'){
+  
+  N=nrow(Y)
+  Tt=ncol(Y)
+  p=ncol(X)
+  if(length(sigma)==1){sigma=rep(sigma,N)}
+  W=GenW(n=Tt,filter.number=filter.number,family=family)
+  if(trans=='log'){
+    Y.t=matrix(nrow=N,ncol=Tt)
+    set2=matrix(nrow=N,ncol=Tt)
+    for (n in 1:N) {
+      x=Y[n,]
+      x.ash=ash(rep(0,Tt),1,lik=lik_pois(x))$result$PosteriorMean
+      m.hat=x.ash
+      m.hat[which(x!=0)]=(x[which(x!=0)])
+      ys=log(m.hat)+(x-m.hat)/m.hat
+      st2=1/(m.hat)
+      
+      Y.t[n,]=W%*%ys
+      set2[n,]=diag(W%*%diag(sigma[n]^2+st2)%*%t(W))
+    }
+
+  }
+  if(trans=='vst'){
+    Y.t=t(apply(Y, 1, function(x){W%*%sqrt(x+ca)}))
+    set2=matrix(nrow=N,ncol=Tt)
+    for (n in 1:N) {
+      st2=1/4
+      set2[n,]=diag(W%*%diag(rep(sigma[n]^2+st2,Tt))%*%t(W))
+    }
+  }
+  
+  beta.hat=matrix(nrow=p+1,ncol=Tt)
+  beta.hat.se=matrix(nrow=p+1,ncol=Tt)
+  
+  for (t in 1:Tt) {
+    wls.fit=lm(y~.,data.frame(y=Y.t[,t],x=X),weights = 1/set2[,t])
+    beta.hat[,t]=coefficients(wls.fit)
+    smy=summary(wls.fit)
+    beta.hat.se[,t]=smy$coefficients[,2]
+  }
+  
+  beta.hat.shrink=matrix(nrow=p+1,ncol=Tt)
+  for (j in 1:(p+1)) {
+    beta.hat.shrink[j,]=ashr::ash(beta.hat[j,],beta.hat.se[j,])$result$PosteriorMean
+  }
+  return(beta.hat.shrink%*%W)
+}
+
+
+
+```
+
+# Simulation
+
+Let N=100, p=3(includes $1_N$).
+
+```{r}
+library(wavethresh)
+library(ashr)
+Tt=512
+  beta1=c(rep(2,Tt/4), rep(5, Tt/4), rep(6, Tt/4), rep(2, Tt/4))
+beta1=5*beta1/sqrt(norm(beta1,'2'))
+
+r=function(x,c){return((x-c)^2*(x>c)*(x<=1))}
+f=function(x){return(0.8 - 30*r(x,0.1) + 60*r(x, 0.2) - 30*r(x, 0.3) +
+                       500*r(x, 0.35) -1000*r(x, 0.37) + 1000*r(x, 0.41) - 500*r(x, 0.43) +
+                       7.5*r(x, 0.5) - 15*r(x, 0.7) + 7.5*r(x, 0.9))}
+mu=f(1:Tt/Tt)
+mu=mu
+beta2=5*mu/sqrt(norm(mu,'2'))
+
+f=function(x){return(0.5 + 2*cos(4*pi*x) + 2*cos(24*pi*x))}
+mu=f(1:Tt/Tt)
+mu=mu-min(mu)
+mu=5*mu/sqrt(norm(mu,'2'))
+
+set.seed(12345)
+N=100
+Y=matrix(nrow = N,ncol = Tt)
+X=matrix(rnorm(N*2),nrow=N,ncol=2)
+sigma=0.3
+for (i in 1:Tt) {
+  Y[,i]=mu[i]+X%*%rbind(beta1[i],beta2[i])+rnorm(N,0,sigma)
+}
+for (i in 1:N) {
+  Y[i,]=rpois(Tt,exp(Y[i,]))
+}
+
+r1=wavelet_fda(Y,X,0.1,trans='log')
+plot(r1[1,],type='l',ylab='',main='Estimate of Beta')
+lines(mu,col='grey80')
+plot(r1[2,],type='l',ylab='',main='Estimate of Beta')
+lines(beta1,col='grey80')
+plot(r1[3,],type='l',ylab='',main='Estimate of Beta')
+lines(beta2,col='grey80')
+
+```
+
+```{r,eval=F}
+
+set.seed(12345)
+N=100
+Y=matrix(nrow = N,ncol = Tt)
+X=matrix(rnorm(N*2),nrow=N,ncol=2)
+sigma=0.1
+for (i in 1:Tt) {
+  Y[,i]=mu[i]+X%*%rbind(beta1[i],beta2[i])+rnorm(N,0,sigma)
+}
+for (i in 1:N) {
+  Y[i,]=rpois(Tt,(Y[i,])^2)
+}
+
+r1=wavelet_fda(Y,X,0.1,trans='vst')
+plot(r1[1,],type='l',ylab='',main='Estimate of Beta')
+lines(mu,col='grey80')
+plot(r1[2,],type='l',ylab='',main='Estimate of Beta')
+lines(beta1,col='grey80')
+plot(r1[3,],type='l',ylab='',main='Estimate of Beta')
+lines(beta2,col='grey80')
+```
