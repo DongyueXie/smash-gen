@@ -32,27 +32,23 @@ library(smashr)
 smashgen_vst_x=function(y,X,sigma,c=3/8){
   
   yy=sqrt(y+c)
-  Eyy=mean(yy)
-  yys=yy-Eyy
-  xx=apply(X, 2, function(x){scale(x,scale = F)})
-  X=xx
   H=solve(t(X)%*%X)%*%t(X)
-  beta.hat=H%*%yys
-  res=yys-X%*%beta.hat
+  beta.hat=H%*%yy
+  res=yy-X%*%beta.hat
   if(missing(sigma)){
-    mu.hat=smash.gaus(res+Eyy)
+    mu.hat=smash.gaus(res)
   }else{
-    mu.hat=smash.gaus(res+Eyy,sigma=sqrt(1/4+sigma^2))
+    mu.hat=smash.gaus(res,sigma=sqrt(1/4+sigma^2))
   }
   yy2=yy-mu.hat
-  beta.hat=H%*%yy2
+  beta.hat=H%*%(yy2)
   
   res=yy-X%*%beta.hat
 
   if(missing(sigma)){
     mu.hat=smash.gaus(res)
   }else{
-    mu.hat=smash.gaus(res,sigma=sqrt(1+sigma^2))
+    mu.hat=smash.gaus(res,sigma=sqrt(1/4+sigma^2))
   }
   yy3=yy-mu.hat
   beta.hat=H%*%yy3
@@ -71,7 +67,7 @@ beta=beta/norm(beta,'2')
 n=length(mu)
 p=length(beta)
 SNR=3
-seed=12345
+seed=1234
 set.seed(seed)
 X=matrix(rnorm(n*p,0,1),nrow=n,byrow = T)
 Xbeta=X%*%beta
@@ -99,7 +95,8 @@ f = c()
 for(i in 1:length(m)){
   f[i]=sum(h*(1+((m[i]-t)/w)^4)^(-1))
 }
-mu=f*5
+mu=f*1.2
+
 beta=c(1,2,-3,-4,5)
 beta=beta/norm(beta,'2')
 
