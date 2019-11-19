@@ -1,0 +1,22 @@
+---
+title: "estimate nugget effect"
+author: "Dongyue Xie"
+date: "2019-11-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Nugget effect is unknown in practice. To apply our smashgen method, we need to know $\sigma^2+s_t^2$. My initial idea is that we can either estimate $\sigma^2$ or $\sigma^2+s_t^2$ together. The method proposed for estimating nugget effect works well as shown in 1 below. Estimating $\sigma^2$ first then plus $s_t^2$ gives better estimation than estimating $\sigma^2+s_t^2$ together($*$). The phenomena I observed is that though the fact $(*)$, `smash.gaus` gives very similar estimate of $\mu_t$ in terms of MSE. This is because `smash.gaus` is sensitive to the scale of variance instead of the shape of variance. As long as n is large enough so that smash can give good estimation of scale of variance and roughly satisfactory shape, then smash.gaus can still give similar mean estimation(see 2 below).
+
+The most straightforward way is to use MLE. I do not include this here. But MLE is the default method.
+
+1. [Estimate nugget effect($\sigma$)](sigma2.html)
+2. [Smash robust to variance?](smashrobust.html)
+
+```{r}
+
+```
+

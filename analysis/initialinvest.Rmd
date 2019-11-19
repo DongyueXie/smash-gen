@@ -1,0 +1,27 @@
+---
+title: "initial investigation"
+author: "Dongyue Xie"
+date: "2019-11-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+This section contains analysis from very early stage of the project. At this stage, we assume the nugget effect is known. 
+
+We were trying to use sample mean as the initial estimate of parameter to formulate $y_t$ and doing iterative algorithm. The problem is that the algorithm does not converge sometimes especially when there is outliers(see 2). One way to solve this is to set the finest level coefficients to zero so that the outliers are kind of removed(at least not very extreme any more). This indeed seems solving the problem but maybe this is a kind of 'cheating'? 
+
+Another way is try to get rid of iterations and use only one iteration. But obviously it does not work well since $\Sigma_tx_t/T$ is not a good approximation of parameters. Finally, we decided to expand around posterior mean from `ash`(see 5 below). The default choice is to use a grid of uniform priors on the parameter($\lambda$ in Poi($\lambda$) and $p$ in Binomial(n,p)). 
+
+1. [review](poireview.html)
+2. [Poisson nugget simulation](nugget2.html): assume $\sigma$ is known.
+3. [A robust version of smash-gen](robustalgo.html): set the highest resolution wavelet coeffs to 0.
+4. [One iteration version](iter1.html): only do 1 iteration.
+5. [Expanding around ash posterior mean](ashpmean.html): iterate once but the Taylor series expansion is around ash posterior mean(applying ash to Poisson data first).
+
+```{r}
+
+```
+

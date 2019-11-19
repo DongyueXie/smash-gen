@@ -1,0 +1,20 @@
+---
+title: "Binomial data with unknown nugget effect"
+author: "Dongyue Xie"
+date: "2019-11-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+We extend smashgen to allow it smoothing probabilities. Simulations in 1 show that smashgen gives reasonable fits. When n is large and p is small in Binomial(n,p), we can use Poisson to approximate binomial distribution. In 2, we compared smashgen-binomial and smashgen-poi.binomial, as well as other popular smoothing methods(ti.thresh and eb.thresh). In general, smashgen-binomial outperforms the other methods. While we expect that as $n_t$ increases smashgen-poi.binomial should give smaller MSE, this is not the case. 
+
+1. [Binomial nugget effect](binomial.html)
+2. [Poisson as approximate of Binomial?](poibinom.html)
+
+```{r}
+
+```
+
