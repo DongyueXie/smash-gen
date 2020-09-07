@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Dongyue Xie" />
@@ -28,9 +29,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
-<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
-<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -78,9 +78,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,7 +92,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -104,6 +101,9 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -119,7 +119,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -139,6 +138,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -160,55 +196,68 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -257,8 +306,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -267,6 +314,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -334,314 +391,458 @@ div.section {
 
 
 <h1 class="title toc-ignore">Shrink R squared - examples</h1>
-<h4 class="author"><em>Dongyue Xie</em></h4>
-<h4 class="date"><em>2019-01-21</em></h4>
+<h4 class="author">Dongyue Xie</h4>
+<h4 class="date">2019-01-21</h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-10</p>
-<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
-<ul>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-09-07
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>smash-gen/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20180501)</code> </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20180501code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20180501)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20180501code" class="panel-collapse collapse">
+<div class="panel-body">
 <p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/63863c79e078b30b81296471431b2af2ab75da70" target="_blank">63863c7</a> </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentreee723bec70a46fe880fcc0e99c2552fc826fa8c1btargetblanke723beca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/e723bec70a46fe880fcc0e99c2552fc826fa8c1b" target="_blank">e723bec</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentreee723bec70a46fe880fcc0e99c2552fc826fa8c1btargetblanke723beca" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    data/.DS_Store
 
 Untracked files:
     Untracked:  analysis/chipexoeg.Rmd
     Untracked:  analysis/efsd.Rmd
+    Untracked:  analysis/pln_smooth.Rmd
+    Untracked:  analysis/pre0221.Rmd
+    Untracked:  analysis/smashadditive.Rmd
     Untracked:  analysis/talk1011.Rmd
     Untracked:  data/chipexo_examples/
     Untracked:  data/chipseq_examples/
     Untracked:  talk.Rmd
+    Untracked:  talk.html
     Untracked:  talk.pdf
 
 Unstaged changes:
     Modified:   analysis/binomial.Rmd
     Modified:   analysis/fda.Rmd
-    Modified:   analysis/index.Rmd
+    Modified:   analysis/protein.Rmd
     Modified:   analysis/r2.Rmd
     Modified:   analysis/sigma.Rmd
 
 </code></pre>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
-</li>
-</ul>
-<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
-<ul>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 File
 </th>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
-<th style="text-align:left;">
+<th>
 Message
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/e723bec70a46fe880fcc0e99c2552fc826fa8c1b/analysis/r2b.Rmd" target="_blank">e723bec</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-07
+</td>
+<td>
+wflow_publish(“analysis/r2b.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/5a3ca6fb05dc31554a7425ef7777b5c6da8ef740/docs/r2b.html" target="_blank">5a3ca6f</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-02-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/63863c79e078b30b81296471431b2af2ab75da70/analysis/r2b.Rmd" target="_blank">63863c7</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/e49cf2f436a7975c6df01044119b3c25097d85ad/docs/r2b.html" target="_blank">e49cf2f</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/e49cf2f436a7975c6df01044119b3c25097d85ad/docs/r2b.html" target="_blank">e49cf2f</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/d255e062db754f87bd7035d22f7adb39d0f252f3/analysis/r2b.Rmd" target="_blank">d255e06</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/c6f9a9135a120c18d6be843925aba99d62835a05/docs/r2b.html" target="_blank">c6f9a91</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/c6f9a9135a120c18d6be843925aba99d62835a05/docs/r2b.html" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/7e08c59f6032d1fbad98ea651d6dc18e9ea19926/analysis/r2b.Rmd" target="_blank">7e08c59</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/r2b.html" target="_blank">c7f4704</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/r2b.html" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1a64c5ff17e3b6f8b82de0633a7cd5461ca6468/analysis/r2b.Rmd" target="_blank">a1a64c5</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/r2b.html" target="_blank">9ce257c</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/r2b.html" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/d6bcb1ac509628298292955aed0a2bc61d273804/analysis/r2b.Rmd" target="_blank">d6bcb1a</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/97b73fcaf728c9a9f389ecda1f1ecbcb0563bfe6/docs/r2b.html" target="_blank">97b73fc</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/97b73fcaf728c9a9f389ecda1f1ecbcb0563bfe6/docs/r2b.html" target="_blank">97b73fc</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-22
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/b5029e2bafd13ed601d12b9a58a1babad5a19d27/analysis/r2b.Rmd" target="_blank">b5029e2</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-22
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 html
 </td>
-<td style="text-align:left;">
-<a href="https://cdn.rawgit.com/DongyueXie/smash-gen/ad12c40aad76bbc7fc79498f45036241cf6a6141/docs/r2b.html" target="_blank">ad12c40</a>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/ad12c40aad76bbc7fc79498f45036241cf6a6141/docs/r2b.html" target="_blank">ad12c40</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-22
 </td>
-<td style="text-align:left;">
+<td>
 Build site.
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/11f83fba74ce4b93409f82d36294de898ade18be/analysis/r2b.Rmd" target="_blank">11f83fb</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-22
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/r2b.Rmd”)
 </td>
 </tr>
 </tbody>
 </table>
-</ul>
-<p></details></p>
-<hr />
+</div>
+<hr>
+</div>
+</div>
+</div>
 <p>For the method used in these examples, see <a href="r2.html">here</a></p>
 <ol style="list-style-type: decimal">
 <li><p>True <span class="math inline">\(R^2\)</span> is defined as <span class="math inline">\(R^2=\frac{var(X\beta)}{var(y)}=\frac{var(y)-\sigma^2}{var(y)}=1-\frac{\sigma^2}{var(y)}=1-\frac{\sigma^2}{\sigma^2+var(X\beta)}\)</span></p></li>
@@ -670,13 +871,24 @@ ash_ar2=function(R2,n,p){
 }
 
 
+# ash_r2=function(R2,n,p){
+#   df1=n-1
+#   df2=n-1
+#   log.ratio=log(1-R2)
+#   shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
+#   r2=1-exp(shrink.log.ratio)
+#   return(r2)
+# }
+
 ash_r2=function(R2,n,p){
-  df1=n-1
-  df2=n-1
-  log.ratio=log(1-R2)
-  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
-  r2=1-exp(shrink.log.ratio)
-  return(r2)
+  df1=p  
+  df2=n-p-1
+  log.ratio=log(R2/(1-R2)/df1*df2)
+  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2),
+                       mixcompdist=&quot;+uniform&quot;)$result$PosteriorMean
+  #r2=(exp(shrink.log.ratio)-1)/(n/p+1)
+  r2=(exp(shrink.log.ratio)-1)
+  r2/(1+r2)
 }</code></pre>
 </div>
 <div id="compare-shrunk-r2-with-true-r2." class="section level1">
@@ -718,47 +930,54 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-2-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-2-1.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -766,47 +985,54 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
+Past versions of unnamed-chunk-2-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-2-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-2-2.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p><strong>Uniform(0,3)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
@@ -839,47 +1065,54 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-3-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-3-1.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -887,47 +1120,54 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-3-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-3-2.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p><strong>Uniform(0,5)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
 
@@ -960,47 +1200,54 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-4-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-4-1.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -1008,47 +1255,54 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-4-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-4-2.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li>Increase <span class="math inline">\(p\)</span> to 20.</li>
 </ol>
@@ -1085,58 +1339,65 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-5-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-5-1.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-5-1.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -1144,58 +1405,65 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-5-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-5-2.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-5-2.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li><span class="math inline">\(n=30, p=3\)</span>.</li>
 </ol>
@@ -1232,58 +1500,65 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-6-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-6-1.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-6-1.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2as,col=3)
@@ -1291,58 +1566,65 @@ lines(trueR2,R2s,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;Adjusted R^2 fash&#39;,&#39;R^2 fash&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-6-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-6-2.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/9ce257c88049551c0dce48eceef4c4c67e753cb4/docs/figure/r2b.Rmd/unnamed-chunk-6-2.png" target="_blank">9ce257c</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 </div>
 <div id="compare-fash-and-corshrink" class="section level1">
 <h1>Compare fash and corshrink</h1>
@@ -1387,47 +1669,54 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-7-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-7-1.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1435,47 +1724,54 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-7-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-7-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-7-2.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li><span class="math inline">\(n=30,p=1\)</span></li>
 </ol>
@@ -1514,47 +1810,54 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-8-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-8-1.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1562,47 +1865,54 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
+Past versions of unnamed-chunk-8-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-8-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c7f4704485d0cd8d0e64bdd377d88d541b8351bc/docs/figure/r2b.Rmd/unnamed-chunk-8-2.png" target="_blank">c7f4704</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-01-27
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 </div>
 <div id="multiple-regression" class="section level2">
 <h2>Multiple regression</h2>
@@ -1644,36 +1954,43 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-9-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1681,36 +1998,43 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-2">
+Past versions of unnamed-chunk-9-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-9-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li><span class="math inline">\(n=100,p=20\)</span></li>
 </ol>
@@ -1749,36 +2073,43 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-10-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1786,36 +2117,43 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-2">
+Past versions of unnamed-chunk-10-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-10-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p><span class="math inline">\(n=100,p=50\)</span></p>
 <p><strong>Uniform(0,1)</strong>:</p>
 <pre class="r"><code>set.seed(1234)
@@ -1852,36 +2190,43 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-11-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1889,36 +2234,43 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-2">
+Past versions of unnamed-chunk-11-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-11-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <ol start="3" style="list-style-type: decimal">
 <li><span class="math inline">\(n=30, p=3\)</span></li>
 </ol>
@@ -1957,36 +2309,43 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1,1),col=c(1,2,3,4,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-12-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2a,R2s,R2as,trueR2)))
 lines(trueR2,R2a,col=2)
 lines(trueR2,R2.fash,col=3)
@@ -1994,36 +2353,43 @@ lines(trueR2,R2.cor,col=4)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;Adjusted R^2&#39;,&#39;R^2 fash&#39;,&#39;R^2 CorShrink&#39;),lty=c(1,1,1,1),col=c(1,2,3,4))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-2">
+Past versions of unnamed-chunk-12-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-12-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 </div>
 </div>
 <div id="summary1" class="section level1">
@@ -2075,72 +2441,86 @@ lines(beta.list,trueR2,col=&#39;grey80&#39;)
 abline(h=0,lty=2)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;R^2 CorShrink&#39;,&#39;R^2 CorShrink Random Sign&#39;,&#39;True R^2&#39;),lty=c(1,1,1,1),col=c(1,2,3,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-13-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <pre class="r"><code>plot(trueR2,R2,type=&#39;l&#39;,ylim=range(c(R2,R2.cor.sign,R2.cor,trueR2)))
 lines(trueR2,R2.cor,col=2)
 lines(trueR2,R2.cor.sign,col=3)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;R^2&#39;,&#39;R^2 CorShrink&#39;,&#39;R^2 CorShrink Random Sign&#39;),lty=c(1,1,1),col=c(1,2,3))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-2.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-2">
+Past versions of unnamed-chunk-13-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-13-2.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>So signs do not matter.</p>
 </div>
 <div id="estimates-of-g" class="section level1">
@@ -2175,43 +2555,50 @@ lines(trueR2,R2.cor,col=2)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;fash&#39;,&#39;Corshrink&#39;,&#39;True R2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-14-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>fash:</p>
 <pre class="r"><code>log.ratio=log(1-R2)
 ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
 ash.fit$fitted_g</code></pre>
 <pre><code>$pi
- [1] 3.941201e-01 1.339569e-11 1.337869e-11 1.341321e-11 1.372783e-11
- [6] 1.519486e-11 2.151838e-11 6.725142e-11 6.058799e-01 1.814045e-11
+ [1] 0.3941201 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+ [8] 0.0000000 0.6058799 0.0000000
 
 $a
  [1]  0.00000000 -0.09507465 -0.13445586 -0.19014930 -0.26891172
@@ -2298,36 +2685,43 @@ lines(trueR2,R2.cor,col=2)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;fash&#39;,&#39;Corshrink&#39;,&#39;True R2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-17-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-17-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>fash:</p>
 <pre class="r"><code>log.ratio=log(1-R2)
 ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
@@ -2421,44 +2815,50 @@ lines(trueR2,R2.cor,col=2)
 lines(trueR2,trueR2,col=&#39;grey80&#39;)
 legend(&#39;topleft&#39;,c(&#39;fash&#39;,&#39;Corshrink&#39;,&#39;True R2&#39;),lty=c(1,1,1),col=c(1,2,&#39;grey80&#39;))</code></pre>
 <p><img src="figure/r2b.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/c6f9a9135a120c18d6be843925aba99d62835a05/docs/figure/r2b.Rmd/unnamed-chunk-20-1.png" target="_blank">c6f9a91</a>
 </td>
-<td style="text-align:left;">
+<td>
 Dongyue Xie
 </td>
-<td style="text-align:left;">
+<td>
 2019-02-10
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+</div>
+</div>
 <p>fash:</p>
 <pre class="r"><code>log.ratio=log(1-R2)
 ash.fit=ash(log.ratio,1,lik=lik_logF(df1=n-1,df2=n-1))
 ash.fit$fitted_g</code></pre>
 <pre><code>$pi
- [1] 1.925080e-01 3.447647e-11 3.471171e-11 3.517280e-11 3.606265e-11
- [6] 3.774646e-11 4.082196e-11 4.558961e-11 5.172612e-11 6.290321e-11
-[11] 1.055638e-10 8.074920e-01 4.531427e-10 4.122839e-11
+ [1] 0.192508 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+ [8] 0.000000 0.000000 0.000000 0.000000 0.807492 0.000000 0.000000
 
 $a
  [1]  0.00000000 -0.07447264 -0.10532021 -0.14894527 -0.21064043
@@ -2529,16 +2929,21 @@ attr(,&quot;row.names&quot;)
 <li><p><code>Corshirnk</code> depends on Fisher transformation which has bivariate normal assumption. Since <span class="math inline">\(R^2=r^2_{y,\hat y}\)</span>, we can apply <code>Corshirnk</code> if <span class="math inline">\(y,\hat y\)</span> is bivariate normal distributed. By saying <span class="math inline">\(y,\hat y\)</span> is bivariate normal distributed, I mean <span class="math inline">\(y,\hat y\)</span> are <span class="math inline">\(n\)</span> i.i.d samples from a bivariate normal distribution. However, this can hardly be true because <span class="math inline">\(\hat y=Hy\)</span> where <span class="math inline">\(H=X(X^TX)^{-1}X^T\)</span>, so the <span class="math inline">\(n\)</span> samples <span class="math inline">\(y,\hat y\)</span> are not independently generated.</p></li>
 <li><p>From the examples above, adjusted <span class="math inline">\(R^2\)</span> is a good estimate of true <span class="math inline">\(R^2\)</span>. It gives estimate close to ture <span class="math inline">\(R^2\)</span> which can be seen from the True <span class="math inline">\(R^2\)</span> - estimated <span class="math inline">\(R^2\)</span> plot. It’s pitfall it that it’s no longer necessatily positive - it can be negative.</p></li>
 </ol>
-<div id="session-information" class="section level2">
-<h2>Session information</h2>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.1 (2018-07-02)
+<pre><code>R version 3.6.1 (2019-07-05)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 Running under: macOS High Sierra 10.13.6
 
 Matrix products: default
-BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -2547,25 +2952,29 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] CorShrink_0.1-6 ashr_2.2-7     
+[1] CorShrink_0.1-6 ashr_2.2-38    
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.0        plyr_1.8.4        compiler_3.5.1   
- [4] git2r_0.23.0      workflowr_1.1.1   R.methodsS3_1.7.1
- [7] R.utils_2.7.0     iterators_1.0.10  tools_3.5.1      
-[10] digest_0.6.18     corrplot_0.84     evaluate_0.11    
-[13] gtable_0.2.0      lattice_0.20-35   Matrix_1.2-14    
-[16] foreach_1.4.4     yaml_2.2.0        parallel_3.5.1   
-[19] gridExtra_2.3     stringr_1.3.1     knitr_1.20       
-[22] REBayes_1.3       rprojroot_1.3-2   grid_3.5.1       
-[25] glmnet_2.0-16     rmarkdown_1.10    reshape2_1.4.3   
-[28] corpcor_1.6.9     magrittr_1.5      whisker_0.3-2    
-[31] backports_1.1.2   codetools_0.2-15  htmltools_0.3.6  
-[34] MASS_7.3-51.1     assertthat_0.2.0  stringi_1.2.4    
-[37] Rmosek_8.0.69     doParallel_1.0.14 pscl_1.5.2       
-[40] truncnorm_1.0-8   SQUAREM_2017.10-1 R.oo_1.22.0      </code></pre>
+ [1] gmp_0.6-0         Rcpp_1.0.2        plyr_1.8.4       
+ [4] compiler_3.6.1    later_1.0.0       git2r_0.26.1     
+ [7] CVXR_1.0-1        workflowr_1.5.0   iterators_1.0.12 
+[10] tools_3.6.1       corrplot_0.84     bit_1.1-14       
+[13] digest_0.6.21     gtable_0.3.0      evaluate_0.14    
+[16] lattice_0.20-38   rlang_0.4.5       Matrix_1.2-17    
+[19] foreach_1.4.7     yaml_2.2.0        parallel_3.6.1   
+[22] xfun_0.10         gridExtra_2.3     Rmpfr_0.8-1      
+[25] stringr_1.4.0     knitr_1.25        fs_1.3.1         
+[28] glmnet_2.0-18     bit64_0.9-7       rprojroot_1.3-2  
+[31] grid_3.6.1        glue_1.3.1        R6_2.4.0         
+[34] rmarkdown_1.16    mixsqp_0.1-97     reshape2_1.4.3   
+[37] corpcor_1.6.9     magrittr_1.5      whisker_0.4      
+[40] backports_1.1.5   promises_1.1.0    codetools_0.2-16 
+[43] htmltools_0.4.0   MASS_7.3-51.4     httpuv_1.5.2     
+[46] stringi_1.4.3     doParallel_1.0.15 pscl_1.5.2       
+[49] truncnorm_1.0-8   SQUAREM_2017.10-1</code></pre>
 </div>
 </div>
+
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -2578,14 +2987,6 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
-
-<hr>
-<p>
-  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-  analysis was created with
-  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
-</p>
-<hr>
 
 
 </div>
@@ -2604,6 +3005,54 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
