@@ -42,13 +42,24 @@ ash_ar2=function(R2,n,p){
 }
 
 
+# ash_r2=function(R2,n,p){
+#   df1=n-1
+#   df2=n-1
+#   log.ratio=log(1-R2)
+#   shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
+#   r2=1-exp(shrink.log.ratio)
+#   return(r2)
+# }
+
 ash_r2=function(R2,n,p){
-  df1=n-1
-  df2=n-1
-  log.ratio=log(1-R2)
-  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2))$result$PosteriorMean
-  r2=1-exp(shrink.log.ratio)
-  return(r2)
+  df1=p  
+  df2=n-p-1
+  log.ratio=log(R2/(1-R2)/df1*df2)
+  shrink.log.ratio=ash(log.ratio,1,lik=lik_logF(df1=df1,df2=df2),
+                       mixcompdist="+uniform")$result$PosteriorMean
+  #r2=(exp(shrink.log.ratio)-1)/(n/p+1)
+  r2=(exp(shrink.log.ratio)-1)
+  r2/(1+r2)
 }
 
 
