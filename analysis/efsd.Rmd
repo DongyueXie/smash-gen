@@ -1,0 +1,28 @@
+---
+title: "Signal denoising exponential family"
+author: "Dongyue Xie"
+date: "2018-11-11"
+output: workflowr::wflow_html
+---
+
+Some collections of literature:
+
+Nonparametric regression for exponential family:
+
+[Brown, Lawrence D., T. Tony Cai, and Harrison H. Zhou. "Nonparametric regression in exponential families." The annals of statistics 38.4 (2010): 2005-2046.](https://arxiv.org/pdf/1010.3836.pdf)
+
+[Cleveland, W. S., Mallows, C. L., & McRae, J. E. (1993). ATS methods: Nonparametric regression for non-Gaussian data. Journal of the American Statistical Association, 88(423), 821-835.](https://www.jstor.org/stable/pdf/2290771.pdf?refreqid=excelsior%3A9899f3e009de18206db09c6eec5a069c)
+
+[Zhang, H. H., & Lin, Y. (2006). Component selection and smoothing for nonparametric regression in exponential families. Statistica Sinica, 1021-1041.](http://www3.stat.sinica.edu.tw/statistica/oldpdf/A16n317.pdf)
+
+[Bianco, A. M., Boente, G., & Sombielle, S. (2011). Robust estimation for nonparametric generalized regression. Statistics & Probability Letters, 81(12), 1986-1994.](https://www.sciencedirect.com/science/article/pii/S0167715211002719)
+
+[Fryzlewicz, P. (2017). Likelihood ratio Haar variance stabilization and normalization for Poisson and other non-Gaussian noise removal. arXiv preprint arXiv:1701.07263.](https://arxiv.org/pdf/1701.07263.pdf)
+
+[Local Likelihood Estimation](https://www.jstor.org/stable/pdf/2289465.pdf)
+
+Generalized addtive model
+
+[O'sullivan, F., Yandell, B. S., & Raynor Jr, W. J. (1986). Automatic smoothing of regression functions in generalized linear models. Journal of the American Statistical Association, 81(393), 96-103.](http://www.stat.wisc.edu/~yandell/doc/1986/7.JASA.pdf)
+
+
