@@ -11,7 +11,7 @@ output:
 
 **Data generation**
 
-Assume $m$ has smooth structure, $\mu_t=(m_t+\epsilon)^2$ where $\epsilon\sim N(0,\sigma^2)$, and $X_t\sim Pois(\mu_t)$. Then $Y_t=\sqrt{X_t}\approx \sqrt{\mu_t}+N(0,1/4)=m+\epsilon+N(0,1/4)$ and $\hat\mu_t=\hat m_t^2$.
+Assume $m$ has smooth structure, $\mu_t=(m_t+\epsilon)^2$ where $\epsilon\sim N(0,\sigma^2)$, and $X_t\sim Pois(\mu_t)$. Then $Y_t=\sqrt{X_t}\approx \sqrt{\mu_t}+N(0,1/4)=m+\epsilon+N(0,1/4)$.
 
 **Recover smooth structure**
 
@@ -59,7 +59,7 @@ homo_var=function(x,minv=0){
 ```{r}
 spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
     (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
-n = 512
+n = 1024
 t = 1:n/n
 m = spike.f(t)
 m=m*2+0.1
@@ -68,60 +68,72 @@ set.seed(12345)
 sigma=0
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
-mu=vst_gen(x,sigma)
+mu = smash.gen.poiss(x,nugget=sigma^2,transformation = 'vst')
+#mu=vst_gen(x,sigma)
 
 plot(x,col='grey80',main='no nugget')
 lines(m)
-lines(mu,col=2)
+lines(mu$lambda.est,col=2)
+```
 
+```{r}
 
 set.seed(12345)
 sigma=0.3
 mm=(sqrt(m)+rnorm(n,0,sigma))^2
 x=rpois(n,mm)
-mu=vst_gen(x,sigma)
-mu.s=vst_gen(x,NULL)
-mu.su=vst_gen(x,NULL,nug_est = F)
+mu=smash.gen.poiss(x,sigma^2)
+mu.s=smash.gen.poiss(x)
+#mu.su=vst_gen(x,NULL,nug_est = F)
 plot(x,col='grey80',main='with nugget 0.3')
 lines(m)
-lines(mu,col=2)
-lines(mu.s,col=3)
-lines(mu.su,col=4)
-legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
+lines(mu$lambda.est,col=2)
+lines(mu.s$lambda.est,col=3)
+#lines(mu.su,col=4)
+legend('topright',c('true mean','known nugget','unkown nugget'),lty=c(1,1,1),col=c(1,2,3))
+mu.s$nugget.est
+```
+
+```{r}
 
 m=m*5+20
 set.seed(12345)
 sigma=0.3
 x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 
-mu=vst_gen(x,sigma)
-mu.s=vst_gen(x,NULL)
-mu.su=vst_gen(x,NULL,nug_est = F)
+mu=smash.gen.poiss(x,sigma^2)
+mu.s=smash.gen.poiss(x)
+#mu.su=vst_gen(x,NULL,nug_est = F)
 plot(x,col='grey80',main='with nugget 0.3')
 lines(m)
-lines(mu,col=2)
-lines(mu.s,col=3)
-lines(mu.su,col=4)
-legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
+lines(mu$lambda.est,col=2)
+lines(mu.s$lambda.est,col=3)
+#lines(mu.su,col=4)
+legend('topright',c('true mean','known nugget','unkown nugget'),lty=c(1,1,1),col=c(1,2,3))
+mu.s$nugget.est
+```
 
+```{r}
 sigma=0.5
 x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 
-mu=vst_gen(x,sigma)
-mu.s=vst_gen(x,NULL)
-mu.su=vst_gen(x,NULL,nug_est = F)
-plot(x,col='grey80',main='with nugget 0.5')
+mu=smash.gen.poiss(x,sigma^2)
+mu.s=smash.gen.poiss(x)
+#mu.su=vst_gen(x,NULL,nug_est = F)
+plot(x,col='grey80',main='with nugget 0.3')
 lines(m)
-lines(mu,col=2)
-lines(mu.s,col=3)
-lines(mu.su,col=4)
-legend('topright',c('smooth mean','known var','unkown var-est nugget','unkown var'),lty=c(1,1,1,1),col=c(1,2,3,4))
+lines(mu$lambda.est,col=2)
+lines(mu.s$lambda.est,col=3)
+#lines(mu.su,col=4)
+legend('topright',c('true mean','known nugget','unkown nugget'),lty=c(1,1,1),col=c(1,2,3))
+mu.s$nugget.est
 ```
 
 
-# Real data comparison
 
-```{r}
+
+```{r,eval=F,include=F}
+# Real data comparison
 extract_counts_CTCF <- function(filename){
   bed_counts <- read.table(filename, header = F, stringsAsFactors = F)
   colnames(bed_counts) <- c("chr", "start", "end", "name", "width", "counts")
