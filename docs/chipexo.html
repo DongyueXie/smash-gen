@@ -405,7 +405,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-09-07
+<strong>Last updated:</strong> 2020-09-08
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -496,10 +496,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree0d33dfadb6d3ba6455c53d4991719afd16edf4e7targetblank0d33dfaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/0d33dfadb6d3ba6455c53d4991719afd16edf4e7" target="_blank">0d33dfa</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentreed3b6815ebfc84dd8a952b6ab30f68f354d5b4295targetblankd3b6815a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/d3b6815ebfc84dd8a952b6ab30f68f354d5b4295" target="_blank">d3b6815</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree0d33dfadb6d3ba6455c53d4991719afd16edf4e7targetblank0d33dfaa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentreed3b6815ebfc84dd8a952b6ab30f68f354d5b4295targetblankd3b6815a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -509,18 +509,22 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    data/.DS_Store
 
 Untracked files:
     Untracked:  analysis/pln_smooth.Rmd
     Untracked:  analysis/smashadditive.Rmd
     Untracked:  analysis/talk1011.Rmd
+    Untracked:  analysis/vstlikcompare.Rmd
     Untracked:  talk.Rmd
     Untracked:  talk.html
     Untracked:  talk.pdf
 
 Unstaged changes:
     Modified:   analysis/binomial.Rmd
+    Deleted:    analysis/chipexocut.Rmd
+    Modified:   analysis/chipseqref.Rmd
     Modified:   analysis/fda.Rmd
     Modified:   analysis/index.Rmd
     Modified:   analysis/protein.Rmd
@@ -564,6 +568,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/d3b6815ebfc84dd8a952b6ab30f68f354d5b4295/analysis/chipexo.Rmd" target="_blank">d3b6815</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+wflow_publish(“analysis/chipexo.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/chipexo.html" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -643,6 +681,7 @@ extract_counts_CTCF &lt;- function(filename){
 real_study = function(file.name,plot.name){
   
   chipexo1 &lt;- extract_counts_CTCF(file.name)
+  print(paste(&quot;proportion of 0s:&quot;, round(sum(chipexo1$counts==0)/length(chipexo1$counts),2)))
 
 #dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
 smash.out=smash.poiss(chipexo1$counts)
@@ -654,15 +693,18 @@ smashgen.lik.out=smash.gen.poiss(chipexo1$counts,method = &#39;smash&#39;,
 plot(chipexo1$counts, col = &quot;gray80&quot;, type = &quot;h&quot;, ylab = &quot;counts&quot;, xlab = &quot;&quot;, main = plot.name)
 lines(smash.out, col = &quot;blue&quot;, lwd = 1)
 #lines(dash.out$estimate, col = &quot;red&quot;, lwd = 1)
-lines(smashgen.vst.out$lambda.est,col=&quot;red&quot;,lwd=1)
-lines(smashgen.lik.out$lambda.est,col=&#39;black&#39;,lwd=1)
+lines(smashgen.vst.out$lambda.est,col=&quot;red&quot;,lwd=2)
+lines(smashgen.lik.out$lambda.est,col=&#39;black&#39;,lwd=2)
 
 legend(&quot;topright&quot;, # places a legend at the appropriate place
        c(&quot;data&quot;,&quot;smash-poiss&quot;,&#39;smash-gen-vst&#39;,&#39;smash-gen-lik&#39;), # puts text in the legend
        lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,1,1,1),
+       lwd=c(1,1,2,2),
        cex = 0.5,
        col=c(&quot;gray80&quot;,&quot;blue&quot;, &quot;red&quot;,&#39;black&#39;))
+
+print(paste(&quot;nugget effect estimated by vst:&quot;,round(smashgen.vst.out$nugget.est,2)))
+print(paste(&quot;nugget effect estimated by lik_expansion:&quot;,round(smashgen.lik.out$nugget.est,2)))
 
 }</code></pre>
 </div>
@@ -672,6 +714,7 @@ legend(&quot;topright&quot;, # places a legend at the appropriate place
 <h2>Forward</h2>
 <pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt&quot;
 real_study(file.name,plot.name = &quot;EncodeBroadHistoneHelas - Rep 1 - forward&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.81&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
@@ -697,6 +740,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-2-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-2-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -710,12 +764,15 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.02&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 0&quot;</code></pre>
 </div>
 <div id="reverse" class="section level2">
 <h2>Reverse</h2>
 <pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_reverse_counts.txt&quot;
 
 real_study(file.name,plot.name = &quot;EncodeBroadHistoneHelas - Rep 1 - reverse&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.84&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
@@ -741,6 +798,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-3-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-3-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -754,6 +822,8 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.01&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 2.93&quot;</code></pre>
 </div>
 </div>
 <div id="encodeopenchromchiphelas---rep-1" class="section level1">
@@ -764,6 +834,7 @@ Dongyue
 
 
 real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 1 - Forward&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.83&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
@@ -789,6 +860,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-4-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-4-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -802,12 +884,15 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.02&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 0&quot;</code></pre>
 </div>
 <div id="reverse-1" class="section level2">
 <h2>Reverse</h2>
 <pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_reverse_counts.txt&quot;
 
 real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 1 - reverse&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.81&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -833,6 +918,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-5-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-5-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -846,6 +942,8 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.02&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 0&quot;</code></pre>
 </div>
 </div>
 <div id="encodeopenchromchiphelas---rep-2" class="section level1">
@@ -853,6 +951,7 @@ Dongyue
 <p>##Forward</p>
 <pre class="r"><code>file.name = &#39;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt&#39;
 real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 2 - Forward&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.79&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -878,6 +977,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-6-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-6-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -891,11 +1001,14 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.02&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 1.21&quot;</code></pre>
 </div>
 <div id="reverse-2" class="section level1">
 <h1>Reverse</h1>
 <pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_reverse_counts.txt&quot;
 real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 2 - reverse&quot;)</code></pre>
+<pre><code>[1] &quot;proportion of 0s: 0.78&quot;</code></pre>
 <p><img src="figure/chipexo.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -921,6 +1034,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-7-1.png" target="_blank">65bf7cd</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-7-1.png" target="_blank">a1b44cb</a>
 </td>
 <td>
@@ -934,6 +1058,8 @@ Dongyue
 </table>
 </div>
 </div>
+<pre><code>[1] &quot;nugget effect estimated by vst: 0.02&quot;
+[1] &quot;nugget effect estimated by lik_expansion: 1&quot;</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -957,7 +1083,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] dashr_0.99.0     inline_0.3.15    Rcpp_1.0.2       smashrgen_0.1.3 
+[1] dashr_0.99.0     inline_0.3.15    Rcpp_1.0.2       smashrgen_0.1.4 
 [5] wavethresh_4.6.8 MASS_7.3-51.4    caTools_1.17.1.2 ashr_2.2-38     
 [9] smashr_1.2-7    
 
