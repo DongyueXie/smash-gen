@@ -30,6 +30,7 @@ extract_counts_CTCF <- function(filename){
 real_study = function(file.name,plot.name){
   
   chipexo1 <- extract_counts_CTCF(file.name)
+  print(paste("proportion of 0s:", round(sum(chipexo1$counts==0)/length(chipexo1$counts),2)))
 
 #dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
 smash.out=smash.poiss(chipexo1$counts)
@@ -41,15 +42,18 @@ smashgen.lik.out=smash.gen.poiss(chipexo1$counts,method = 'smash',
 plot(chipexo1$counts, col = "gray80", type = "h", ylab = "counts", xlab = "", main = plot.name)
 lines(smash.out, col = "blue", lwd = 1)
 #lines(dash.out$estimate, col = "red", lwd = 1)
-lines(smashgen.vst.out$lambda.est,col="red",lwd=1)
-lines(smashgen.lik.out$lambda.est,col='black',lwd=1)
+lines(smashgen.vst.out$lambda.est,col="red",lwd=2)
+lines(smashgen.lik.out$lambda.est,col='black',lwd=2)
 
 legend("topright", # places a legend at the appropriate place
        c("data","smash-poiss",'smash-gen-vst','smash-gen-lik'), # puts text in the legend
        lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,1,1,1),
+       lwd=c(1,1,2,2),
        cex = 0.5,
        col=c("gray80","blue", "red",'black'))
+
+print(paste("nugget effect estimated by vst:",round(smashgen.vst.out$nugget.est,2)))
+print(paste("nugget effect estimated by lik_expansion:",round(smashgen.lik.out$nugget.est,2)))
 
 }
 
