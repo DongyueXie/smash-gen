@@ -10,7 +10,7 @@ output:
 
 We generalize `smash`(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, and account for additional unknown variances.
 
-This [R package](https://github.com/DongyueXie/smashrgen) contains functions for this project, the main function is `smash_gen_poiss.R.
+This [R package](https://github.com/DongyueXie/smashrgen) contains functions for this project, the main function is `smash_gen_poiss.R`.
 
 # Analysis
 
@@ -67,6 +67,7 @@ In addiiton to likelihood expansion, VST is another way to make data normal dsit
 2. [Compare log and anscombe transform](compares.html)
 3. [Vst for nugget effect](ansgen.html)
 4. [More in anscombe transformation](vstiter.html)
+5. [Compare vst and lik expansion](vstlikcompare.html)
 
 ## Chip-Exo and Chip-seq data smoothing
 
