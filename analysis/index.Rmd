@@ -10,11 +10,11 @@ output:
 
 We generalize `smash`(Xing and Stephens, 2016), a flexible empirical Bayes method for signal denoising, to deal with non-Gaussian data, and account for additional unknown variances.
 
-This [R package](https://github.com/DongyueXie/smashrgen) contains functions for this project.
+This [R package](https://github.com/DongyueXie/smashrgen) contains functions for this project, the main function is `smash_gen_poiss.R.
 
 # Analysis
 
-Update on Nov-2019: Only keep useful links here.
+A list of analysis related to the project
 
 ## Method
 
@@ -59,20 +59,6 @@ We treat unevenly spaced data as missing and set them to 0 with corresponding st
 
 1. [Missing data?](missing.html)
 
-## Chip-Exo and Chip-seq data smoothing
-
-Some real data applications of smashgen. One problem is that the length of sequence is not a power of 2 so have to either augment or cut the sequences. For augmenting data, I tried to reflect two tails of data and for cutting data, I tried to retain the parts that are obviously not zeros. In conclusion, smashgen gives more smoothing fit in general. Two problems: is it over-smoothing? how to solve the peak problem?
-
-The primary role of CTCF is thought to be in regulating the 3D structure of chromatin.CTCF binds together strands of DNA, thus forming chromatin loops, and anchors DNA to cellular structures like the nuclear lamina. It also defines the boundaries between active and heterochromatic DNA.
-
-1. [CTCF Chip-exo data, reflection](chipexo.html): use symmetric reflection to extend sequence.
-2. [CTCF Chip-exo data, cut](chipexocut.html): cut the sequence.
-3. [CTCF Chip-seq data](chipseqref.html)
-
-## DNA methylation data smoothing
-
-1. [BS Cancer data](bsseq.html): DNA methylation data from normal and cancer.
-
 ## Variance stabilizing transformation(vst)
 
 In addiiton to likelihood expansion, VST is another way to make data normal dsitributed.
@@ -81,6 +67,20 @@ In addiiton to likelihood expansion, VST is another way to make data normal dsit
 2. [Compare log and anscombe transform](compares.html)
 3. [Vst for nugget effect](ansgen.html)
 4. [More in anscombe transformation](vstiter.html)
+
+## Chip-Exo and Chip-seq data smoothing
+
+Some real data applications of smashgen. 
+
+The primary role of CTCF is thought to be in regulating the 3D structure of chromatin.CTCF binds together strands of DNA, thus forming chromatin loops, and anchors DNA to cellular structures like the nuclear lamina. It also defines the boundaries between active and heterochromatic DNA.
+
+1. [CTCF Chip-exo data](chipexo.html)
+2. [CTCF Chip-seq data](chipseqref.html)
+
+## DNA methylation data smoothing
+
+1. [BS Cancer data](bsseq.html): DNA methylation data from normal and cancer.
+
 
 ## Wavelet-based Functional data analysis.
 
