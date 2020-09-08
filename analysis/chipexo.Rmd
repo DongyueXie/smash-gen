@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(warning = F, message = F)
 ```
 
-The lenght of sequence here is 425, which is not a power of 2 hence causing problem when using smashgen. In this real data analysis, we reflect the data both to the left and right so that it has length of 1024 then apply smashgen to the augmented data.
+The lenght of sequence here is 425, which is not a power of 2 hence causing problem when using smashgen. In this real data analysis, we reflect the data then apply smashgen to the augmented data.
 
 # Setup
 ```{r}
@@ -26,6 +26,33 @@ extract_counts_CTCF <- function(filename){
   return(counts.l = list(chr = bed_counts$chr, start = bed_counts$start, end = bed_counts$end, counts = counts))
 }
 
+
+real_study = function(file.name,plot.name){
+  
+  chipexo1 <- extract_counts_CTCF(file.name)
+
+#dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
+smash.out=smash.poiss(chipexo1$counts)
+#y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.vst.out=smash.gen.poiss(chipexo1$counts,method = 'smash',transformation = 'vst')
+smashgen.lik.out=smash.gen.poiss(chipexo1$counts,method = 'smash',
+                                 transformation = 'lik_expansion',ash.pm = TRUE)
+
+plot(chipexo1$counts, col = "gray80", type = "h", ylab = "counts", xlab = "", main = plot.name)
+lines(smash.out, col = "blue", lwd = 1)
+#lines(dash.out$estimate, col = "red", lwd = 1)
+lines(smashgen.vst.out$lambda.est,col="red",lwd=1)
+lines(smashgen.lik.out$lambda.est,col='black',lwd=1)
+
+legend("topright", # places a legend at the appropriate place
+       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik'), # puts text in the legend
+       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","blue", "red",'black'))
+
+}
+
 ```
 
 # EncodeBroadHistoneHelas - Rep 1
@@ -33,47 +60,16 @@ extract_counts_CTCF <- function(filename){
 ## Forward
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt")
-
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
-
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt"
+real_study(file.name,plot.name = "EncodeBroadHistoneHelas - Rep 1 - forward")
 ```
 
 ## Reverse
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_reverse_counts.txt")
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_reverse_counts.txt"
 
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
-
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+real_study(file.name,plot.name = "EncodeBroadHistoneHelas - Rep 1 - reverse")
 ```
 
 # EncodeOpenChromChipHelas - Rep 1
@@ -81,47 +77,18 @@ legend("topright", # places a legend at the appropriate place
 ## Forward
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt")
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt"
 
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
 
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+real_study(file.name,plot.name = "EncodeOpenChromChipHelas - Rep 1 - Forward")
 ```
 
 ## Reverse
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_reverse_counts.txt")
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_reverse_counts.txt"
 
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
-
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+real_study(file.name,plot.name = "EncodeOpenChromChipHelas - Rep 1 - reverse")
 ```
 
 # EncodeOpenChromChipHelas - Rep 2
@@ -129,43 +96,13 @@ legend("topright", # places a legend at the appropriate place
 ##Forward
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt")
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
-
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+file.name = 'data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt'
+real_study(file.name,plot.name = "EncodeOpenChromChipHelas - Rep 2 - Forward")
 ```
 
 # Reverse
 
 ```{r}
-chipexo1 <- extract_counts_CTCF("D:/smashgen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_reverse_counts.txt")
-dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
-smash.out=smash.poiss(chipexo1$counts)
-y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.out=smash_gen_lite(y)
-
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
-lines(smash.out, col = "blue", lwd = 1)
-lines(dash.out$estimate, col = "red", lwd = 2)
-lines(smashgen.out[301:725],col=3,lwd=3)
-
-legend("topright", # places a legend at the appropriate place
-       c("truth","dash-m", "smash-poiss",'smash-gen'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,2,1,3),
-       cex = 0.5,
-       col=c("gray80","red", "blue",3))
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_reverse_counts.txt"
+real_study(file.name,plot.name = "EncodeOpenChromChipHelas - Rep 2 - reverse")
 ```
