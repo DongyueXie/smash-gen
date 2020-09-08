@@ -508,10 +508,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree2ce356dd72ac38b76b8df4e64a57a82eda479ca8targetblank2ce356da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/2ce356dd72ac38b76b8df4e64a57a82eda479ca8" target="_blank">2ce356d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4e9e66319e6e54b55745ccce20b88f38ea1a3bfdtargetblank4e9e663a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4e9e66319e6e54b55745ccce20b88f38ea1a3bfd" target="_blank">4e9e663</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree2ce356dd72ac38b76b8df4e64a57a82eda479ca8targetblank2ce356da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4e9e66319e6e54b55745ccce20b88f38ea1a3bfdtargetblank4e9e663a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -576,6 +576,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/4e9e66319e6e54b55745ccce20b88f38ea1a3bfd/analysis/ansgen.Rmd" target="_blank">4e9e663</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+wflow_publish(“analysis/ansgen.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/0d211b480a4bc365beb23700d51ce724bfe905ee/docs/ansgen.html" target="_blank">0d211b4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -750,6 +784,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/0d211b480a4bc365beb23700d51ce724bfe905ee/docs/figure/ansgen.Rmd/unnamed-chunk-2-1.png" target="_blank">0d211b4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/e0e866aa4a78e950128dac94624eca88a249078e/docs/figure/ansgen.Rmd/unnamed-chunk-2-1.png" target="_blank">e0e866a</a>
 </td>
 <td>
@@ -781,7 +826,7 @@ x=rpois(n,mm)
 mu=smash.gen.poiss(x,sigma^2)
 mu.s=smash.gen.poiss(x)
 #mu.su=vst_gen(x,NULL,nug_est = F)
-plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.3&#39;)
+plot(x,col=&#39;grey80&#39;,main=&#39;Nugget 0.09&#39;)
 lines(m)
 lines(mu$lambda.est,col=2)
 lines(mu.s$lambda.est,col=3)
@@ -810,6 +855,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/0d211b480a4bc365beb23700d51ce724bfe905ee/docs/figure/ansgen.Rmd/unnamed-chunk-3-1.png" target="_blank">0d211b4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/e0e866aa4a78e950128dac94624eca88a249078e/docs/figure/ansgen.Rmd/unnamed-chunk-3-1.png" target="_blank">e0e866a</a>
@@ -846,13 +902,50 @@ x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 mu=smash.gen.poiss(x,sigma^2)
 mu.s=smash.gen.poiss(x)
 #mu.su=vst_gen(x,NULL,nug_est = F)
-plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.3&#39;)
+plot(x,col=&#39;grey80&#39;,main=&#39;Nugget 0.09&#39;)
 lines(m)
 lines(mu$lambda.est,col=2)
 lines(mu.s$lambda.est,col=3)
 #lines(mu.su,col=4)
 legend(&#39;topright&#39;,c(&#39;true mean&#39;,&#39;known nugget&#39;,&#39;unkown nugget&#39;),lty=c(1,1,1),col=c(1,2,3))</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/0d211b480a4bc365beb23700d51ce724bfe905ee/docs/figure/ansgen.Rmd/unnamed-chunk-4-1.png" target="_blank">0d211b4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mu.s$nugget.est</code></pre>
 <pre><code>[1] 0.09683011</code></pre>
 <pre class="r"><code>sigma=0.5
@@ -861,13 +954,50 @@ x=rpois(n,(sqrt(m)+rnorm(n,0,sigma))^2)
 mu=smash.gen.poiss(x,sigma^2)
 mu.s=smash.gen.poiss(x)
 #mu.su=vst_gen(x,NULL,nug_est = F)
-plot(x,col=&#39;grey80&#39;,main=&#39;with nugget 0.3&#39;)
+plot(x,col=&#39;grey80&#39;,main=&#39;Nugget 0.25&#39;)
 lines(m)
 lines(mu$lambda.est,col=2)
 lines(mu.s$lambda.est,col=3)
 #lines(mu.su,col=4)
 legend(&#39;topright&#39;,c(&#39;true mean&#39;,&#39;known nugget&#39;,&#39;unkown nugget&#39;),lty=c(1,1,1),col=c(1,2,3))</code></pre>
 <p><img src="figure/ansgen.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/0d211b480a4bc365beb23700d51ce724bfe905ee/docs/figure/ansgen.Rmd/unnamed-chunk-5-1.png" target="_blank">0d211b4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mu.s$nugget.est</code></pre>
 <pre><code>[1] 0.2595341</code></pre>
 </div>
