@@ -25,11 +25,11 @@ For Binomial data, $(f'(\mu))^2\propto 1/(np(1-p))$ so if we take $Y=sin^{-1}(\s
 Anscombe(1948) shows that for $Y=\sqrt{X+c}$, $Var(Y)\approx \frac{1}{4}[1+\frac{3-8c}{8\mu}+\frac{32c^2-52c+17}{2\mu^2}]]$. If take $c=3/8$ and for large $\mu$, $Var(Y)\approx 1/4$. Also clearly, $\lim_{\mu\to 0}Var(\sqrt{X+c})=0$. 
 
 ```{r}
-mu=c(seq(0,1,length.out = 50),seq(1,10,length.out = 50))
+mu=seq(0,10,length.out = 500)
 ans=c()
 sr=c()
 set.seed(12345)
-for (i  in 1:100) {
+for (i  in 1:500) {
   x=rpois(1e6,mu[i])
   ans[i]=var(sqrt(x+3/8))
   sr[i]=var(sqrt(x))
@@ -39,6 +39,19 @@ lines(mu,sr,col=4)
 abline(a=0.25,b=0,lty=2)
 legend('bottomright',c('anscombe','square root'),lty=c(1,1),col=c(1,4))
 ```
+
+Apprently, if the mean is small say 1 or 2 then the transformed variable has variance smaller than 0.25. One way to adjust for small counts is to take all possibilities into account. For example, if we observe x=0, then we can assign the following variance to its transformation, let $y\sim Poisson(\lambda)$: $\frac{\int p(x=0;\lambda)var(\sqrt{y+c};\lambda)d\lambda}{\int p(x=0;\lambda)d\lambda}$. In practice we can generate a grid of discrete values and evaluate the above quantity.
+
+```{r}
+for(i in c(0,1,2)){
+ p0 = dpois(i,mu)
+ p0 = p0/sum(p0)
+ p0 = sum(p0*ans)
+ print(p0)
+}
+```
+
+
 
 # Compare log and anscombe transformation
 
