@@ -496,10 +496,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree419cb5de1e4e8c4bf174cf5ccdb47a82b5ceb030targetblank419cb5da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/419cb5de1e4e8c4bf174cf5ccdb47a82b5ceb030" target="_blank">419cb5d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree71ccfa4398221f5fe3fd2b735e5bf1e3311843e2targetblank71ccfa4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/71ccfa4398221f5fe3fd2b735e5bf1e3311843e2" target="_blank">71ccfa4</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree419cb5de1e4e8c4bf174cf5ccdb47a82b5ceb030targetblank419cb5da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree71ccfa4398221f5fe3fd2b735e5bf1e3311843e2targetblank71ccfa4a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -572,6 +572,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/71ccfa4398221f5fe3fd2b735e5bf1e3311843e2/analysis/vstlikcompare.Rmd" target="_blank">71ccfa4</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+wflow_publish(“analysis/vstlikcompare.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/cf53728bc2a735cee4a83902d734f20d5b9190e3/docs/vstlikcompare.html" target="_blank">cf53728</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/419cb5de1e4e8c4bf174cf5ccdb47a82b5ceb030/analysis/vstlikcompare.Rmd" target="_blank">419cb5d</a>
 </td>
 <td>
@@ -625,16 +659,8 @@ wflow_publish(“analysis/vstlikcompare.Rmd”)
 </div>
 </div>
 </div>
-<pre class="r"><code>library(smashrgen)</code></pre>
-<pre><code>Loading required package: smashr</code></pre>
-<pre><code>Loading required package: ashr</code></pre>
-<pre><code>Loading required package: caTools</code></pre>
-<pre><code>Loading required package: MASS</code></pre>
-<pre><code>Loading required package: wavethresh</code></pre>
-<pre><code>WaveThresh: R wavelet software, release 4.6.8, installed</code></pre>
-<pre><code>Copyright Guy Nason and others 1993-2016</code></pre>
-<pre><code>Note: nlevels has been renamed to nlevelsWT</code></pre>
-<pre class="r"><code>library(smashr)
+<pre class="r"><code>library(smashrgen)
+library(smashr)
 library(wavethresh)</code></pre>
 <div id="step-trend" class="section level2">
 <h2>step trend</h2>
@@ -753,7 +779,7 @@ Dongyue Xie
 <pre class="r"><code>fit2$nugget.est</code></pre>
 <pre><code>[1] 0.2803054</code></pre>
 <pre class="r"><code>set.seed(12345)
-sigma = 0.5
+sigma = 1.5
 n = 1024
 m=c(rep(1,n/4), rep(5, n/4), rep(8, n/4), rep(1, n/4))*5
 lamda=exp(log(m)+rnorm(length(m),0,sigma))
@@ -805,9 +831,9 @@ Dongyue Xie
 </div>
 </div>
 <pre class="r"><code>fit$nugget.est</code></pre>
-<pre><code>[1] 0.2379032</code></pre>
+<pre><code>[1] 1.993192</code></pre>
 <pre class="r"><code>fit2$nugget.est</code></pre>
-<pre><code>[1] 0.6471359</code></pre>
+<pre><code>[1] 0</code></pre>
 </div>
 <div id="generate-from-sqrt-root-link" class="section level3">
 <h3>Generate from sqrt-root link</h3>
@@ -848,6 +874,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/cf53728bc2a735cee4a83902d734f20d5b9190e3/docs/figure/vstlikcompare.Rmd/unnamed-chunk-5-1.png" target="_blank">cf53728</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/8627a119e12a7c3e08123f85906bdd867128637a/docs/figure/vstlikcompare.Rmd/unnamed-chunk-5-1.png" target="_blank">8627a11</a>
@@ -904,6 +941,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/cf53728bc2a735cee4a83902d734f20d5b9190e3/docs/figure/vstlikcompare.Rmd/unnamed-chunk-6-1.png" target="_blank">cf53728</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-09-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/8627a119e12a7c3e08123f85906bdd867128637a/docs/figure/vstlikcompare.Rmd/unnamed-chunk-6-1.png" target="_blank">8627a11</a>
