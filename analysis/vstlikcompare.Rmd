@@ -26,7 +26,7 @@ m=c(rep(1,n/4), rep(5, n/4), rep(10, n/4), rep(1, n/4))
 lamda=exp(log(m)+rnorm(length(m),0,sigma))
 x=rpois(length(m),lamda)
 fit = smash.gen.poiss(x,transformation = 'lik_expansion',method = 'smash',ash.pm = TRUE)
-fit2 = smash.gen.poiss(x,transformation = 'vst',method = 'smash',ash.pm = TRUE)
+fit2 = smash.gen.poiss(x,transformation = 'vst',method = 'smash')
 plot(x,col='grey80')
 lines(m+sigma^2/2,col='grey50')
 lines(fit$lambda.est,col=1,lwd=2)
@@ -87,7 +87,7 @@ n = 1024
 m=c(rep(1,n/4), rep(5, n/4), rep(8, n/4), rep(1, n/4))
 lamda=(sqrt(m)+rnorm(length(m),0,sigma))^2
 x=rpois(length(m),lamda)
-fit = smash.gen.poiss(x,transformation = 'lik_expansion',method = 'smash',ash.pm = TRUE,nug.init = 0)
+fit = smash.gen.poiss(x,transformation = 'lik_expansion',method = 'smash',ash.pm = TRUE,nug.init = NULL)
 fit2 = smash.gen.poiss(x,transformation = 'vst',method = 'smash',ash.pm = TRUE)
 plot(x,col='grey80')
 lines(m+sigma^2,col='grey50')
@@ -107,8 +107,8 @@ n = 1024
 m=c(rep(1,n/4), rep(5, n/4), rep(8, n/4), rep(1, n/4))*5
 lamda=(sqrt(m)+rnorm(length(m),0,sigma))^2
 x=rpois(length(m),lamda)
-fit = smash.gen.poiss(x,transformation = 'lik_expansion',method = 'smash',ash.pm = TRUE,nug.init = 0)
-fit2 = smash.gen.poiss(x,transformation = 'vst',method = 'smash',nug.init = 0)
+fit = smash.gen.poiss(x,transformation = 'lik_expansion',method = 'smash',ash.pm = TRUE,nug.init = NULL)
+fit2 = smash.gen.poiss(x,transformation = 'vst',method = 'smash',nug.init = NULL)
 plot(x,col='grey80')
 lines(m+sigma^2,col='grey50')
 lines(fit$lambda.est,col=1,lwd=2)
