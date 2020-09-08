@@ -5,6 +5,10 @@ date: "June 3, 2018"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F)
+```
+
 ```{r}
 library(smashrgen)
 library(smashr)
@@ -60,7 +64,7 @@ fit2$nugget.est
 
 ```{r}
 set.seed(12345)
-sigma = 0.5
+sigma = 1.5
 n = 1024
 m=c(rep(1,n/4), rep(5, n/4), rep(8, n/4), rep(1, n/4))*5
 lamda=exp(log(m)+rnorm(length(m),0,sigma))
