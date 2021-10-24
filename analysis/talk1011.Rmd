@@ -1,0 +1,69 @@
+---
+title: "talk1011"
+author: "Dongyue Xie"
+date: "2018-10-09"
+output: workflowr::wflow_html
+---
+
+# Talk about briefly smash and ash
+
+Introduce smash(smoothing by adaptive shrinkage):
+
+## Gaussian nonparametric regression and smash
+
+problem: $y\sim N(\mu,D)$ where $\mu\in R^T$ and $D\in R^{T*T}$. $\mu$ is assumed to have spatial structure($\mu_t$ similar to $\mu_t'$ if $|t-t'|$ is small). $D=diag(\sigma^2_1,...,\sigma^2_T)$. T is assumed to a power of 2.
+
+The key idea is to apply a discrete wavelet transform (DWT). The DWT can be represented as pre-multiplying by an orthogonal $T\times T$ matrix $W$ that depends on the wavelet basis chosen. $Wy\sim N(W\mu,WDW')$. A key feature of the DWT is that if $\mu$ is spatially structured then many elements of $W\mu$ will
+be close to zero, and vice versa. 
+
+Thus the DWT has changed the problem from fitting Gaussian nonparametric regression under the assumption that $\mu$ spatially structure to fitting transformed model under the assumption that many elements $W\mu$ will be close to zero. This is easily achieved by the sparsity-inducing EB shrinkage methods described above. After getting shrinkage estimates of $W\mu$, we can easily transform it back by multiplying $W^{-1}$. These strategies are from johnstone and sliverman, 2005a.
+
+Now what shrinkage method to be performed? methods including hard threshhold/soft threshold. Smash uses the EB shrinkage method proposed by matthew, which is adaptive shrinakge(ash). Stephens(2017). I assume most of you know this method since some of you are new. I am going to briefly introduce this method.
+
+## ash
+
+Now we have observations $x_1,..,x_T$ of underlying quantites $\theta_1,...,\theta_T$, and Gaussian errors with sd $s=(s_1,...,s_T)$. so we have $x|\theta\sim N_T(\theta,S)$ where $S=diag(s_1^2,...,s_T^2)$ and $\theta_1,...,\theta_T\sim_{iid} g(\cdot)$. Usually prior $g(\cdot)$ is sparsity inducing. 
+
+Ash allows very flexible distributional families and assume it is unimodal distribution, with the mode set to 0 in settings where sparsity is desired. Smash assumes the the family of (zero-centered) scale mixtures of normals. In practice this is achieved by using finite mixtures with a potentially large number of components. $g(\cdot)=\Sigma_{k=0}^K\pi_kN(\cdot;0,\tau_k^2)$. 
+
+A key idea, which substantially simplifes inference, is to take $\tau_0,...,\tau_K$ to be a fixed grid of values ranging from very small (e.g. $\tau_0 = 0$, in which case g includes a point mass at 0) to very large. Sum of weights equals to 1. 
+
+Ash provides a flexible family of unimodal and symmetric distributions. Indeed, with a sufficiently large and dense grid of variance the distribution g in can arbitrarily accurately approximate any scale mixture of normals. Of cause, a mixture of normals is only one of the many choices(uniform, half-uniform...). If you are interested in ash, please read Stephens(2017). 
+
+## relate ash to smash
+
+$x=Wy, \theta=W\mu, s_j^2=\sigma_j^2$
+
+## smash algo:
+
+In practice, the variance might be unknown. Smash first initilizes variance then it 
+iteratively estimate $\mu$ and $\sigma^2$. The iterations are taken to be 2.
+
+# Generalized smash
+
+Some times we encounter non-Gaussain sequences such as poisson or binomial sequences. People have developed some methods specially for poisson data. We are thinking to generalzie smash.gaus to deal with the other data types so that we don't need specific methods for eac hdata types. 
+Some advancetage of smash: choice of W very flexiable, ash very flexible, computationally efficient. 
+
+Idea: Do a taylor series expansion of likelihood at a certain point and use a normal likelihood to approximate it. 
+
+Write down the formula for poisson distribution.( see the handout ) show matthew's plots.
+
+deal with nugget effect:
+
+the nugget effect in these contexts is mainly owing to the position specific biases in mapping reads
+
+mesurement errors/ In spatial studies, nugget effect refers to the sum of geological microstructure and measurement error. It is the intercept in a variogram.
+
+## Real data
+
+DNA contamination and DNA fragmentation heterogeneity produce false positives (erroneous calls) and imprecision in mapping.
+
+Proteins bind to specific DNA sequences to regulate genes. Proteins bind to specific DNA sequences to regulate genes. In the ChIP assay, proteins are crosslinked to their DNA-binding sites in vivo and then immunopurified from fragmented chromatin. Subsequently, the bound DNA is identified genome-wide by microarray hybridization (ChIP-chip) or deep sequencing (ChIP-seq). ChIP only provides a set of statistically enriched high-occupancy binding regions.
+
+Here, we develop ChIP-exo, to precisely map a comprehensive set of protein-binding locations genome-wide in any organism and to greatly diminish both erroneous and missed calls associated with mapping.
+
+We applied ChIP-exo to human CTCF, as a more complex biological system. CTCF is a sequence-specific DNA-binding protein that plays important roles in metazoan gene regulation and three-dimensional chromatin organization in a wide variety of cell types.
+
+We detected 35,161 CTCF-bound locations in HeLa cells. Nearly all CTCF-bound regions (93%), determined previously in HeLa cells by ChIP-seq (Cuddapah et al., 2009), were verified by ChIP-exo (Figure S6B), although another ∼17,000 locations were missed.
+
+“ChIPable” human HeLa cell sonicated chromatin was purchased from Millipore (12-687) for biological replicate 1 and 2 and Active Motif (53015) for biological replicate 3. 

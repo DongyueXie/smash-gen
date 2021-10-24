@@ -1,0 +1,491 @@
+---
+title: "Generalized smoothing by adaptive shrinkage"
+author: "Dongyue Xie"
+date: "2018-10-11"
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Poisson likelihood aprroximation
+
+Examples from Matthew. (<http://stephens999.github.io/poisson/analysis/poisson_loglik.html>)
+
+```{r}
+plot_poisson_loglik=function(x,range1=1,range2=1,...){
+  m = ifelse(x==0,log(0.01),log(x))
+  sd_approx = ifelse(x==0,-m/sqrt(2),exp(m)^-0.5)
+  l = m + seq(-range1,range2,length=100)
+  loglik = dpois(x,exp(l),log=TRUE)
+  plot(l, loglik-max(loglik),type="l",...)
+  abline(v=log(x))
+  normlik = log(dnorm(l,m,sd=sd_approx))
+  lines(l,normlik-max(normlik),col="blue")
+}
+par(mfrow=c(2,2))
+plot_poisson_loglik(1,main="x=1")
+plot_poisson_loglik(2,main="x=2")
+plot_poisson_loglik(20,main="x=20")
+plot_poisson_loglik(0,main="x=0",range1=1,range2=5)
+```
+
+
+## Examples of smashgen-Poisson
+
+Mean function range [0.1,6].
+```{r,warning=FALSE,message=FALSE}
+library(smashrgen)
+seed=12345
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*2+0.1
+#range(m)
+
+sig=0
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+#################
+
+sig=0.1
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0.1')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+
+
+#############
+sig=0.5
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0.5')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+########
+
+sig=1
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=1')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+
+
+
+```
+
+## Examples of smashgen-Poisson
+
+Mean function range [30,90].
+
+```{r,warning=FALSE,message=FALSE}
+library(smashrgen)
+seed=12345
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+m=m*20+30
+#range(m)
+
+sig=0
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+#################
+
+sig=0.1
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0.1')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+
+#############
+sig=0.3
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0.3')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+#############
+sig=0.5
+
+set.seed(seed)
+lambda=exp(log(m)+rnorm(n,0,sig))
+x=rpois(n,lambda)
+
+
+
+sgen=smash_gen_lite(x,wave_family = 'DaubLeAsymm',filter.number = 8)
+sp=smash.poiss(x)
+
+#par(mfrow=c(2,2))
+
+plot(x,col='grey80',ylab='',xlab='',main='nugget=0.5')
+lines(m,col='grey10')
+lines(sp,col=2)
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smash.pois','smashgen'),lty=c(0,1,1,1),pch=c(1,NA,NA,NA),col=c('grey80','grey10',2,4))
+########
+
+
+```
+
+
+## Examples of smashgen-Binomial
+
+$n_t=10$, p has range [0.011,0.99]
+
+```{r,warning=FALSE,message=FALSE}
+seed=12345
+spike.f = function(x) (0.75 * exp(-500 * (x - 0.23)^2) + 1.5 * exp(-2000 * (x - 0.33)^2) + 3 * exp(-8000 * (x - 0.47)^2) + 2.25 * exp(-16000 * 
+    (x - 0.69)^2) + 0.5 * exp(-32000 * (x - 0.83)^2))
+n = 512
+t = 1:n/n
+m = spike.f(t)
+
+p = spike.f(t)*3-4.5
+
+ntri=rep(10,n)
+
+sig=0
+
+set.seed(seed)
+
+ng=rnorm(n,0,sig)
+m=exp(p+ng)
+q=m/(1+m)
+x=rbinom(n,ntri,q)
+
+
+sgen=smash_gen_lite(x,ntri=ntri,dist_family = 'binomial',wave_family = 'DaubLeAsymm',filter.number = 8)
+
+
+par(mfrow=c(2,2))
+
+plot(x/ntri,col='grey80',ylab='',xlab='',main='nugget=0')
+lines(exp(p)/(1+exp(p)),col='grey10')
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smashgen'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey10',4))
+#################
+
+sig=0.1
+
+set.seed(seed)
+
+ng=rnorm(n,0,sig)
+m=exp(p+ng)
+q=m/(1+m)
+x=rbinom(n,ntri,q)
+
+
+sgen=smash_gen_lite(x,ntri=ntri,dist_family = 'binomial',wave_family = 'DaubLeAsymm',filter.number = 8)
+
+
+#par(mfrow=c(2,2))
+
+plot(x/ntri,col='grey80',ylab='',xlab='',main='nugget=0.1')
+lines(exp(p)/(1+exp(p)),col='grey10')
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smashgen'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey10',4))
+
+#############
+sig=0.5
+
+set.seed(seed)
+
+ng=rnorm(n,0,sig)
+m=exp(p+ng)
+q=m/(1+m)
+x=rbinom(n,ntri,q)
+
+
+sgen=smash_gen_lite(x,ntri=ntri,dist_family = 'binomial',wave_family = 'DaubLeAsymm',filter.number = 8)
+
+
+#par(mfrow=c(2,2))
+
+plot(x/ntri,col='grey80',ylab='',xlab='',main='nugget=0.5')
+lines(exp(p)/(1+exp(p)),col='grey10')
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smashgen'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey10',4))
+
+########
+
+sig=1
+
+set.seed(seed)
+
+ng=rnorm(n,0,sig)
+m=exp(p+ng)
+q=m/(1+m)
+x=rbinom(n,ntri,q)
+
+
+sgen=smash_gen_lite(x,ntri=ntri,dist_family = 'binomial',wave_family = 'DaubLeAsymm',filter.number = 8)
+
+
+#par(mfrow=c(2,2))
+
+plot(x/ntri,col='grey80',ylab='',xlab='',main='nugget=1')
+lines(exp(p)/(1+exp(p)),col='grey10')
+lines(sgen,col=4)
+
+legend('topleft',c('data','true mean','smashgen'),lty=c(0,1,1),pch=c(1,NA,NA),col=c('grey80','grey10',4))
+
+
+```
+
+## Chip-exo/Chip-seq examples
+
+Data from Rhee and Pugh 2011 and Cuddapah et al. 2009, processed by Kevin.
+
+```{r}
+extract_counts_CTCF <- function(filename){
+  bed_counts <- read.table(filename, header = F, stringsAsFactors = F)
+  colnames(bed_counts) <- c("chr", "start", "end", "name", "width", "counts")
+
+  counts <- strsplit(bed_counts$counts, split = ",")[[1]]
+  counts[counts == "NA"] <- 0
+  counts <- as.numeric(counts)
+
+  return(counts.l = list(chr = bed_counts$chr, start = bed_counts$start, end = bed_counts$end, counts = counts))
+}
+par(mfrow=c(2,2))
+##########
+# chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt")
+# 
+# smash.out=smash.poiss(chipexo1$counts)
+# y=reflect(chipexo1$counts,'both',c(300,299))
+# smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+# 
+# plot(chipexo1$counts, col = "gray80", ylab = "rep1 forward", xlab = "", main = "EncodeBroadHistoneHelas - Rep 1")
+# lines(smash.out, col = 2, lwd = 1)
+# lines(smashgen.out[301:725],col=4,lwd=2)
+# 
+# legend("topright", # places a legend at the appropriate place
+#        c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+#        lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+#        pch=c(1,NA,NA),
+#        lwd=c(1,1,2),
+#        cex = 0.5,
+#        col=c("gray80","red", "blue"))
+
+#############
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+
+plot(chipexo1$counts, col = "gray80", ylab = "rep1 forward", xlab = "", main = "EncodeOpenChromChipHelas - Rep 1")
+lines(smash.out, col = 2, lwd = 1)
+lines(smashgen.out[301:725],col=4,lwd=2)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA),
+       lwd=c(1,1,2),
+       cex = 0.5,
+       col=c("gray80","red", "blue"))
+
+###########
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+
+plot(chipexo1$counts, col = "gray80", ylab = "rep2 forward", xlab = "", main = "EncodeOpenChromChipHelas - Rep 2
+")
+lines(smash.out, col = 2, lwd = 1)
+lines(smashgen.out[301:725],col=4,lwd=2)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA),
+       lwd=c(1,1,2),
+       cex = 0.5,
+       col=c("gray80","red", "blue"))
+
+
+##Not very good exampels above ones
+#############
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipseq_examples/example_CTCF_raw_rep1_Forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+
+plot(chipexo1$counts, col = "gray80", ylab = "forward strand", xlab = "", main = "CTCF raw rep 1")
+lines(smash.out, col = 2, lwd = 1)
+lines(smashgen.out[301:725],col=4,lwd=2)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA),
+       lwd=c(1,1,2),
+       cex = 0.5,
+       col=c("gray80","red", "blue"))
+
+###############
+chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipseq_examples/example_CTCF_raw_rep2_Forward_counts.txt")
+
+smash.out=smash.poiss(chipexo1$counts)
+y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+
+plot(chipexo1$counts, col = "gray80", ylab = "forward strand", xlab = "", main = "CTCF raw rep 2")
+lines(smash.out, col = 2, lwd = 1)
+lines(smashgen.out[301:725],col=4,lwd=2)
+
+legend("topright", # places a legend at the appropriate place
+       c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+       lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+       pch=c(1,NA,NA),
+       lwd=c(1,1,2),
+       cex = 0.5,
+       col=c("gray80","red", "blue"))
+
+###############
+# chipexo1 <- extract_counts_CTCF("/Users/dongyue/Documents/smash-gen/data/chipseq_examples/example_CTCF_raw_rep3_Forward_counts.txt")
+# 
+# smash.out=smash.poiss(chipexo1$counts)
+# y=reflect(chipexo1$counts,'both',c(300,299))
+# smashgen.out=smash_gen_lite(y,wave_family = 'DaubLeAsymm',filter.number = 8)
+# 
+# plot(chipexo1$counts, col = "gray80", ylab = "forward strand", xlab = "", main = "CTCF raw rep 3")
+# lines(smash.out, col = 2, lwd = 1)
+# lines(smashgen.out[301:725],col=4,lwd=2)
+# 
+# legend("topright", # places a legend at the appropriate place
+#        c("truth","smash-poiss",'smash-gen'), # puts text in the legend
+#        lty=c(0,1,1), # gives the legend appropriate symbols (lines)
+#        pch=c(1,NA,NA),
+#        lwd=c(1,1,2),
+#        cex = 0.5,
+#        col=c("gray80","red", "blue"))
+```
+
+## More details
+
+Please click <https://dongyuexie.github.io/smash-gen/> for more details.
+
+## Reference
+
+Stephens, M. (2017). False discovery rates: a new deal. Biostatistics, 18(2), 275-294.
+
+Xing, Z., & Stephens, M. (2016). Smoothing via Adaptive Shrinkage (smash): denoising Poisson and heteroskedastic Gaussian signals. arXiv preprint arXiv:1605.07787.
+
+Johnstone, I. M., & Silverman, B. W. (2005). Empirical Bayes selection of wavelet thresholds. Annals of Statistics, 1700-1752.
+
+Rhee, H. S., & Pugh, B. F. (2011). Comprehensive genome-wide protein-DNA interactions detected at single-nucleotide resolution. Cell, 147(6), 1408-1419.
+
+Cuddapah, S., Jothi, R., Schones, D. E., Roh, T.-Y., Cui, K., & Zhao, K. (2009). Global analysis of the insulator binding protein CTCF in chromatin barrier regions reveals demarcation of active and repressive domains. Genome Research, 19(1), 24–32. http://doi.org/10.1101/gr.082800.108
