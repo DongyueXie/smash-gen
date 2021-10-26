@@ -536,16 +536,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4a070d55c27d1014a2b71cf62734509a688d609dtargetblank4a070d5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4a070d55c27d1014a2b71cf62734509a688d609d" target="_blank">4a070d5</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree425cf6e6fc34898726a2feeaf407f43c495afac3targetblank425cf6ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/425cf6e6fc34898726a2feeaf407f43c495afac3" target="_blank">425cf6e</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4a070d55c27d1014a2b71cf62734509a688d609dtargetblank4a070d5a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree425cf6e6fc34898726a2feeaf407f43c495afac3targetblank425cf6ea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/DongyueXie/smash-gen/tree/4a070d55c27d1014a2b71cf62734509a688d609d" target="_blank">4a070d5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/DongyueXie/smash-gen/tree/425cf6e6fc34898726a2feeaf407f43c495afac3" target="_blank">425cf6e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -604,6 +604,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/425cf6e6fc34898726a2feeaf407f43c495afac3/analysis/gtex_smooth.Rmd" target="_blank">425cf6e</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+<td>
+wflow_publish(c(“analysis/gtex_smooth.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/99af0120897e4b0ebc06333802ca709b6c71da65/docs/gtex_smooth.html" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/smash-gen/blob/4a070d55c27d1014a2b71cf62734509a688d609d/analysis/gtex_smooth.Rmd" target="_blank">4a070d5</a>
 </td>
 <td>
@@ -644,7 +678,7 @@ library(wavethresh)</code></pre>
 # fit.smash.gen = smash.gen.poiss(datax[,4],transformation = &#39;lik_expansion&#39;,method = &#39;smash&#39;)
 # lines(fit.smash.gen$lambda.est)</code></pre>
 <pre class="r"><code>files = list.files(&#39;/project2/mstephens/dongyue/gtex/Yang/CoverageCounts&#39;)
-for(f in files[-1]){
+for(f in files[2:11]){
   fs = strsplit(f,split=&#39;_&#39;)
   gene_name = fs[[1]][1]
   fs = strsplit(fs[[1]][2],split = &#39;:&#39;)
@@ -693,504 +727,3052 @@ fit.smash.pois.gaus = smash.pois.gaus(y)
 plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
 xlab.idx = round(seq(1,nrow(datax),length.out = 5))
 axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
-lines(fit.smash.gen.vst$lambda.est)
+lines(fit.smash.pois.gaus$lambda.est)
 
 
   }
   
 }</code></pre>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-1.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-1.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-2.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
+Past versions of unnamed-chunk-2-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-2.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-3.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-3">
+Past versions of unnamed-chunk-2-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-3.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-4.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-4">
+Past versions of unnamed-chunk-2-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-4.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-5.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-5">
+Past versions of unnamed-chunk-2-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-5.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-6.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-7.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-8.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-9.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-10.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-11.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-12.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-13.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-14.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-15.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-16.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-17.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-18.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-19.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-20.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-21.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-22.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-23.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-6">
+Past versions of unnamed-chunk-2-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-6.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-7.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-7">
+Past versions of unnamed-chunk-2-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-7.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-8.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-8">
+Past versions of unnamed-chunk-2-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-8.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-9.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-9">
+Past versions of unnamed-chunk-2-9.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-9.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-10.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-10">
+Past versions of unnamed-chunk-2-10.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-10.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-11.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-11">
+Past versions of unnamed-chunk-2-11.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-11" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-11.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-12.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-12">
+Past versions of unnamed-chunk-2-12.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-12" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-12.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-13.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-13">
+Past versions of unnamed-chunk-2-13.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-13" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-13.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-14.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-14">
+Past versions of unnamed-chunk-2-14.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-14" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-14.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-15.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-15">
+Past versions of unnamed-chunk-2-15.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-15" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-15.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-16.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-16">
+Past versions of unnamed-chunk-2-16.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-16" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-16.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-17.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-17">
+Past versions of unnamed-chunk-2-17.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-17" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-17.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-18.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-18">
+Past versions of unnamed-chunk-2-18.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-18" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-18.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-19.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-19">
+Past versions of unnamed-chunk-2-19.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-19" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-19.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-20.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-20">
+Past versions of unnamed-chunk-2-20.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-20" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-20.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-21.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-21">
+Past versions of unnamed-chunk-2-21.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-21" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-21.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-22.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-22">
+Past versions of unnamed-chunk-2-22.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-22" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-22.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-23.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-23">
+Past versions of unnamed-chunk-2-23.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-23" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-23.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-24.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-24">
+Past versions of unnamed-chunk-2-24.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-24" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-24.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-25.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-25">
+Past versions of unnamed-chunk-2-25.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-25" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-25.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-26.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-27.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-28.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-26">
+Past versions of unnamed-chunk-2-26.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-26" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-26.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-27.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-27">
+Past versions of unnamed-chunk-2-27.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-27" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-27.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-28.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-28">
+Past versions of unnamed-chunk-2-28.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-28" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-28.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-29.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-30.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-31.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-32.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-29">
+Past versions of unnamed-chunk-2-29.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-29" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-29.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-30.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-30">
+Past versions of unnamed-chunk-2-30.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-30" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-30.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-31.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-31">
+Past versions of unnamed-chunk-2-31.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-31" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-31.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-32.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-32">
+Past versions of unnamed-chunk-2-32.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-32" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-32.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-33.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-33">
+Past versions of unnamed-chunk-2-33.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-33" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-33.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-34.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-35.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-36.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-37.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-34">
+Past versions of unnamed-chunk-2-34.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-34" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-34.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-35.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-35">
+Past versions of unnamed-chunk-2-35.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-35" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-35.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-36.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-36">
+Past versions of unnamed-chunk-2-36.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-36" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-36.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-37.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-37">
+Past versions of unnamed-chunk-2-37.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-37" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-37.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-38.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-39.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-40.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-41.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-42.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-43.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-44.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-45.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-46.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-38">
+Past versions of unnamed-chunk-2-38.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-38" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-38.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-39.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-39">
+Past versions of unnamed-chunk-2-39.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-39" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-39.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-40.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-40">
+Past versions of unnamed-chunk-2-40.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-40" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-40.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-41.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-41">
+Past versions of unnamed-chunk-2-41.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-41" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-41.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-42.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-42">
+Past versions of unnamed-chunk-2-42.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-42" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-42.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-43.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-43">
+Past versions of unnamed-chunk-2-43.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-43" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-43.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-44.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-44">
+Past versions of unnamed-chunk-2-44.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-44" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-44.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-45.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-45">
+Past versions of unnamed-chunk-2-45.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-45" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-45.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-46.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-46">
+Past versions of unnamed-chunk-2-46.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-46" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-46.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-47.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-47">
+Past versions of unnamed-chunk-2-47.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-47" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-47.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-48.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-48">
+Past versions of unnamed-chunk-2-48.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-48" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-48.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-49.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-49">
+Past versions of unnamed-chunk-2-49.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-49" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-49.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-50.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-51.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-52.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-53.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-50">
+Past versions of unnamed-chunk-2-50.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-50" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-50.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-51.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-51">
+Past versions of unnamed-chunk-2-51.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-51" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-51.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-52.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-52">
+Past versions of unnamed-chunk-2-52.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-52" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-52.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-53.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-53">
+Past versions of unnamed-chunk-2-53.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-53" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-53.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-54.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-55.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-56.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-57.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-58.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-59.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-60.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-54">
+Past versions of unnamed-chunk-2-54.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-54" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-54.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-55.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-55">
+Past versions of unnamed-chunk-2-55.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-55" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-55.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-56.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-56">
+Past versions of unnamed-chunk-2-56.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-56" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-56.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-57.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-57">
+Past versions of unnamed-chunk-2-57.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-57" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-57.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-58.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-58">
+Past versions of unnamed-chunk-2-58.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-58" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-58.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-59.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-59">
+Past versions of unnamed-chunk-2-59.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-59" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-59.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-60.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-60">
+Past versions of unnamed-chunk-2-60.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-60" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-60.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-61.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-61">
+Past versions of unnamed-chunk-2-61.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-61" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-61.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-62.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-63.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-64.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-65.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-66.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-67.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-68.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-62">
+Past versions of unnamed-chunk-2-62.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-62" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-62.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-63.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-63">
+Past versions of unnamed-chunk-2-63.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-63" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-63.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-64.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-64">
+Past versions of unnamed-chunk-2-64.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-64" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-64.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-65.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-65">
+Past versions of unnamed-chunk-2-65.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-65" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-65.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-66.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-66">
+Past versions of unnamed-chunk-2-66.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-66" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-66.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-67.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-67">
+Past versions of unnamed-chunk-2-67.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-67" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-67.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-68.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-68">
+Past versions of unnamed-chunk-2-68.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-68" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-68.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-69.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-70.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-71.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-72.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-69">
+Past versions of unnamed-chunk-2-69.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-69" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-69.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-70.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-70">
+Past versions of unnamed-chunk-2-70.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-70" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-70.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-71.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-71">
+Past versions of unnamed-chunk-2-71.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-71" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-71.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-72.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-72">
+Past versions of unnamed-chunk-2-72.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-72" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-72.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-73.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-73">
+Past versions of unnamed-chunk-2-73.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-73" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-73.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-74.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-74">
+Past versions of unnamed-chunk-2-74.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-74" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-74.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-75.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-75">
+Past versions of unnamed-chunk-2-75.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-75" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-75.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-76.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-76">
+Past versions of unnamed-chunk-2-76.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-76" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-76.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-77.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-77">
+Past versions of unnamed-chunk-2-77.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-77" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-77.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-78.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-79.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-80.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-81.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-82.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-83.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-84.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-85.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-86.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-87.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-88.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-89.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-90.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-91.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-92.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-93.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-94.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-95.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-96.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-97.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-98.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-99.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-100.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-101.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-102.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-103.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-104.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-105.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-106.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-107.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-108.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-109.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-110.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-111.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-112.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-113.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-114.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-115.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-116.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-117.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-118.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-119.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-120.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-121.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-122.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-123.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-124.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-125.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-126.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-127.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-128.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-129.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-130.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-131.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-132.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-133.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-134.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-135.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-136.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-137.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-138.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-139.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-140.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-141.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-142.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-143.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-144.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-145.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-146.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-147.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-148.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.
-
-Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-149.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-150.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-151.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-152.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-153.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-154.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-155.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-156.png" width="960" style="display: block; margin: auto;" /></p>
-<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
-= control, : Optimization failed to converge. Results may be unreliable.
-Try increasing maxiter and rerunning.</code></pre>
-<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-157.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-158.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-159.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-160.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-78">
+Past versions of unnamed-chunk-2-78.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-78" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-78.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-79.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-79">
+Past versions of unnamed-chunk-2-79.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-79" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-79.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-80.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-80">
+Past versions of unnamed-chunk-2-80.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-80" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/99af0120897e4b0ebc06333802ca709b6c71da65/docs/figure/gtex_smooth.Rmd/unnamed-chunk-2-80.png" target="_blank">99af012</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
