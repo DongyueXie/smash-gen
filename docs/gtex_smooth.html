@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="DongyueXie" />
+
+<meta name="date" content="2019-11-24" />
+
+<title>gtex smooth</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">smashgen</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">gtex smooth</h1>
+<h4 class="author">DongyueXie</h4>
+<h4 class="date">2019-11-24</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-10-26
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>smash-gen/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20180501code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20180501)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20180501code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20180501)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4a070d55c27d1014a2b71cf62734509a688d609dtargetblank4a070d5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/smash-gen/tree/4a070d55c27d1014a2b71cf62734509a688d609d" target="_blank">4a070d5</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiesmashgentree4a070d55c27d1014a2b71cf62734509a688d609dtargetblank4a070d5a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/DongyueXie/smash-gen/tree/4a070d55c27d1014a2b71cf62734509a688d609d" target="_blank">4a070d5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/est_nugget.Rmd
+    Untracked:  analysis/gtex_smooth_individual.Rmd
+    Untracked:  code/smash_gen_poisson.R
+
+Unstaged changes:
+    Modified:   analysis/sigma.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/gtex_smooth.Rmd</code>) and HTML (<code>docs/gtex_smooth.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/smash-gen/blob/4a070d55c27d1014a2b71cf62734509a688d609d/analysis/gtex_smooth.Rmd" target="_blank">4a070d5</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2021-10-26
+</td>
+<td>
+wflow_publish(c(“analysis/gtex_smooth.Rmd”))
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Apply smash gen to gtex data.</p>
+<pre class="r"><code>library(smashr)
+library(wavethresh)</code></pre>
+<pre><code>Loading required package: MASS</code></pre>
+<pre><code>WaveThresh: R wavelet software, release 4.6.8, installed</code></pre>
+<pre><code>Copyright Guy Nason and others 1993-2016</code></pre>
+<pre><code>Note: nlevels has been renamed to nlevelsWT</code></pre>
+<pre class="r"><code>source(&#39;code/smash_gen_poisson.R&#39;)
+
+
+
+# 
+# fit.smash = smash.poiss(datax[,4],reflect = TRUE)
+# plot(datax[,4],col=&#39;grey80&#39;,type = &#39;h&#39;,ylab=&#39;counts&#39;,xlab=&#39;&#39;)
+# lines(fit.smash,col=&#39;grey80&#39;)
+# 
+# fit.smash.gen = smash.gen.poiss(datax[,4],transformation = &#39;lik_expansion&#39;,method = &#39;smash&#39;)
+# lines(fit.smash.gen$lambda.est)</code></pre>
+<pre class="r"><code>files = list.files(&#39;/project2/mstephens/dongyue/gtex/Yang/CoverageCounts&#39;)
+for(f in files[-1]){
+  fs = strsplit(f,split=&#39;_&#39;)
+  gene_name = fs[[1]][1]
+  fs = strsplit(fs[[1]][2],split = &#39;:&#39;)
+  chr = fs[[1]][1]
+  
+  datax = read.table(paste(&#39;/project2/mstephens/dongyue/gtex/Yang/CoverageCounts/&#39;,f,sep=&#39;&#39;),
+                     header = TRUE)
+  tissues = colnames(datax)
+  tissue = c()
+  for(i in 1:length(tissues)){
+    tissue = c(tissue, (strsplit(tissues[i],split = &#39;_&#39;)[[1]])[1])
+  }
+  tissue_name = unique(tissue[-c(1:3)])
+  
+  for(i in 1:length(tissue_name)){
+    idx = which(tissue==tissue_name[i])
+    y = rowSums(datax[,idx])
+   
+fit.smash.pois = smash.poiss(y,reflect = TRUE)
+plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.pois,col=&#39;grey40&#39;)
+
+# fit.smash.gaus = smash.gaus(y)
+# plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
+# xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+# axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+# lines(fit.smash.gaus,col=&#39;grey40&#39;)
+
+
+fit.smash.gen = smash.gen.poiss(y,transformation = &#39;lik_expansion&#39;,smooth_method = &#39;smash&#39;)
+plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.gen$lambda.est,lwd=1,col=4)
+
+
+fit.smash.gen.vst = smash.gen.poiss(y,transformation = &#39;vst&#39;,smooth_method = &#39;smash&#39;)
+plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.gen.vst$lambda.est,lwd=1,col=2)
+
+fit.smash.pois.gaus = smash.pois.gaus(y)
+plot(y,col=&#39;grey80&#39;,type=&#39;p&#39;,pch=20,lwd=0.5,ylab=&#39;counts&#39;,xlab=&#39;Chr11&#39;,xaxt = &quot;n&quot;,main=paste(gene_name,tissue_name[i],sep=&#39;, &#39;))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.gen.vst$lambda.est)
+
+
+  }
+  
+}</code></pre>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-2.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-3.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-4.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-5.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-6.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-7.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-8.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-9.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-10.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-11.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-12.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-13.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-14.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-15.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-16.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-17.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-18.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-19.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-20.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-21.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-22.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-23.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-24.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-25.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-26.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-27.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-28.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-29.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-30.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-31.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-32.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-33.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-34.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-35.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-36.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-37.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-38.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-39.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-40.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-41.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-42.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-43.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-44.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-45.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-46.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-47.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-48.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-49.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-50.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-51.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-52.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-53.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-54.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-55.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-56.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-57.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-58.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-59.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-60.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-61.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-62.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-63.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-64.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-65.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-66.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-67.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-68.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-69.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-70.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-71.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-72.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-73.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-74.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-75.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-76.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-77.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-78.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-79.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-80.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-81.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-82.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-83.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-84.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-85.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-86.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-87.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-88.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-89.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-90.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-91.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-92.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-93.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-94.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-95.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-96.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-97.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-98.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-99.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-100.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-101.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-102.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-103.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-104.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-105.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-106.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-107.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-108.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-109.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-110.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-111.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-112.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-113.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-114.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-115.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-116.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-117.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-118.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-119.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-120.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-121.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-122.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-123.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-124.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-125.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-126.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-127.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-128.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-129.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-130.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-131.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-132.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-133.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-134.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-135.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-136.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-137.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-138.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-139.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-140.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-141.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-142.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-143.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-144.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-145.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-146.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-147.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-148.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.
+
+Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-149.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-150.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-151.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-152.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-153.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-154.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-155.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-156.png" width="960" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-157.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-158.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-159.png" width="960" style="display: block; margin: auto;" /><img src="figure/gtex_smooth.Rmd/unnamed-chunk-2-160.png" width="960" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.1 (2019-07-05)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ashr_2.2-50      wavethresh_4.6.8 MASS_7.3-51.4    smashr_1.2-9    
+[5] workflowr_1.6.2 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.5        knitr_1.23        whisker_0.3-2    
+ [4] magrittr_1.5      SQUAREM_2017.10-1 lattice_0.20-38  
+ [7] R6_2.4.0          stringr_1.4.0     caTools_1.17.1.2 
+[10] tools_3.6.1       grid_3.6.1        data.table_1.13.2
+[13] xfun_0.8          irlba_2.3.3       invgamma_1.1     
+[16] git2r_0.26.1      htmltools_0.3.6   yaml_2.2.0       
+[19] digest_0.6.20     rprojroot_2.0.2   mixsqp_0.3-17    
+[22] Matrix_1.2-18     later_0.8.0       bitops_1.0-6     
+[25] promises_1.0.1    fs_1.3.1          glue_1.3.1       
+[28] evaluate_0.14     rmarkdown_1.13    stringi_1.4.3    
+[31] compiler_3.6.1    truncnorm_1.0-8   httpuv_1.5.1     </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
