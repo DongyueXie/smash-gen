@@ -27,9 +27,9 @@ source('code/smash_gen_poisson.R')
 # lines(fit.smash.gen$lambda.est)
 ```
 
-```{r,fig.width=10,fig.height=5}
+```{r,fig.width=10,fig.height=5,warning=FALSE}
 files = list.files('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts')
-for(f in files[-1]){
+for(f in files[2:11]){
   fs = strsplit(f,split='_')
   gene_name = fs[[1]][1]
   fs = strsplit(fs[[1]][2],split = ':')
@@ -78,7 +78,7 @@ fit.smash.pois.gaus = smash.pois.gaus(y)
 plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,tissue_name[i],sep=', '))
 xlab.idx = round(seq(1,nrow(datax),length.out = 5))
 axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
-lines(fit.smash.gen.vst$lambda.est)
+lines(fit.smash.pois.gaus$lambda.est)
 
 
   }
