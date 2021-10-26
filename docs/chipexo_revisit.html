@@ -9,10 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Dongyue Xie" />
+<meta name="author" content="DongyueXie" />
 
+<meta name="date" content="2021-10-20" />
 
-<title>Chip-exo data smoothing</title>
+<title>chipexo example revisit</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -417,9 +418,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Chip-exo data smoothing</h1>
-<h4 class="author">Dongyue Xie</h4>
-<h4 class="date">June 3, 2018</h4>
+<h1 class="title toc-ignore">chipexo example revisit</h1>
+<h4 class="author">DongyueXie</h4>
+<h4 class="date">2021-10-20</h4>
 
 </div>
 
@@ -552,7 +553,6 @@ Note that you need to be careful to ensure that all relevant files for the analy
 <pre><code>
 Ignored files:
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/est_nugget.Rmd
@@ -576,7 +576,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/chipexo.Rmd</code>) and HTML (<code>docs/chipexo.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/chipexo_revisit.Rmd</code>) and HTML (<code>docs/chipexo_revisit.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -605,7 +605,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/46c8831545722ac2f9a662589cf060367c3387fd/analysis/chipexo.Rmd" target="_blank">46c8831</a>
+<a href="https://github.com/DongyueXie/smash-gen/blob/46c8831545722ac2f9a662589cf060367c3387fd/analysis/chipexo_revisit.Rmd" target="_blank">46c8831</a>
 </td>
 <td>
 DongyueXie
@@ -617,108 +617,6 @@ DongyueXie
 wflow_publish(c(“analysis/chipexo.Rmd”, “analysis/chipexo_revisit.Rmd”))
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/chipexo.html" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/d3b6815ebfc84dd8a952b6ab30f68f354d5b4295/analysis/chipexo.Rmd" target="_blank">d3b6815</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-<td>
-wflow_publish(“analysis/chipexo.Rmd”)
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/chipexo.html" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/0d33dfadb6d3ba6455c53d4991719afd16edf4e7/analysis/chipexo.Rmd" target="_blank">0d33dfa</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-<td>
-wflow_publish(“analysis/chipexo.Rmd”)
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/smash-gen/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/chipexo.html" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-<td>
-chip exo data analysis
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/f000105059870eb63dc73bfa3e33fd7f67751a07/analysis/chipexo.Rmd" target="_blank">f000105</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-<td>
-chip exo data analysis
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -726,12 +624,15 @@ chip exo data analysis
 </div>
 </div>
 </div>
-<p>The lenght of sequence here is 425, which is not a power of 2 hence causing problem when using smashgen. In this real data analysis, we reflect the data then apply smashgen to the augmented data.</p>
+<p>Take a look at the poterntially oversmoothing issue.</p>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
-<pre class="r"><code>source(&#39;code/smash_gen_poisson.R&#39;)
-
-extract_counts_CTCF &lt;- function(filename){
+<pre class="r"><code>source(&#39;code/smash_gen_poisson.R&#39;)</code></pre>
+<pre><code>Loading required package: MASS</code></pre>
+<pre><code>WaveThresh: R wavelet software, release 4.6.8, installed</code></pre>
+<pre><code>Copyright Guy Nason and others 1993-2016</code></pre>
+<pre><code>Note: nlevels has been renamed to nlevelsWT</code></pre>
+<pre class="r"><code>extract_counts_CTCF &lt;- function(filename){
   bed_counts &lt;- read.table(filename, header = F, stringsAsFactors = F)
   colnames(bed_counts) &lt;- c(&quot;chr&quot;, &quot;start&quot;, &quot;end&quot;, &quot;name&quot;, &quot;width&quot;, &quot;counts&quot;)
 
@@ -782,419 +683,193 @@ print(paste(&quot;nugget effect estimated by lik_expansion:&quot;,round(smashgen
 <pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt&quot;
 real_study(file.name,plot.name = &quot;EncodeBroadHistoneHelas - Rep 1 - forward&quot;)</code></pre>
 <pre><code>[1] &quot;proportion of 0s: 0.81&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-2-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-2-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-2-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
 [1] &quot;nugget effect estimated by lik_expansion: 1.49&quot;</code></pre>
-</div>
-<div id="reverse" class="section level2">
-<h2>Reverse</h2>
-<pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_reverse_counts.txt&quot;
+<pre class="r"><code>chipexo1 &lt;- extract_counts_CTCF(file.name)
+plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;)
+fit.pois.gaus = smash.pois.gaus(chipexo1$counts)
+smash.out=smash.poiss(chipexo1$counts)
+lines(smash.out,col=4)
+lines(fit.pois.gaus$lambda.est)</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>smashgen.lik.out=smash.gen.poiss(chipexo1$counts,smooth_method = &#39;smash&#39;,
+                                 transformation = &#39;lik_expansion&#39;,
+                                 ash.pm = FALSE,robust = F)
+smashgen.lik.out$nugget.est</code></pre>
+<pre><code>[1] 1.485326</code></pre>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;)
+lines(smashgen.lik.out$lambda.est)</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Set nugget = 0</p>
+<pre class="r"><code>smashgen.lik.out0=smash.gen.poiss(chipexo1$counts,smooth_method = &#39;smash&#39;,
+                                 transformation = &#39;lik_expansion&#39;,
+                                 ash.pm = F,robust = F,nugget = 0)
+plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;)
+lines(smashgen.lik.out0$lambda.est)</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Why?</p>
+<pre class="r"><code>x=chipexo1$counts
+if(!ispowerof2(length(x))){
+  reflect.x = reflect(x)
+  x = reflect.x$x
+  idx = reflect.x$idx
+}else{
+  idx = 1:length(x)
+}
 
-real_study(file.name,plot.name = &quot;EncodeBroadHistoneHelas - Rep 1 - reverse&quot;)</code></pre>
-<pre><code>[1] &quot;proportion of 0s: 0.84&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
-Past versions of unnamed-chunk-3-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-3-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-3-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-3-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
-[1] &quot;nugget effect estimated by lik_expansion: 0&quot;</code></pre>
-</div>
-</div>
-<div id="encodeopenchromchiphelas---rep-1" class="section level1">
-<h1>EncodeOpenChromChipHelas - Rep 1</h1>
-<div id="forward-1" class="section level2">
-<h2>Forward</h2>
-<pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_forward_counts.txt&quot;
-
-
-real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 1 - Forward&quot;)</code></pre>
-<pre><code>[1] &quot;proportion of 0s: 0.83&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
-Past versions of unnamed-chunk-4-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-4-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-4-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-4-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-4-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
-[1] &quot;nugget effect estimated by lik_expansion: 0.8&quot;</code></pre>
-</div>
-<div id="reverse-1" class="section level2">
-<h2>Reverse</h2>
-<pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep1_reverse_counts.txt&quot;
-
-real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 1 - reverse&quot;)</code></pre>
-<pre><code>[1] &quot;proportion of 0s: 0.81&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-5-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-5-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-5-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
-[1] &quot;nugget effect estimated by lik_expansion: 0.96&quot;</code></pre>
-</div>
-</div>
-<div id="encodeopenchromchiphelas---rep-2" class="section level1">
-<h1>EncodeOpenChromChipHelas - Rep 2</h1>
-<div id="forward-2" class="section level2">
-<h2>Forward</h2>
-<pre class="r"><code>file.name = &#39;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_forward_counts.txt&#39;
-real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 2 - Forward&quot;)</code></pre>
-<pre><code>[1] &quot;proportion of 0s: 0.79&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-6-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-6-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-6-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
-[1] &quot;nugget effect estimated by lik_expansion: 0.98&quot;</code></pre>
-</div>
-</div>
-<div id="reverse-2" class="section level1">
-<h1>Reverse</h1>
-<pre class="r"><code>file.name = &quot;data/chipexo_examples/example_CTCF_MACE_wgEncodeOpenChromChipHelas3CtcfAlnRep2_reverse_counts.txt&quot;
-real_study(file.name,plot.name = &quot;EncodeOpenChromChipHelas - Rep 2 - reverse&quot;)</code></pre>
-<pre><code>[1] &quot;proportion of 0s: 0.78&quot;</code></pre>
-<p><img src="figure/chipexo.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/364a81a7631c2eb2171c93b4c6b3db53e9eb15c2/docs/figure/chipexo.Rmd/unnamed-chunk-7-1.png" target="_blank">364a81a</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/65bf7cddedf6d7af225af0b9de1041b91013cfd4/docs/figure/chipexo.Rmd/unnamed-chunk-7-1.png" target="_blank">65bf7cd</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-09-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/smash-gen/blob/a1b44cb166b5267cfac5cb45c90ee8481f23b2d6/docs/figure/chipexo.Rmd/unnamed-chunk-7-1.png" target="_blank">a1b44cb</a>
-</td>
-<td>
-Dongyue
-</td>
-<td>
-2018-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>[1] &quot;nugget effect estimated by vst: 0&quot;
-[1] &quot;nugget effect estimated by lik_expansion: 0.83&quot;</code></pre>
+n = length(x)
+s = 1
+lambda_tilde = x/s
+x_pm = ash(rep(0,n),1,lik=lik_pois(x,scale=s,link=&#39;log&#39;),
+                   optmethod=&#39;mixSQP&#39;,pointmass=F)$result$PosteriorMean
+lambda_tilde[x&lt;1] = x_pm[x&lt;1]
+    # working data
+st=sqrt(1/(s*lambda_tilde))
+y=log(lambda_tilde)+(x-s*lambda_tilde)/(s*lambda_tilde)
+    
+plot(st[idx],pch=20,ylab=&#39;knwon approx sd&#39;)</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>nug.est = 0
+fit = smash.gaus(y,sigma=sqrt(st^2+nug.est),
+                     filter.number = 1,family = &#39;DaubExPhase&#39;,
+                     post.var = TRUE)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit$mu.est[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>try to fit smash with unknown variance</p>
+<pre class="r"><code>fit = smash.gaus(y,filter.number = 1,family = &#39;DaubExPhase&#39;,
+                     post.var = TRUE,joint = T)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit$mu.res$mu.est[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(fit$var.res$var.est[idx],type=&#39;l&#39;,ylab=&#39;estimated variance&#39;)</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>try to fit smash with constant variance</p>
+<pre class="r"><code>fit = smash.gaus(y,sigma=0.6,filter.number = 1,family = &#39;DaubExPhase&#39;,
+                     post.var = TRUE,joint = T)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit$mu.res$mu.est[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;,ylab=&#39;count&#39;)
+lines(exp(fit$mu.res$mu.est[idx]))</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit = smash.gaus(y,sigma=1,filter.number = 1,family = &#39;DaubExPhase&#39;,
+                     post.var = TRUE,joint = T)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit$mu.res$mu.est[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;,ylab=&#39;count&#39;)
+lines(exp(fit$mu.res$mu.est[idx]))</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>try other smoother</p>
+<pre class="r"><code>fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.75)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit.loess$fitted[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;,ylab=&#39;count&#39;)
+lines(exp(fit.loess$fitted[idx]))</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.2)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit.loess$fitted[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;,ylab=&#39;count&#39;)
+lines(exp(fit.loess$fitted[idx]))</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.1)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit.loess$fitted[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(chipexo1$counts,pch=20,col=&#39;grey80&#39;,ylab=&#39;count&#39;)
+lines(exp(fit.loess$fitted[idx]))</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Why vst worked?</p>
+<pre class="r"><code>y = sqrt(x+3/8)/sqrt(s)
+st = rep(sqrt(0.25/s),length(y))
+nug.est = 0
+fit = smash.gaus(y,sigma=sqrt(st^2+nug.est),
+                     filter.number = 1,family = &#39;DaubExPhase&#39;,
+                     post.var = TRUE)
+plot(y[idx],col=&#39;grey80&#39;,pch=20,ylab=&#39;pseudo-data&#39;)
+lines(fit$mu.est[idx])</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Simulate data from vst fitted one.</p>
+<pre class="r"><code>smashgen.vst.out=smash.gen.poiss(chipexo1$counts,smooth_method = &#39;smash&#39;,transformation = &#39;vst&#39;,robust = F)
+smashgen.vst.out$nugget.est</code></pre>
+<pre><code>[1] 0</code></pre>
+<pre class="r"><code>set.seed(12345)
+for(i in 1:10){
+  y = rpois(length(chipexo1$counts),smashgen.vst.out$lambda.est)
+            # (sqrt(smashgen.vst.out$lambda.est)+rnorm(length(chipexo1$counts),0,0.1))^2)
+  
+  plot(y,col=&#39;grey80&#39;,pch=20,ylab=&#39;simulated counts&#39;)
+  lines(smashgen.vst.out$lambda.est,col=&#39;grey80&#39;)
+  fit.vst = smash.gen.poiss(y,smooth_method = &#39;smash&#39;,transformation = &#39;vst&#39;,robust = F)
+  fit.smash = smash.poiss(y)
+  fit.lik = smash.gen.poiss(y,smooth_method = &#39;smash&#39;,transformation = &#39;lik_expansion&#39;,robust = F)
+  fit.pois.gaus = smash.pois.gaus(y)
+  lines(fit.smash,col=4)
+  lines(fit.vst$lambda.est,col=2)
+  lines(fit.lik$lambda.est,col=1)
+  lines(fit.pois.gaus$lambda.est,col=3)
+  legend(&quot;topright&quot;, # places a legend at the appropriate place
+       c(&quot;data&quot;,&quot;smash-poiss&quot;,&#39;smash-gen-vst&#39;,&#39;smash-gen-lik&#39;,&#39;smash=pois-gaus&#39;), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
+       cex = 0.5,
+       col=c(&quot;gray80&quot;,&quot;blue&quot;, &quot;red&quot;,&#39;black&#39;,3))
+}</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-9.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-11-10.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Simulate data from smash.pois fitted one.</p>
+<pre class="r"><code>smash.out=smash.poiss(chipexo1$counts)
+set.seed(12345)
+for(i in 1:10){
+  y = rpois(length(chipexo1$counts),smash.out)
+            # (sqrt(smashgen.vst.out$lambda.est)+rnorm(length(chipexo1$counts),0,0.1))^2)
+  
+  plot(y,col=&#39;grey80&#39;,pch=20,ylab=&#39;simulated counts&#39;)
+  lines(smashgen.vst.out$lambda.est,col=&#39;grey80&#39;)
+  fit.vst = smash.gen.poiss(y,smooth_method = &#39;smash&#39;,transformation = &#39;vst&#39;,robust = F)
+  fit.smash = smash.poiss(y)
+  fit.lik = smash.gen.poiss(y,smooth_method = &#39;smash&#39;,transformation = &#39;lik_expansion&#39;,robust = F)
+  fit.pois.gaus = smash.pois.gaus(y)
+  lines(fit.smash,col=4)
+  lines(fit.vst$lambda.est,col=2)
+  lines(fit.lik$lambda.est,col=1)
+  lines(fit.pois.gaus$lambda.est,col=3)
+  legend(&quot;topright&quot;, # places a legend at the appropriate place
+       c(&quot;data&quot;,&quot;smash-poiss&quot;,&#39;smash-gen-vst&#39;,&#39;smash-gen-lik&#39;,&#39;smash=pois-gaus&#39;), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
+       cex = 0.5,
+       col=c(&quot;gray80&quot;,&quot;blue&quot;, &quot;red&quot;,&#39;black&#39;,3))
+}</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-9.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>Warning in estimate_mixprop(data, g, prior, optmethod = optmethod, control
+= control, : Optimization failed to converge. Results may be unreliable.
+Try increasing maxiter and rerunning.</code></pre>
+<p><img src="figure/chipexo_revisit.Rmd/unnamed-chunk-12-10.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1237,6 +912,7 @@ loaded via a namespace (and not attached):
 [25] promises_1.0.1    fs_1.3.1          glue_1.3.1       
 [28] evaluate_0.14     rmarkdown_1.13    stringi_1.4.3    
 [31] compiler_3.6.1    truncnorm_1.0-8   httpuv_1.5.1     </code></pre>
+</div>
 </div>
 </div>
 
