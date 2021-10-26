@@ -1,0 +1,271 @@
+---
+title: "chipexo example revisit"
+author: "DongyueXie"
+date: "2021-10-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Take a look at the poterntially oversmoothing issue.
+
+# Setup
+```{r}
+source('code/smash_gen_poisson.R')
+
+extract_counts_CTCF <- function(filename){
+  bed_counts <- read.table(filename, header = F, stringsAsFactors = F)
+  colnames(bed_counts) <- c("chr", "start", "end", "name", "width", "counts")
+
+  counts <- strsplit(bed_counts$counts, split = ",")[[1]]
+  counts[counts == "NA"] <- 0
+  counts <- as.numeric(counts)
+
+  return(counts.l = list(chr = bed_counts$chr, start = bed_counts$start, end = bed_counts$end, counts = counts))
+}
+
+
+real_study = function(file.name,plot.name){
+  
+  chipexo1 <- extract_counts_CTCF(file.name)
+  print(paste("proportion of 0s:", round(sum(chipexo1$counts==0)/length(chipexo1$counts),2)))
+
+#dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
+smash.out=smash.poiss(chipexo1$counts)
+#y=reflect(chipexo1$counts,'both',c(300,299))
+smashgen.vst.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',transformation = 'vst',robust = F)
+smashgen.lik.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',
+                                 transformation = 'lik_expansion',ash.pm = FALSE,robust = F)
+fit.pois.gaus = smash.pois.gaus(chipexo1$counts)
+
+plot(chipexo1$counts, col = "gray80", type = "p", pch=20,ylab = "counts", xlab = "", main = plot.name)
+lines(smash.out, col = "blue", lwd = 1)
+#lines(dash.out$estimate, col = "red", lwd = 1)
+lines(smashgen.vst.out$lambda.est,col="red",lwd=2)
+lines(smashgen.lik.out$lambda.est,col='black',lwd=2)
+
+lines(fit.pois.gaus$lambda.est,col=3)
+  legend("topright", # places a legend at the appropriate place
+       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik','smash-pois-gaus'), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","blue", "red",'black',3))
+
+print(paste("nugget effect estimated by vst:",round(smashgen.vst.out$nugget.est,2)))
+print(paste("nugget effect estimated by lik_expansion:",round(smashgen.lik.out$nugget.est,2)))
+
+}
+
+```
+
+# EncodeBroadHistoneHelas - Rep 1
+
+## Forward
+
+```{r}
+file.name = "data/chipexo_examples/example_CTCF_MACE_wgEncodeBroadHistoneHelas3CtcfStdAlnRep1_forward_counts.txt"
+real_study(file.name,plot.name = "EncodeBroadHistoneHelas - Rep 1 - forward")
+```
+
+
+
+```{r}
+chipexo1 <- extract_counts_CTCF(file.name)
+plot(chipexo1$counts,pch=20,col='grey80')
+fit.pois.gaus = smash.pois.gaus(chipexo1$counts)
+smash.out=smash.poiss(chipexo1$counts)
+lines(smash.out,col=4)
+lines(fit.pois.gaus$lambda.est)
+smashgen.lik.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',
+                                 transformation = 'lik_expansion',
+                                 ash.pm = FALSE,robust = F)
+smashgen.lik.out$nugget.est
+plot(chipexo1$counts,pch=20,col='grey80')
+lines(smashgen.lik.out$lambda.est)
+```
+
+Set nugget = 0
+
+```{r}
+smashgen.lik.out0=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',
+                                 transformation = 'lik_expansion',
+                                 ash.pm = F,robust = F,nugget = 0)
+plot(chipexo1$counts,pch=20,col='grey80')
+lines(smashgen.lik.out0$lambda.est)
+```
+
+
+Why?
+
+
+```{r}
+x=chipexo1$counts
+if(!ispowerof2(length(x))){
+  reflect.x = reflect(x)
+  x = reflect.x$x
+  idx = reflect.x$idx
+}else{
+  idx = 1:length(x)
+}
+
+n = length(x)
+s = 1
+lambda_tilde = x/s
+x_pm = ash(rep(0,n),1,lik=lik_pois(x,scale=s,link='log'),
+                   optmethod='mixSQP',pointmass=F)$result$PosteriorMean
+lambda_tilde[x<1] = x_pm[x<1]
+    # working data
+st=sqrt(1/(s*lambda_tilde))
+y=log(lambda_tilde)+(x-s*lambda_tilde)/(s*lambda_tilde)
+    
+plot(st[idx],pch=20,ylab='knwon approx sd')
+nug.est = 0
+fit = smash.gaus(y,sigma=sqrt(st^2+nug.est),
+                     filter.number = 1,family = 'DaubExPhase',
+                     post.var = TRUE)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit$mu.est[idx])
+```
+
+try to fit smash with unknown variance
+
+```{r}
+fit = smash.gaus(y,filter.number = 1,family = 'DaubExPhase',
+                     post.var = TRUE,joint = T)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit$mu.res$mu.est[idx])
+
+plot(fit$var.res$var.est[idx],type='l',ylab='estimated variance')
+```
+
+
+try to fit smash with constant variance
+
+```{r}
+fit = smash.gaus(y,sigma=0.6,filter.number = 1,family = 'DaubExPhase',
+                     post.var = TRUE,joint = T)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit$mu.res$mu.est[idx])
+
+plot(chipexo1$counts,pch=20,col='grey80',ylab='count')
+lines(exp(fit$mu.res$mu.est[idx]))
+```
+
+```{r}
+fit = smash.gaus(y,sigma=1,filter.number = 1,family = 'DaubExPhase',
+                     post.var = TRUE,joint = T)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit$mu.res$mu.est[idx])
+
+plot(chipexo1$counts,pch=20,col='grey80',ylab='count')
+lines(exp(fit$mu.res$mu.est[idx]))
+```
+
+try other smoother
+
+```{r}
+
+
+fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.75)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit.loess$fitted[idx])
+
+plot(chipexo1$counts,pch=20,col='grey80',ylab='count')
+lines(exp(fit.loess$fitted[idx]))
+
+
+fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.2)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit.loess$fitted[idx])
+
+plot(chipexo1$counts,pch=20,col='grey80',ylab='count')
+lines(exp(fit.loess$fitted[idx]))
+
+fit.loess = loess(y~.,data.frame(y=y,x=1:n),weights = 1/(st^2),span = 0.1)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit.loess$fitted[idx])
+
+plot(chipexo1$counts,pch=20,col='grey80',ylab='count')
+lines(exp(fit.loess$fitted[idx]))
+
+
+```
+
+Why vst worked?
+
+
+```{r}
+y = sqrt(x+3/8)/sqrt(s)
+st = rep(sqrt(0.25/s),length(y))
+nug.est = 0
+fit = smash.gaus(y,sigma=sqrt(st^2+nug.est),
+                     filter.number = 1,family = 'DaubExPhase',
+                     post.var = TRUE)
+plot(y[idx],col='grey80',pch=20,ylab='pseudo-data')
+lines(fit$mu.est[idx])
+```
+
+Simulate data from vst fitted one.
+
+```{r}
+smashgen.vst.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',transformation = 'vst',robust = F)
+smashgen.vst.out$nugget.est
+set.seed(12345)
+for(i in 1:10){
+  y = rpois(length(chipexo1$counts),smashgen.vst.out$lambda.est)
+            # (sqrt(smashgen.vst.out$lambda.est)+rnorm(length(chipexo1$counts),0,0.1))^2)
+  
+  plot(y,col='grey80',pch=20,ylab='simulated counts')
+  lines(smashgen.vst.out$lambda.est,col='grey80')
+  fit.vst = smash.gen.poiss(y,smooth_method = 'smash',transformation = 'vst',robust = F)
+  fit.smash = smash.poiss(y)
+  fit.lik = smash.gen.poiss(y,smooth_method = 'smash',transformation = 'lik_expansion',robust = F)
+  fit.pois.gaus = smash.pois.gaus(y)
+  lines(fit.smash,col=4)
+  lines(fit.vst$lambda.est,col=2)
+  lines(fit.lik$lambda.est,col=1)
+  lines(fit.pois.gaus$lambda.est,col=3)
+  legend("topright", # places a legend at the appropriate place
+       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik','smash=pois-gaus'), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","blue", "red",'black',3))
+}
+
+
+```
+
+Simulate data from smash.pois fitted one.
+
+```{r}
+smash.out=smash.poiss(chipexo1$counts)
+set.seed(12345)
+for(i in 1:10){
+  y = rpois(length(chipexo1$counts),smash.out)
+            # (sqrt(smashgen.vst.out$lambda.est)+rnorm(length(chipexo1$counts),0,0.1))^2)
+  
+  plot(y,col='grey80',pch=20,ylab='simulated counts')
+  lines(smashgen.vst.out$lambda.est,col='grey80')
+  fit.vst = smash.gen.poiss(y,smooth_method = 'smash',transformation = 'vst',robust = F)
+  fit.smash = smash.poiss(y)
+  fit.lik = smash.gen.poiss(y,smooth_method = 'smash',transformation = 'lik_expansion',robust = F)
+  fit.pois.gaus = smash.pois.gaus(y)
+  lines(fit.smash,col=4)
+  lines(fit.vst$lambda.est,col=2)
+  lines(fit.lik$lambda.est,col=1)
+  lines(fit.pois.gaus$lambda.est,col=3)
+  legend("topright", # places a legend at the appropriate place
+       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik','smash=pois-gaus'), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
+       cex = 0.5,
+       col=c("gray80","blue", "red",'black',3))
+}
+
+
+```
+
+
+

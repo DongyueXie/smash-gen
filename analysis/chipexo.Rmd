@@ -1,5 +1,5 @@
 ---
-title: "Chip-exo data smoothing(augmentation)"
+title: "Chip-exo data smoothing"
 author: "Dongyue Xie"
 date: "June 3, 2018"
 output: html_document
@@ -12,8 +12,7 @@ The lenght of sequence here is 425, which is not a power of 2 hence causing prob
 
 # Setup
 ```{r}
-library(smashrgen)
-library(dashr)
+source('code/smash_gen_poisson.R')
 
 extract_counts_CTCF <- function(filename){
   bed_counts <- read.table(filename, header = F, stringsAsFactors = F)
@@ -35,22 +34,24 @@ real_study = function(file.name,plot.name){
 #dash.out=dash_smooth(chipexo1$counts, dash_control = list(Inf_weight = 1), progressbar = FALSE)
 smash.out=smash.poiss(chipexo1$counts)
 #y=reflect(chipexo1$counts,'both',c(300,299))
-smashgen.vst.out=smash.gen.poiss(chipexo1$counts,method = 'smash',transformation = 'vst')
-smashgen.lik.out=smash.gen.poiss(chipexo1$counts,method = 'smash',
-                                 transformation = 'lik_expansion',ash.pm = TRUE)
+smashgen.vst.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',transformation = 'vst',robust = F)
+smashgen.lik.out=smash.gen.poiss(chipexo1$counts,smooth_method = 'smash',
+                                 transformation = 'lik_expansion',ash.pm = FALSE,robust = F)
+fit.pois.gaus = smash.pois.gaus(chipexo1$counts)
 
-plot(chipexo1$counts, col = "gray80", type = "h", ylab = "counts", xlab = "", main = plot.name)
+plot(chipexo1$counts, col = "gray80", type = "p", pch=20,ylab = "counts", xlab = "", main = plot.name)
 lines(smash.out, col = "blue", lwd = 1)
 #lines(dash.out$estimate, col = "red", lwd = 1)
 lines(smashgen.vst.out$lambda.est,col="red",lwd=2)
 lines(smashgen.lik.out$lambda.est,col='black',lwd=2)
 
-legend("topright", # places a legend at the appropriate place
-       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik'), # puts text in the legend
-       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
-       lwd=c(1,1,2,2),
+lines(fit.pois.gaus$lambda.est,col=3)
+  legend("topright", # places a legend at the appropriate place
+       c("data","smash-poiss",'smash-gen-vst','smash-gen-lik','smash-pois-gaus'), # puts text in the legend
+       lty=c(1,1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1,1),
        cex = 0.5,
-       col=c("gray80","blue", "red",'black'))
+       col=c("gray80","blue", "red",'black',3))
 
 print(paste("nugget effect estimated by vst:",round(smashgen.vst.out$nugget.est,2)))
 print(paste("nugget effect estimated by lik_expansion:",round(smashgen.lik.out$nugget.est,2)))
