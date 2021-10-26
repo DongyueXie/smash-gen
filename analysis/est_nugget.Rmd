@@ -1,0 +1,61 @@
+---
+title: "Estimate  nugget effect, use smallest s_t's, and test smash_pois_gaus"
+author: "DongyueXie"
+date: "2021-10-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+
+```{r}
+source('code/smash_gen_poisson.R')
+datax = read.table('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts/FTH1_11:61731756-61735132.txt.gz',header = TRUE)
+fit.smash.gen = smash.gen.poiss(datax[,4],transformation = 'lik_expansion',smooth_method = 'smash',maxiter = 1)
+plot(datax[,4],col='grey80',type = 'h',ylab='counts',xlab='Chr11',xaxt = "n")
+xlab.idx = round(seq(1,length(datax[,4]),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.gen$lambda.est)
+```
+
+```{r,fig.width=10,fig.height=5}
+# mu = c(rep(0.1,n/4),rep(2,n/4),rep(3,n/4),rep(0.1,n/4))
+mu = fit.smash.gen$mu.est
+mu[mu<0] = mean(mu[mu<0])
+mu[mu>3.5] = mean(mu[mu>3.5])
+plot(mu,type='l')
+s=1
+n = length(mu)
+set.seed(111)
+for(reps in 1:3){
+  y = rpois(n,exp(mu+rnorm(n,0,s)))
+  plot(y,col='grey80',ylab='simulated counts',xlab='Chr11',xaxt = "n",pch=20,lwd=0.5)
+plot(y,col='grey80',ylab='simulated counts',xlab='Chr11',xaxt = "n",pch=20,lwd=0.5,ylim=c(0,400))
+xlab.idx = round(seq(1,length(datax[,4]),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(exp(mu),col='grey50')
+fit = smash.gen.poiss(y,robust=FALSE)
+lines(fit$lambda.est,col=2)
+print(fit$nugget.est)
+
+fit.vst = smash.gen.poiss(y,robust=T,transformation = 'vst')
+lines(fit.vst$lambda.est,col=3)
+
+fit1 = smash.pois.gaus(y)
+lines(fit1$lambda.est,col=4)
+legend("topright", # places a legend at the appropriate place
+       c("mean",'smash-gen-vst','smash-gen-lik','smash-pois-gaus'), # puts text in the legend
+       lty=c(1,1,1,1), # gives the legend appropriate symbols (lines)
+       lwd=c(1,1,1,1),
+       cex = 0.5,
+       col=c("gray50",3, 2,4))
+}
+
+```
+
+
+
+
+
