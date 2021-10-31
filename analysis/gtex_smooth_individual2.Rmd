@@ -1,0 +1,85 @@
+---
+title: "gtex smooth individual"
+author: "DongyueXie"
+date: "2021-10-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Apply smash gen to gtex data. On a single individual.
+
+```{r}
+library(smashr)
+library(wavethresh)
+source('code/smash_gen_poisson.R')
+
+
+
+# 
+# fit.smash = smash.poiss(datax[,4],reflect = TRUE)
+# plot(datax[,4],col='grey80',type = 'h',ylab='counts',xlab='')
+# lines(fit.smash,col='grey80')
+# 
+# fit.smash.gen = smash.gen.poiss(datax[,4],transformation = 'lik_expansion',method = 'smash')
+# lines(fit.smash.gen$lambda.est)
+```
+
+```{r,fig.width=10,fig.height=5,warning=FALSE}
+files = list.files('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts')
+for(f in files[12:21]){
+  fs = strsplit(f,split='_')
+  gene_name = fs[[1]][1]
+  fs = strsplit(fs[[1]][2],split = ':')
+  chr = fs[[1]][1]
+  
+  datax = read.table(paste('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts/',f,sep=''),
+                     header = TRUE)
+  # tissues = colnames(datax)
+  # tissue = c()
+  # for(i in 1:length(tissues)){
+  #   tissue = c(tissue, (strsplit(tissues[i],split = '_')[[1]])[1])
+  # }
+  # tissue_name = unique(tissue[-c(1:3)])
+  
+  
+    idx = 4
+    y = (datax[,idx])
+   indi_name = colnames(datax)[idx]
+    
+fit.smash.pois = smash.poiss(y,reflect = TRUE)
+plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.pois,col='grey40')
+
+
+fit.smash.gen = smash.gen.poiss(y,transformation = 'lik_expansion',smooth_method = 'smash')
+plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.gen$lambda.est,lwd=1,col=4)
+
+
+# fit.smash.gen.vst = smash.gen.poiss(y,transformation = 'vst',smooth_method = 'smash')
+# plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+# xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+# axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+# lines(fit.smash.gen.vst$lambda.est,lwd=1,col=2)
+# 
+# fit.smash.pois.gaus = smash.pois.gaus(y)
+# plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+# xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+# axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+# lines(fit.smash.pois.gaus$lambda.est)
+
+  
+}
+```
+
+
+
+
+
