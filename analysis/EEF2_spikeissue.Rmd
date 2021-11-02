@@ -1,0 +1,50 @@
+---
+title: "EEF2 spikeissue"
+author: "DongyueXie"
+date: "2021-10-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+We found the [spiky issue](gtex_smooth.html) at the beginning and ending of an exon area, and here we try to remove those large counts and see if the spike is still there. We use gene EEF2 as an example.
+
+```{r}
+library(smashr)
+library(wavethresh)
+source('code/smash_gen_poisson.R')
+files = list.files('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts')
+f = files[2]
+datax = read.table(paste('/project2/mstephens/dongyue/gtex/Yang/CoverageCounts/',f,sep=''),
+                     header = TRUE)
+fs = strsplit(f,split='_')
+  gene_name = fs[[1]][1]
+  fs = strsplit(fs[[1]][2],split = ':')
+  chr = fs[[1]][1]
+idx = 4
+y = (datax[,idx])
+indi_name = colnames(datax)[idx]
+    
+fit.smash.pois.gaus = smash.pois.gaus(y)
+plot(y,col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.pois.gaus$lambda.est)
+```
+
+Now remove the large counts at the beginning and ending of an exon area.
+
+```{r}
+rm.idx = which(fit.smash.pois.gaus$lambda.est>47)
+fit.smash.pois.gaus2 = smash.pois.gaus(y[-rm.idx])
+plot(y[-rm.idx],col='grey80',type='p',pch=20,lwd=0.5,ylab='counts',xlab='Chr11',xaxt = "n",main=paste(gene_name,indi_name,sep=', '))
+xlab.idx = round(seq(1,nrow(datax),length.out = 5))
+axis(1, at = xlab.idx,labels = datax[xlab.idx,2])
+lines(fit.smash.pois.gaus2$lambda.est)
+```
+
+
+
+
