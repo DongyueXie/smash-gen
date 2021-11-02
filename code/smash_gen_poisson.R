@@ -31,6 +31,7 @@ smash.gen.poiss = function(x,nugget=NULL,s=1,
                            nug.init = NULL,
                            nug.est.method = 'diff',
                            ash.pm=FALSE,
+                           smash.pm=FALSE,
                            eps='estimate',
                            filter.number = 1,
                            family = "DaubExPhase",
@@ -55,6 +56,9 @@ smash.gen.poiss = function(x,nugget=NULL,s=1,
 
   if(transformation == 'lik_expansion'){
 
+    if(smash.pm){
+      lambda_tilde = smash.poiss(x)/s
+    }
     lambda_tilde = x/s
     if(min(x)<1){
       if(ash.pm){
